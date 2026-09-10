@@ -606,20 +606,26 @@ tspan.gg { text-decoration-color:#0E9F6E; }
 
 #draw-color-pop {
   position:fixed; z-index:660; background:#fff; border:1px solid #DDE3EC; border-radius:14px;
-  padding:8px; box-shadow:0 10px 30px rgba(0,0,0,.2); display:none; gap:7px; align-items:center;
+  padding:12px; box-shadow:0 10px 30px rgba(0,0,0,.2); display:none; flex-direction:column; gap:10px;
+  width:186px; font-family: Calibri, Arial, sans-serif;
 }
 #draw-color-pop.open { display:flex; }
+#draw-color-pop .type-row { display:flex; gap:8px; }
 #draw-color-pop .type-btn {
-  width:30px; height:30px; border-radius:50%; border:1.5px solid #DDE3EC; background:#F4F6FA;
-  cursor:pointer; display:flex; align-items:center; justify-content:center; color:#3A4658; padding:0;
+  flex:1; height:32px; border-radius:8px; border:1.5px solid #DDE3EC; background:#F4F6FA;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; color:#3A4658; padding:0;
+  font-size:11.5px; font-weight:700;
 }
 #draw-color-pop .type-btn.active { border-color:#3D80E8; background:#EAF1FC; color:#0F4CA3; }
-#draw-color-pop .type-btn svg { width:15px; height:15px; }
-#draw-color-pop .sep-v { width:1px; height:22px; background:#E3E5E9; flex:none; }
+#draw-color-pop .type-btn svg { width:14px; height:14px; flex:none; }
+#draw-color-pop .color-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; justify-items:center; }
 #draw-color-pop .swatch {
-  width:22px; height:22px; border-radius:50%; border:2px solid transparent; cursor:pointer; padding:0; flex:none;
+  width:22px; height:22px; border-radius:50%; border:1px solid rgba(0,0,0,.08); box-shadow:0 0 0 2px transparent; cursor:pointer; padding:0; flex:none;
 }
-#draw-color-pop .swatch.active { border-color:#0F4CA3; box-shadow:0 0 0 2px #fff inset; }
+#draw-color-pop .swatch.active { box-shadow:0 0 0 2px #0F4CA3; }
+#draw-color-pop .thickness-row { display:flex; align-items:center; gap:7px; }
+#draw-color-pop .thickness-row input[type=range] { flex:1; accent-color:#0F4CA3; }
+#draw-color-pop .thickness-label { font-size:9.5px; color:#8A94A6; white-space:nowrap; }
 </style>
 </head>
 <body>
@@ -2816,18 +2822,39 @@ tspan.gg { text-decoration-color:#0E9F6E; }
   </button>
 </div>
 <div id="draw-color-pop">
-  <button type="button" class="type-btn active" data-type="pen" title="Qalam">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 12l7.5 1.5L18 13z"/></svg>
-  </button>
-  <button type="button" class="type-btn" data-type="marker" title="Marker">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l3-3 9-9 3 3-9 9-3 3H4v-3z"/><path d="M14 5l5 5"/></svg>
-  </button>
-  <span class="sep-v"></span>
-  <button type="button" class="swatch active" data-color="#1a1a2e" style="background:#1a1a2e"></button>
-  <button type="button" class="swatch" data-color="#E8264A" style="background:#E8264A"></button>
-  <button type="button" class="swatch" data-color="#1D4ED8" style="background:#1D4ED8"></button>
-  <button type="button" class="swatch" data-color="#0E9F6E" style="background:#0E9F6E"></button>
-  <button type="button" class="swatch" data-color="#F5A524" style="background:#F5A524"></button>
+  <div class="type-row">
+    <button type="button" class="type-btn active" data-type="pen" title="Qalam">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 12l7.5 1.5L18 13z"/></svg>
+      <span>Qalam</span>
+    </button>
+    <button type="button" class="type-btn" data-type="marker" title="Marker">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l3-3 9-9 3 3-9 9-3 3H4v-3z"/><path d="M14 5l5 5"/></svg>
+      <span>Marker</span>
+    </button>
+  </div>
+  <div class="color-grid">
+    <button type="button" class="swatch active" data-color="#1a1a2e" style="background:#1a1a2e"></button>
+    <button type="button" class="swatch" data-color="#4a4f5c" style="background:#4a4f5c"></button>
+    <button type="button" class="swatch" data-color="#9AA1AC" style="background:#9AA1AC"></button>
+    <button type="button" class="swatch" data-color="#ffffff" style="background:#ffffff"></button>
+    <button type="button" class="swatch" data-color="#E8264A" style="background:#E8264A"></button>
+    <button type="button" class="swatch" data-color="#F5730A" style="background:#F5730A"></button>
+    <button type="button" class="swatch" data-color="#F5A524" style="background:#F5A524"></button>
+    <button type="button" class="swatch" data-color="#0E9F6E" style="background:#0E9F6E"></button>
+    <button type="button" class="swatch" data-color="#14B8A6" style="background:#14B8A6"></button>
+    <button type="button" class="swatch" data-color="#1D4ED8" style="background:#1D4ED8"></button>
+    <button type="button" class="swatch" data-color="#6366F1" style="background:#6366F1"></button>
+    <button type="button" class="swatch" data-color="#9333EA" style="background:#9333EA"></button>
+    <button type="button" class="swatch" data-color="#EC4899" style="background:#EC4899"></button>
+    <button type="button" class="swatch" data-color="#92400E" style="background:#92400E"></button>
+    <button type="button" class="swatch" data-color="#DB2777" style="background:#DB2777"></button>
+    <button type="button" class="swatch" data-color="#38BDF8" style="background:#38BDF8"></button>
+  </div>
+  <div class="thickness-row">
+    <span class="thickness-label">Ingichka</span>
+    <input type="range" id="draw-thickness" min="1" max="10" step="0.5" value="3.2">
+    <span class="thickness-label">Qalin</span>
+  </div>
 </div>
 
 <div id="nav-bar">
@@ -3040,8 +3067,11 @@ tspan.gg { text-decoration-color:#0E9F6E; }
     var clearBtn = document.getElementById("draw-clear-btn");
     var colorPop = document.getElementById("draw-color-pop");
 
+    var thicknessSlider = document.getElementById("draw-thickness");
+
     var dtool = "pen"; // "pen" | "marker" | "eraser"
     var dcolor = "#1a1a2e";
+    var penWidth = 3.2, markerWidth = 16; // each type remembers its own thickness
     var drawOn = false, drawing = false, lastX = 0, lastY = 0;
 
     function resizeDrawCanvas(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
@@ -3055,6 +3085,11 @@ tspan.gg { text-decoration-color:#0E9F6E; }
       toggleBtn.classList.toggle("on", on);
     }
 
+    function syncThicknessSlider(){
+      if (dtool === "marker") { thicknessSlider.min = 8; thicknessSlider.max = 30; thicknessSlider.value = markerWidth; }
+      else { thicknessSlider.min = 1; thicknessSlider.max = 10; thicknessSlider.value = penWidth; }
+    }
+
     function selectTool(t, c){
       dtool = t;
       if (c) dcolor = c;
@@ -3062,6 +3097,7 @@ tspan.gg { text-decoration-color:#0E9F6E; }
       eraserBtn.classList.toggle("active", t === "eraser");
       Array.prototype.forEach.call(colorPop.querySelectorAll(".type-btn"), function(b){ b.classList.toggle("active", b.dataset.type === t); });
       Array.prototype.forEach.call(colorPop.querySelectorAll(".swatch"), function(b){ b.classList.toggle("active", b.dataset.color === dcolor); });
+      if (t !== "eraser") syncThicknessSlider();
       setDrawOn(true);
     }
 
@@ -3070,6 +3106,7 @@ tspan.gg { text-decoration-color:#0E9F6E; }
       var open = !colorPop.classList.contains("open");
       colorPop.classList.toggle("open", open);
       if (open) {
+        syncThicknessSlider();
         var r = penBtn.getBoundingClientRect();
         colorPop.style.right = (window.innerWidth - r.right) + "px";
         colorPop.style.bottom = (window.innerHeight - r.top + 10) + "px";
@@ -3084,6 +3121,9 @@ tspan.gg { text-decoration-color:#0E9F6E; }
     Array.prototype.forEach.call(colorPop.querySelectorAll(".swatch"), function(b){
       b.onclick = function(e){ e.stopPropagation(); selectTool(dtool === "eraser" ? "pen" : dtool, b.dataset.color); };
     });
+    thicknessSlider.oninput = function(){
+      if (dtool === "marker") markerWidth = +thicknessSlider.value; else penWidth = +thicknessSlider.value;
+    };
 
     eraserBtn.onclick = function(){ colorPop.classList.remove("open"); selectTool("eraser"); };
     toggleBtn.onclick = function(){ colorPop.classList.remove("open"); setDrawOn(!drawOn); };
@@ -3104,7 +3144,7 @@ tspan.gg { text-decoration-color:#0E9F6E; }
         dctx.globalAlpha = 1;
       } else {
         dctx.globalCompositeOperation = "source-over";
-        dctx.lineWidth = dtool === "marker" ? 16 : 3.2;
+        dctx.lineWidth = dtool === "marker" ? markerWidth : penWidth;
         dctx.globalAlpha = dtool === "marker" ? 0.35 : 1;
         dctx.strokeStyle = dcolor;
       }
