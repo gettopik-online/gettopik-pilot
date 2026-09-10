@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GETTOPIK · Kirish</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Malgun Gothic", sans-serif;
+    background: #F4F6FA;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card {
+    background: #fff; border-radius: 16px; box-shadow: 0 20px 60px rgba(15,76,163,.12);
+    padding: 40px 36px; width: 100%; max-width: 360px; text-align: center;
+  }
+  .brand {
+    display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 22px;
+  }
+  .brand-dot {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: linear-gradient(135deg, #3D80E8, #0F4CA3);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 800; font-size: 15px;
+  }
+  .brand-name { font-weight: 800; font-size: 19px; color: #0F1A2B; letter-spacing: .3px; }
+  h1 { font-size: 16px; font-weight: 700; color: #3A4658; margin: 0 0 24px 0; }
+  input[type="password"] {
+    width: 100%; padding: 13px 14px; border-radius: 10px; border: 1.5px solid #DDE3EC;
+    font-size: 15px; outline: none; transition: border-color .15s ease;
+  }
+  input[type="password"]:focus { border-color: #3D80E8; }
+  button {
+    width: 100%; margin-top: 14px; padding: 13px 14px; border-radius: 10px; border: none;
+    background: #0F4CA3; color: #fff; font-weight: 700; font-size: 15px; cursor: pointer;
+    transition: background .15s ease;
+  }
+  button:hover { background: #0D3E87; }
+  button:active { transform: scale(0.98); }
+  .error {
+    margin-top: 12px; color: #E8264A; font-size: 13.5px; font-weight: 600; min-height: 18px;
+  }
+  .hint { margin-top: 20px; color: #9AA1AC; font-size: 12.5px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="brand">
+    <div class="brand-dot">G</div>
+    <div class="brand-name">GETTOPIK</div>
+  </div>
+  <h1>Interaktiv sahifaga kirish uchun parolni kiriting</h1>
+  <form id="gate-form" autocomplete="off">
+    <input type="password" id="pw" placeholder="Parol" autofocus>
+    <button type="submit">Kirish</button>
+    <div class="error" id="err"></div>
+  </form>
+  <div class="hint">Parolingiz yo'q bo'lsa, administrator bilan bog'laning.</div>
+</div>
+<script>
+// Per-person password list, stored as SHA-256 hashes (not plaintext) so casual "view source"
+// doesn't hand out the actual passwords. Each entry is independently revocable — just delete its
+// line and redeploy. The label is only for the admin's own reference when managing the list.
+var PASSWORDS = {
+  "e057f3efcb248b2bf9892e03b84526ade9dabd7f98fc3d01bdd051b471422add": "Bekhruz (asosiy)"
+};
+
+async function sha256Hex(text) {
+  var buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2, "0"); }).join("");
+}
+
+document.getElementById("gate-form").addEventListener("submit", async function(e){
+  e.preventDefault();
+  var pw = document.getElementById("pw").value;
+  var errEl = document.getElementById("err");
+  if (!pw) return;
+  var hash = await sha256Hex(pw);
+  if (PASSWORDS[hash]) {
+    sessionStorage.setItem("gettopik_ok", "1");
+    location.href = "pilot.html";
+  } else {
+    errEl.textContent = "Parol noto'g'ri. Qaytadan urinib ko'ring.";
+    document.getElementById("pw").value = "";
+    document.getElementById("pw").focus();
+  }
+});
+</script>
+</body>
+</html>
