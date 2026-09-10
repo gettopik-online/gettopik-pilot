@@ -3071,7 +3071,7 @@ tspan.gg { text-decoration-color:#0E9F6E; }
 
     var dtool = "pen"; // "pen" | "marker" | "eraser"
     var dcolor = "#1a1a2e";
-    var penWidth = 3.2, markerWidth = 16; // each type remembers its own thickness
+    var penWidth = 3.2, markerWidth = 9; // each type remembers its own thickness
     var drawOn = false, drawing = false, lastX = 0, lastY = 0;
 
     function resizeDrawCanvas(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
@@ -3086,7 +3086,7 @@ tspan.gg { text-decoration-color:#0E9F6E; }
     }
 
     function syncThicknessSlider(){
-      if (dtool === "marker") { thicknessSlider.min = 8; thicknessSlider.max = 30; thicknessSlider.value = markerWidth; }
+      if (dtool === "marker") { thicknessSlider.min = 4; thicknessSlider.max = 18; thicknessSlider.value = markerWidth; }
       else { thicknessSlider.min = 1; thicknessSlider.max = 10; thicknessSlider.value = penWidth; }
     }
 
