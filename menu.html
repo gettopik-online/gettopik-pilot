@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+if (sessionStorage.getItem("gettopik_ok") !== "1") {
+  location.replace("index.html");
+}
+</script>
+<title>GETTOPIK · O'qituvchi paneli</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Malgun Gothic", sans-serif;
+    background: #F4F6FA;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 48px 20px; }
+  .brand {
+    display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 28px;
+  }
+  .brand-dot {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: linear-gradient(135deg, #3D80E8, #0F4CA3);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 800; font-size: 15px;
+  }
+  .brand-name { font-weight: 800; font-size: 19px; color: #0F1A2B; letter-spacing: .3px; }
+  h1 { text-align: center; font-size: 16px; font-weight: 700; color: #3A4658; margin: 0 0 28px 0; }
+  .card {
+    display: block; background: #fff; border-radius: 14px; box-shadow: 0 10px 30px rgba(15,76,163,.10);
+    padding: 22px 24px; margin-bottom: 14px; text-decoration: none; color: inherit;
+    border: 1.5px solid transparent; transition: border-color .15s ease, transform .1s ease;
+  }
+  .card:hover { border-color: #3D80E8; transform: translateY(-1px); }
+  .card .kicker { font-size: 11.5px; font-weight: 800; letter-spacing: 1.5px; color: #3D80E8; text-transform: uppercase; margin-bottom: 6px; }
+  .card .title { font-size: 18px; font-weight: 800; color: #0F1A2B; margin-bottom: 4px; }
+  .card .desc { font-size: 13.5px; color: #6B7686; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <div class="brand-dot">G</div>
+    <div class="brand-name">GETTOPIK</div>
+  </div>
+  <h1>Qaysi kitobni ochmoqchisiz?</h1>
+
+  <a class="card" href="pilot.html">
+    <div class="kicker">TOPIK Ⅱ · Final Pass</div>
+    <div class="title">6 round · to'liq mock imtihon</div>
+    <div class="desc">18 UNIT · 듣기 · 읽기 · 쓰기 — audio, 해설 va chizish vositasi bilan interaktiv nusxa.</div>
+  </a>
+
+  <a class="card" href="topik1.html">
+    <div class="kicker">TOPIK Ⅰ · Study Guide</div>
+    <div class="title">26 UNIT · to'liq qo'llanma</div>
+    <div class="desc">듣기 1~30 · 읽기 31~70 — 457 savol, 382 lug'at, interaktiv sahifama-sahifa nusxa.</div>
+  </a>
+
+  <a class="card" href="yozish.html">
+    <div class="kicker">TOPIK Ⅱ · Writing Guide</div>
+    <div class="title">쓰기 51 · 52 · 53</div>
+    <div class="desc">17 dars — turlar bo'yicha strategiya va tayyor iboralar, interaktiv nusxa.</div>
+  </a>
+</div>
+</body>
+</html>

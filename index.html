@@ -80,7 +80,7 @@ document.getElementById("gate-form").addEventListener("submit", async function(e
   var hash = await sha256Hex(pw);
   if (PASSWORDS[hash]) {
     sessionStorage.setItem("gettopik_ok", "1");
-    location.href = "pilot.html";
+    location.href = "menu.html";
   } else {
     errEl.textContent = "Parol noto'g'ri. Qaytadan urinib ko'ring.";
     document.getElementById("pw").value = "";
