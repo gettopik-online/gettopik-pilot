@@ -1,88 +1,254 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="uz">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
+// simple client-side gate: this page only shows if the user came through index.html's password
+// screen in this browser tab's session (sessionStorage clears when the tab/browser closes).
 if (sessionStorage.getItem("gettopik_ok") !== "1") {
   location.replace("index.html");
 }
 </script>
-<title>GETTOPIK · O'qituvchi paneli</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GETTOPIK · O'quv dasturi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; }
-  html, body {
-    margin: 0; padding: 0; min-height: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Malgun Gothic", sans-serif;
-    background: #F4F6FA;
+  :root{
+    --blue:#66AAFD; --blue-dark:#2F7BE0; --blue-light:#EAF3FF; --red:#EA1F3D;
+    --dark:#1E2A3A; --muted:#5B6474; --pale:#EEF1F5; --pale-txt:#A0A8B5; --white:#fff;
   }
-  .wrap { max-width: 1040px; margin: 0 auto; padding: 44px 20px 56px; }
-  .brand {
-    display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 24px;
-  }
-  .brand-dot {
-    width: 30px; height: 30px; border-radius: 50%;
-    background: linear-gradient(135deg, #3D80E8, #0F4CA3);
-    display: flex; align-items: center; justify-content: center;
-    color: #fff; font-weight: 800; font-size: 15px;
-  }
-  .brand-name { font-weight: 800; font-size: 19px; color: #0F1A2B; letter-spacing: .3px; }
-  h1 { text-align: center; font-size: 16px; font-weight: 700; color: #3A4658; margin: 0 0 30px 0; }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:#fff;color:var(--dark);font-family:"Segoe UI",Calibri,"Noto Sans KR","Malgun Gothic",Arial,sans-serif}
+  .ko{font-family:"Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",sans-serif}
+  #app{max-width:1100px;margin:0 auto;padding:28px 24px 60px;min-height:100vh;display:flex;flex-direction:column}
+  a{color:inherit;text-decoration:none}
 
-  /* four book covers, one button each */
-  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
-  .card {
-    display: flex; flex-direction: column; text-decoration: none; color: inherit;
-    background: #fff; border-radius: 14px; padding: 14px 14px 18px;
-    box-shadow: 0 10px 30px rgba(15,76,163,.10);
-    border: 1.5px solid transparent; transition: border-color .15s ease, transform .12s ease, box-shadow .15s ease;
-  }
-  .card:hover { border-color: #3D80E8; transform: translateY(-3px); box-shadow: 0 16px 38px rgba(15,76,163,.18); }
-  .card:focus-visible { outline: 3px solid #3D80E8; outline-offset: 3px; }
-  .cover {
-    display: block; width: 100%; aspect-ratio: 794 / 1123; object-fit: cover; object-position: top center;
-    border-radius: 8px; border: 1px solid #E3E8F0; background: #fff;
-  }
-  .card .kicker { font-size: 10.5px; font-weight: 800; letter-spacing: 1.2px; color: #3D80E8; text-transform: uppercase; margin: 14px 0 5px; }
-  .card .title { font-size: 15.5px; font-weight: 800; color: #0F1A2B; line-height: 1.3; }
+  /* header */
+  .hdr{display:flex;align-items:center;gap:14px;margin-bottom:26px}
+  .hdr img{width:44px;height:44px;border-radius:10px}
+  .hdr .lvl{font-size:22px;font-weight:900}
+  .hdr .sub{font-size:14px;color:var(--muted)}
 
-  @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 18px; } }
-  @media (max-width: 460px) { .grid { grid-template-columns: 1fr; } .wrap { padding: 32px 16px 44px; } }
+  /* menu */
+  .menu{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:26px;padding-top:30px}
+  .menu img{width:110px;height:110px;border-radius:24px}
+  .menu h1{margin:0;font-size:clamp(28px,5vw,44px);letter-spacing:.12em;font-weight:900}
+  .grid{display:grid;gap:22px;width:100%;margin-top:10px}
+  .grid.c3{grid-template-columns:repeat(3,1fr)}
+  .grid.c4{grid-template-columns:repeat(4,1fr)}
+  .btn{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+       background:var(--blue);color:#fff;border-radius:22px;min-height:150px;padding:22px 16px;
+       box-shadow:0 10px 24px rgba(102,170,253,.38);transition:transform .15s,box-shadow .15s;cursor:pointer}
+  .btn:hover{transform:translateY(-3px);box-shadow:0 16px 30px rgba(102,170,253,.45)}
+  .btn::after{content:"";position:absolute;top:16px;right:16px;width:20px;height:20px;border-radius:50%;background:var(--red)}
+  .btn .big{font-size:clamp(28px,4.5vw,42px);font-weight:900;line-height:1.1}
+  .btn .small{font-size:15px;font-weight:700;opacity:.95}
+  .btn.off{background:var(--pale);color:var(--pale-txt);box-shadow:none;border:1px solid #DDE2E9;cursor:default}
+  .btn.off::after{display:none}
+  .btn.off:hover{transform:none}
+
+  /* level page */
+  .hero{text-align:center;margin:26px 0 30px}
+  .hero .n{font-size:clamp(48px,8vw,72px);font-weight:900;color:var(--blue);line-height:1}
+  .hero .t{font-size:clamp(22px,4vw,36px);font-weight:900}
+
+  /* book page */
+  .book{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:36px;align-items:start}
+  .covers{display:flex;gap:18px;flex-wrap:wrap}
+  .cover{flex:1 1 120px;max-width:190px;text-align:center}
+  .cover .img{aspect-ratio:0.74;border-radius:4px;box-shadow:0 10px 24px rgba(0,0,0,.22);overflow:hidden;background:#fff}
+  .cover img{width:100%;height:100%;object-fit:cover;display:block}
+  .cover .cap{font-size:12px;font-weight:700;margin-top:10px}
+  .count{display:flex;align-items:baseline;gap:8px;margin-bottom:16px}
+  .count .n{font-size:56px;font-weight:900;color:var(--blue);line-height:1}
+  .count .t{font-size:26px;font-weight:900}
+  .row{display:flex;gap:14px;background:var(--blue-light);border-radius:14px;padding:12px 14px;margin-bottom:10px}
+  .row .num{flex:0 0 64px;text-align:center}
+  .row .num b{display:flex;align-items:center;justify-content:center;width:64px;height:52px;border-radius:10px;background:var(--blue);color:#fff;font-size:22px;font-weight:900}
+  .row .num span{display:block;font-size:10px;color:var(--muted);margin-top:4px}
+  .row .ttl{font-size:18px;font-weight:900;margin-bottom:4px}
+  .row .det{font-size:13px;color:var(--muted);line-height:1.45}
+
+  /* TOPIK II drawn cover */
+  .t2{position:relative;width:100%;height:100%;background:#fff;display:flex}
+  .t2 .strip{width:13%;background:#3B82F6;position:relative}
+  .t2 .strip span{position:absolute;left:50%;top:70%;transform:translate(-50%,-50%) rotate(-90deg);transform-origin:center;white-space:nowrap;color:#fff;font-weight:700;font-size:.45em}
+  .t2 .body{flex:1;padding:8% 8% 8% 9%;text-align:left;display:flex;flex-direction:column}
+  .t2 .tag{display:flex;align-items:center;gap:4px;color:#2563EB;font-weight:900;font-size:.55em}
+  .t2 .tag img{width:1em;height:1em;border-radius:2px}
+  .t2 .g{color:#6B7280;font-weight:700;font-size:.45em;border-bottom:1px solid #E5E7EB;padding-bottom:6%;margin-bottom:10%}
+  .t2 .big{font-size:1.5em;font-weight:900;color:#1F2937;line-height:1.05}
+  .t2 .b2{color:#2563EB;font-weight:900;font-size:.7em;margin-top:4%}
+  .t2 .b3{color:#1F2937;font-weight:700;font-size:.42em;margin-top:5%}
+  .t2 .b4{color:#9CA3AF;font-size:.36em;margin-top:2%}
+  .t2 .foot{margin-top:auto;color:#9CA3AF;font-size:.36em}
+
+  /* time page */
+  .tt{display:flex;align-items:baseline;gap:8px;margin:10px 0 18px}
+  .tt .n{font-size:56px;font-weight:900;color:var(--blue);line-height:1}
+  .tt .t{font-size:26px;font-weight:900}
+  .tt .s{font-size:16px;font-weight:700;color:var(--muted);margin-left:10px}
+  .track{margin-bottom:26px}
+  .track h4{margin:0 0 8px;color:var(--blue-dark);font-size:14px}
+  .bar{display:flex;height:40px;border-radius:6px;overflow:hidden;gap:2px;margin-bottom:14px}
+  .bar div{display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;min-width:6px}
+  .cards{display:grid;gap:14px}
+  .card{background:var(--blue-light);border-radius:14px;padding:16px 18px;min-height:90px}
+  .card .m{display:flex;align-items:center;gap:8px;font-weight:900;font-size:26px;line-height:1}
+  .card .m i{display:inline-block;width:12px;height:12px;border-radius:50%}
+  .card .m small{font-size:12px;color:var(--muted);font-weight:700}
+  .card .l{font-weight:900;font-size:15px;margin-top:8px}
+  .card .d{font-size:13px;color:var(--muted);margin-top:4px}
+  .day{background:var(--blue-light);border-radius:16px;padding:18px;min-height:220px;display:flex;flex-direction:column}
+  .day .pill{align-self:flex-start;background:var(--blue);color:#fff;border-radius:999px;padding:6px 18px;font-weight:700;font-size:13px}
+  .day .items{margin:16px 0;font-size:18px;font-weight:900;line-height:1.6}
+  .day .tag{margin-top:auto;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+  .day .tag::before{content:"";width:12px;height:12px;border-radius:50%;background:var(--red)}
+
+  /* nav */
+  .nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:auto;padding-top:30px;flex-wrap:wrap}
+  .nav .r{display:flex;gap:12px;margin-left:auto}
+  .pill-btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue-light);color:var(--blue-dark);font-weight:700;font-size:14px;padding:10px 20px;border-radius:999px}
+  .pill-btn.primary{background:var(--blue);color:#fff}
+  .pill-btn svg{width:16px;height:16px;fill:currentColor}
+
+  @media (max-width:760px){
+    .grid.c3,.grid.c4{grid-template-columns:repeat(2,1fr)}
+    .book{grid-template-columns:1fr}
+    .btn{min-height:120px}
+  }
+  @media (max-width:560px){ .grid.c3,.grid.c4{grid-template-columns:1fr} #app{padding:20px 16px 44px} .btn{min-height:110px} }
+  .grid > *{min-width:0}
+  .tbooks{margin-top:22px;border-top:1px solid #E6EAF0;padding-top:16px}
+  .tbooks .tbh{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .tbook{display:flex;align-items:center;gap:12px;background:var(--blue-light);border:1px solid #DCE8FB;border-radius:14px;padding:12px 16px;margin-bottom:10px;transition:border-color .15s,transform .12s}
+  .tbook:hover{border-color:var(--blue);transform:translateY(-2px)}
+  .tbook .ic{display:flex;width:34px;height:34px;flex:none;align-items:center;justify-content:center;border-radius:10px;background:var(--blue);color:#fff}
+  .tbook .ic svg{width:17px;height:17px;fill:currentColor}
+  .tbook b{display:block;font-size:15px;font-weight:800}
+  .tbook i{font-style:normal;font-size:12.5px;color:var(--muted)}
+  .allbooks{margin-top:8px;font-size:14px;font-weight:700;color:var(--blue-dark);border-bottom:1px dashed #BBD4F8;padding-bottom:2px}
+  .allbooks:hover{color:var(--dark)}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="brand">
-    <div class="brand-dot">G</div>
-    <div class="brand-name">GETTOPIK</div>
-  </div>
-  <h1>Qaysi kitobni ochmoqchisiz?</h1>
+<div id="app"></div>
+<script>
+const ICON_HOME = '<svg viewBox="0 0 576 512"><path d="M280 148L96 300v164c0 13 11 24 24 24h112V368c0-13 11-24 24-24h64c13 0 24 11 24 24v120h112c13 0 24-11 24-24V300L296 148c-5-4-11-4-16 0zM571 251L512 202V64c0-9-7-16-16-16h-64c-9 0-16 7-16 16v53l-95-78c-19-16-47-16-66 0L5 251c-7 6-8 16-2 23l26 32c6 7 16 8 23 2l223-184c5-4 11-4 16 0l223 184c7 6 17 5 23-2l26-32c6-7 5-17-2-23z"/></svg>';
+const ICON_BACK = '<svg viewBox="0 0 448 512"><path d="M257 65l-24-24c-9-9-25-9-34 0L7 233c-9 9-9 25 0 34l192 192c9 9 25 9 34 0l24-24c10-10 9-26 0-35L136 320h287c13 0 24-11 24-24v-32c0-13-11-24-24-24H136l121-113c10-9 10-25 0-35z"/></svg>';
+const ICON_CLOCK = '<svg viewBox="0 0 512 512"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110 0-200-90-200-200S146 56 256 56s200 90 200 200-90 200-200 200zm62-104l-85-62c-3-2-5-6-5-10V116c0-7 5-12 12-12h32c7 0 12 5 12 12v141l67 49c5 4 6 11 2 17l-19 26c-4 5-11 6-16 2z"/></svg>';
 
-  <div class="grid">
-    <a class="card" href="pilot.html">
-      <img class="cover" src="covers/pilot.jpg" alt="파이널 패스 kitobining muqovasi" loading="lazy">
-      <div class="kicker">TOPIK Ⅱ · Final Pass</div>
-      <div class="title">6 round · to'liq mock imtihon</div>
-    </a>
+const LEVELS = {
+  cho:  { ko:'초급', uz:"Boshlang'ich daraja", total:75, months:6, books:['1A','1B','2A','2B'] },
+  jung: { ko:'중급', uz:"O'rta daraja", total:75, months:6, books:['3A','3B','파이널 패스'] },
+};
+const TG1 = { img:'covertg.jpg', cap:'TOPIK Ⅰ 종합 학습가이드' };
+const WR  = { img:'coverwr.jpg', cap:'쓰기 51 · 52 · 53' };
+const TG2 = { t2:true, cap:'TOPIK Ⅱ 종합 학습가이드' };
 
-    <a class="card" href="topik1.html">
-      <img class="cover" src="covers/topik1.jpg" alt="TOPIK Ⅰ qo'llanmasining muqovasi" loading="lazy">
-      <div class="kicker">TOPIK Ⅰ · Study Guide</div>
-      <div class="title">26 UNIT · to'liq qo'llanma</div>
-    </a>
+const BOOKS = {
+  '1A': { level:'cho', lessons:20, header:'서울대 한국어 1A', covers:[{img:'cover1a.jpg',cap:'서울대 한국어 1A'}],
+    rows:[ [3,'한글',["Koreys alifbosi va o'qish qoidalari"]], [16,'1.1 – 8.2 unitlari',["8 ta bo'lim, har biri 2 darsdan"]], [1,'중간고사',['Oraliq imtihon']] ] },
+  '1B': { level:'cho', lessons:17, header:'서울대 한국어 1B + TOPIK Ⅰ 종합 학습가이드', covers:[{img:'cover1b.jpg',cap:'서울대 한국어 1B'},TG1],
+    rows:[ [16,'9.1 – 16.2 unitlari',["8 ta bo'lim × 2 dars",'TOPIK Ⅰ 가이드 (har darsda): 듣기 1–14 · 읽기 31–45']], [1,'기말고사',['Yakuniy imtihon']] ] },
+  '2A': { level:'cho', lessons:19, header:'서울대 한국어 2A + TOPIK Ⅰ 종합 학습가이드', covers:[{img:'cover2a.jpg',cap:'서울대 한국어 2A'},TG1],
+    rows:[ [18,'1.1 – 9.2 unitlari',["9 ta bo'lim × 2 dars",'TOPIK Ⅰ 가이드 (har darsda): 듣기 15–28 · 읽기 48–54']], [1,'중간고사',['Oraliq imtihon']] ] },
+  '2B': { level:'cho', lessons:19, header:'서울대 한국어 2B + TOPIK Ⅰ 종합 학습가이드', covers:[{img:'cover2b.jpg',cap:'서울대 한국어 2B'},TG1],
+    rows:[ [18,'10.1 – 18.2 unitlari',["9 ta bo'lim × 2 dars",'TOPIK Ⅰ 가이드 (har darsda): 듣기 29–30 · 읽기 55–70']], [1,'기말고사',['Yakuniy imtihon']] ] },
+  '3A': { level:'jung', lessons:27, header:'서울대 한국어 3A + 쓰기 51·52·53 + TOPIK Ⅱ 종합 학습가이드', covers:[{img:'cover3a.jpg',cap:'서울대 한국어 3A'},WR,TG2],
+    rows:[ [18,'1.1 – 9.2 unitlari',["9 ta bo'lim × 2 dars",'TOPIK Ⅱ 가이드 (20 daq): 읽기 1–15, 19–20 · 듣기 1–20 (3 dan tashqari)']], [8,'쓰기 51 · 52 · 53',['1 – 8 darslar']], [1,'중간고사',['Oraliq imtihon']] ] },
+  '3B': { level:'jung', lessons:28, header:'서울대 한국어 3B + 쓰기 51·52·53 + TOPIK Ⅱ 종합 학습가이드', covers:[{img:'cover3b.jpg',cap:'서울대 한국어 3B'},WR,TG2],
+    rows:[ [18,'10.1 – 18.1 unitlari',['17 ta unit darsi + 1 ta takrorlash','TOPIK Ⅱ 가이드 (20 daq): 읽기 13–31 · 듣기 3, 21–31']], [9,'쓰기 51 · 52 · 53',['9 – 17 darslar']], [1,'기말고사',['Yakuniy imtihon']] ] },
+  '파이널 패스': { level:'jung', lessons:20, header:'파이널 패스 · TOPIK 학습가이드 (18유닛)', covers:[{img:'coverfp.jpg',cap:'TOPIK 학습가이드 (18유닛)'}],
+    rows:[ [18,'1 – 18 unitlar',['Har darsda 1 ta unit']], [2,'MOCK 시험',['19-dars — 듣기 · 쓰기','20-dars — 읽기']] ] },
+};
 
-    <a class="card" href="topik2.html">
-      <img class="cover" src="covers/topik2.jpg" alt="TOPIK Ⅱ 종합 학습가이드 muqovasi" loading="lazy">
-      <div class="kicker">TOPIK Ⅱ · 종합 학습가이드</div>
-      <div class="title">35 UNIT · to'liq qo'llanma</div>
-    </a>
+const SEG_A = [ [1,10,"Davomat va so'z so'rash","Yo'qlama, o'tgan dars so'zlarini so'rash"], [11,75,'Yangi mavzu',"Kitobdagi unit bo'yicha"], [76,80,'Uy vazifasi','Vazifa berish va ilovaga dostup berish'] ];
+const SEG_B = [ [1,10,"Davomat va so'z so'rash","Yo'qlama, o'tgan dars so'zlarini so'rash"], [11,60,'Yangi mavzu',"Kitobdagi unit bo'yicha"], [61,80,'TOPIK','TOPIK Ⅰ 종합 학습가이드 mashqlari'] ];
+const TR_J = [ { title:'Unit darsi', segs:[[1,10,"Davomat va so'z so'rash"],[11,60,'Yangi mavzu'],[61,80,'TOPIK Ⅱ 종합 학습가이드']] },
+               { title:'쓰기 darsi', segs:[[1,10,"Davomat va so'z so'rash"],[11,80,"To'liq 쓰기 (51 · 52 · 53)"]] } ];
+const TIME = {
+  '1A': { tracks:[{segs:SEG_A}] }, '1B': { tracks:[{segs:SEG_B}] }, '2A': { tracks:[{segs:SEG_B}] }, '2B': { tracks:[{segs:SEG_B}] },
+  '3A': { tracks:TR_J }, '3B': { tracks:TR_J },
+  '파이널 패스': { cycle:{ sub:'3 kunlik sikl takrorlanadi', days:[ [['듣기 1 – 30'],"To'liq ishlash + tahlil"], [['읽기 1 – 20','쓰기 51 · 52'],"To'liq ishlash + tahlil"], [['읽기 21 – 31','쓰기 53'],"To'liq ishlash + tahlil"] ] } },
+};
+const TEACHER = {
+  '1B': [['TOPIK Ⅰ 종합 학습가이드','topik1.html']],
+  '2A': [['TOPIK Ⅰ 종합 학습가이드','topik1.html']],
+  '2B': [['TOPIK Ⅰ 종합 학습가이드','topik1.html']],
+  '3A': [['TOPIK Ⅱ 종합 학습가이드','topik2.html'],['쓰기 51 · 52 · 53','yozish.html']],
+  '3B': [['TOPIK Ⅱ 종합 학습가이드','topik2.html'],['쓰기 51 · 52 · 53','yozish.html']],
+  '파이널 패스': [['TOPIK 학습가이드 (18유닛)','pilot.html']],
+};
+const ICON_BOOK = '<svg viewBox="0 0 448 512"><path d="M448 358V25c0-14-11-25-25-25H96C43 0 0 43 0 96v320c0 53 43 96 96 96h327c14 0 25-11 25-25v-16c0-8-4-15-10-20-5-18-5-70 0-88 6-5 10-12 10-20zM128 134c0-3 3-6 6-6h212c3 0 6 3 6 6v20c0 3-3 6-6 6H134c-3 0-6-3-6-6v-20zm0 64c0-3 3-6 6-6h212c3 0 6 3 6 6v20c0 3-3 6-6 6H134c-3 0-6-3-6-6v-20zm253 250H96c-18 0-32-14-32-32 0-18 14-32 32-32h285c-2 17-2 47 0 64z"/></svg>';
+const COLORS = ['#66AAFD','#2F7BE0','#EA1F3D','#2E4A7A'];
 
-    <a class="card" href="yozish.html">
-      <img class="cover" src="covers/yozish.jpg" alt="쓰기 qo'llanmasining muqovasi" loading="lazy">
-      <div class="kicker">TOPIK Ⅱ · Writing Guide</div>
-      <div class="title">쓰기 51 · 52 · 53</div>
-    </a>
-  </div>
-</div>
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const header = (ko, sub) => `<div class="hdr"><img src="program/logo.jpg" alt=""><div><span class="lvl ko">${ko}</span> <span class="sub">${esc(sub)}</span></div></div>`;
+const nav = (left, back) => `<div class="nav">${left||''}<div class="r">${back?`<a class="pill-btn" href="${back[1]}">${ICON_BACK}<span class="ko">${esc(back[0])}</span></a>`:''}<a class="pill-btn" href="#/">${ICON_HOME}Menyu</a></div></div>`;
+
+function t2cover(){
+  return `<div class="t2 ko"><div class="strip"><span>TOPIK Ⅱ · 종합 학습가이드</span></div><div class="body">
+    <div class="tag"><img src="program/logo.jpg" alt="">TOPIK Ⅱ · 중급</div><div class="g">TOPIK 종합 학습가이드</div>
+    <div class="big">TOPIK Ⅱ</div><div class="b2">완전 정복 워크북</div><div class="b3">듣기 (1번~50번) · 읽기 (1번~50번)</div>
+    <div class="b4">전 영역 총정리 · 유닛 구성 · 문제 · 어휘</div><div class="foot">정답과 해설 수록</div></div></div>`;
+}
+
+function pageMenu(){
+  const b = (k,ko,uz,on)=> on ? `<a class="btn" href="#/${k}"><span class="big ko">${ko}</span><span class="small">${uz}</span></a>`
+                             : `<div class="btn off"><span class="big ko">${ko}</span><span class="small">${uz}</span><span class="small ko">준비 중...</span></div>`;
+  return `<div class="menu"><img src="program/logo.jpg" alt="logo"><h1>O'QUV DASTURI</h1>
+    <div class="grid c3">${b('cho','초급',"Boshlang'ich",true)}${b('jung','중급',"O'rta",true)}${b('go','고급','Yuqori',false)}</div>
+    <a class="allbooks" href="kitoblar.html">Interaktiv o'qituvchi kitoblari (hammasi) →</a></div>`;
+}
+function pageLevel(id){
+  const L = LEVELS[id]; if(!L) return pageMenu();
+  const btns = L.books.map(k=>`<a class="btn" href="#/book/${encodeURIComponent(k)}"><span class="big ${/[가-힣]/.test(k)?'ko':''}">${k}</span><span class="small">${BOOKS[k].lessons} ta dars</span></a>`).join('');
+  return header(L.ko, L.uz) + `<div class="hero"><span class="n">${L.total}</span> <span class="t">ta dars &nbsp;·&nbsp; ${L.months} oy</span></div>
+    <div class="grid c${L.books.length}">${btns}</div>` + nav();
+}
+function pageBook(k){
+  const B = BOOKS[k]; if(!B) return pageMenu();
+  const L = LEVELS[B.level];
+  const covers = B.covers.map(c=>`<div class="cover"><div class="img" style="font-size:${c.t2?'clamp(12px,2.2vw,22px)':'inherit'}">${c.t2?t2cover():`<img src="program/${c.img}" alt="">`}</div><div class="cap ko">${esc(c.cap)}</div></div>`).join('');
+  const rows = B.rows.map(r=>`<div class="row"><div class="num"><b>${r[0]}</b><span>ta dars</span></div><div><div class="ttl ko">${esc(r[1])}</div><div class="det ko">${r[2].map(esc).join('<br>')}</div></div></div>`).join('');
+  const left = TIME[k] ? `<a class="pill-btn primary" href="#/time/${encodeURIComponent(k)}">${ICON_CLOCK}80 daqiqa</a>` : '';
+  const tb = (TEACHER[k]||[]).map(t=>`<a class="tbook" href="${t[1]}"><span class="ic">${ICON_BOOK}</span><span><b class="ko">${esc(t[0])}</b><i>O'qituvchi nusxasi — interaktiv</i></span></a>`).join('');
+  const tbox = tb ? `<div class="tbooks"><div class="tbh">Interaktiv o'qituvchi kitoblari</div>${tb}</div>` : '';
+  return header(L.ko, B.header) + `<div class="book"><div class="covers">${covers}</div><div><div class="count"><span class="n">${B.lessons}</span><span class="t">ta dars</span></div>${rows}${tbox}</div></div>` + nav(left, [L.ko, '#/'+B.level]);
+}
+function pageTime(k){
+  const T = TIME[k], B = BOOKS[k]; if(!T||!B) return pageMenu();
+  const L = LEVELS[B.level];
+  let body = '';
+  if (T.cycle){
+    body = `<div class="tt"><span class="n">80</span><span class="t">daqiqa</span><span class="s">· ${esc(T.cycle.sub)}</span></div>
+      <div class="grid c3">${T.cycle.days.map((d,i)=>`<div class="day"><span class="pill">${i+1}-dars</span><div class="items ko">${d[0].map(esc).join('<br>')}</div><div class="tag">${esc(d[1])}</div></div>`).join('')}</div>`;
+  } else {
+    body = `<div class="tt"><span class="n">80</span><span class="t">daqiqa</span></div>` + T.tracks.map(tr=>{
+      const tot = tr.segs.reduce((a,g)=>a+(g[1]-g[0]+1),0);
+      const bar = tr.segs.map((g,i)=>`<div style="flex:${g[1]-g[0]+1};background:${COLORS[i%4]}">${(g[1]-g[0]+1)/tot>0.1?`${g[0]}–${g[1]}`:''}</div>`).join('');
+      const cards = tr.segs.map((g,i)=>`<div class="card"><div class="m"><i style="background:${COLORS[i%4]}"></i><span style="color:${COLORS[i%4]}">${g[1]-g[0]+1}</span><small>daqiqa</small></div><div class="l ko">${esc(g[2])}</div>${g[3]?`<div class="d ko">${esc(g[3])}</div>`:''}</div>`).join('');
+      return `<div class="track">${tr.title?`<h4 class="ko">${esc(tr.title)}</h4>`:''}<div class="bar">${bar}</div><div class="cards" style="grid-template-columns:repeat(${tr.segs.length},1fr)">${cards}</div></div>`;
+    }).join('');
+  }
+  return header(L.ko, B.header + ' · dars tuzilishi') + body + nav('', [k, '#/book/'+encodeURIComponent(k)]);
+}
+
+function render(){
+  const h = decodeURIComponent(location.hash || '#/').replace(/^#\/?/, '');
+  const p = h.split('/');
+  let html;
+  if (!p[0]) html = pageMenu();
+  else if (p[0]==='book') html = pageBook(p.slice(1).join('/'));
+  else if (p[0]==='time') html = pageTime(p.slice(1).join('/'));
+  else html = pageLevel(p[0]);
+  document.getElementById('app').innerHTML = html;
+  window.scrollTo(0,0);
+}
+window.addEventListener('hashchange', render);
+render();
+</script>
 </body>
 </html>

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+if (sessionStorage.getItem("gettopik_ok") !== "1") {
+  location.replace("index.html");
+}
+</script>
+<title>GETTOPIK · O'qituvchi paneli</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Malgun Gothic", sans-serif;
+    background: #F4F6FA;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 44px 20px 56px; }
+  .brand {
+    display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 24px;
+  }
+  .brand-dot {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: linear-gradient(135deg, #3D80E8, #0F4CA3);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 800; font-size: 15px;
+  }
+  .brand-name { font-weight: 800; font-size: 19px; color: #0F1A2B; letter-spacing: .3px; }
+  h1 { text-align: center; font-size: 16px; font-weight: 700; color: #3A4658; margin: 0 0 30px 0; }
+
+  /* four book covers, one button each */
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+  .card {
+    display: flex; flex-direction: column; text-decoration: none; color: inherit;
+    background: #fff; border-radius: 14px; padding: 14px 14px 18px;
+    box-shadow: 0 10px 30px rgba(15,76,163,.10);
+    border: 1.5px solid transparent; transition: border-color .15s ease, transform .12s ease, box-shadow .15s ease;
+  }
+  .card:hover { border-color: #3D80E8; transform: translateY(-3px); box-shadow: 0 16px 38px rgba(15,76,163,.18); }
+  .card:focus-visible { outline: 3px solid #3D80E8; outline-offset: 3px; }
+  .cover {
+    display: block; width: 100%; aspect-ratio: 794 / 1123; object-fit: cover; object-position: top center;
+    border-radius: 8px; border: 1px solid #E3E8F0; background: #fff;
+  }
+  .card .kicker { font-size: 10.5px; font-weight: 800; letter-spacing: 1.2px; color: #3D80E8; text-transform: uppercase; margin: 14px 0 5px; }
+  .card .title { font-size: 15.5px; font-weight: 800; color: #0F1A2B; line-height: 1.3; }
+
+  @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 18px; } }
+  @media (max-width: 460px) { .grid { grid-template-columns: 1fr; } .wrap { padding: 32px 16px 44px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <div class="brand-dot">G</div>
+    <div class="brand-name">GETTOPIK</div>
+  </div>
+  <h1>Interaktiv o'qituvchi kitoblari</h1>
+
+  <div class="grid">
+    <a class="card" href="pilot.html">
+      <img class="cover" src="covers/pilot.jpg" alt="파이널 패스 kitobining muqovasi" loading="lazy">
+      <div class="kicker">TOPIK Ⅱ · Final Pass</div>
+      <div class="title">6 round · to'liq mock imtihon</div>
+    </a>
+
+    <a class="card" href="topik1.html">
+      <img class="cover" src="covers/topik1.jpg" alt="TOPIK Ⅰ qo'llanmasining muqovasi" loading="lazy">
+      <div class="kicker">TOPIK Ⅰ · Study Guide</div>
+      <div class="title">26 UNIT · to'liq qo'llanma</div>
+    </a>
+
+    <a class="card" href="topik2.html">
+      <img class="cover" src="covers/topik2.jpg" alt="TOPIK Ⅱ 종합 학습가이드 muqovasi" loading="lazy">
+      <div class="kicker">TOPIK Ⅱ · 종합 학습가이드</div>
+      <div class="title">35 UNIT · to'liq qo'llanma</div>
+    </a>
+
+    <a class="card" href="yozish.html">
+      <img class="cover" src="covers/yozish.jpg" alt="쓰기 qo'llanmasining muqovasi" loading="lazy">
+      <div class="kicker">TOPIK Ⅱ · Writing Guide</div>
+      <div class="title">쓰기 51 · 52 · 53</div>
+    </a>
+  </div>
+  <div style="text-align:center;margin-top:26px"><a href="menu.html" style="font-size:13.5px;font-weight:700;color:#3D80E8;text-decoration:none">← O'quv dasturi</a></div>
+</div>
+</body>
+</html>
