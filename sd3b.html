@@ -627,181 +627,189 @@ tspan.gg { text-decoration-color:#0E9F6E; }
 #draw-color-pop .thickness-label { font-size:9.5px; color:#8A94A6; white-space:nowrap; }
 .page.imgpage{padding:0;}
 .page.imgpage img{width:100%;height:100%;display:block;object-fit:fill;}
+
+  .page.pdfpage{padding:0;overflow:hidden;background:#fff}
+  .page.pdfpage canvas{display:block;width:100%;height:100%}
+  .page.pdfpage.pending::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,#fff,#fff 28px,#FAFBFD 28px,#FAFBFD 56px)}
+  #pdf-note{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:60;background:#0F1A2B;color:#fff;
+    font:600 13px/1.4 "Segoe UI",sans-serif;padding:8px 16px;border-radius:999px;opacity:.92;transition:opacity .3s}
+  #pdf-note.hidden{opacity:0;pointer-events:none}
 </style>
 </head>
 <body>
+<div id="pdf-note">Kitob yuklanmoqda…</div>
 <div id="stage-outer"><div id="stage-inner">
-<div class="page imgpage" data-key="p1"><img src="books/sd3b/p-001.webp" alt="Sahifa 1" loading="lazy"></div>
-<div class="page imgpage" data-key="p2"><img src="books/sd3b/p-002.webp" alt="Sahifa 2" loading="lazy"></div>
-<div class="page imgpage" data-key="p3"><img src="books/sd3b/p-003.webp" alt="Sahifa 3" loading="lazy"></div>
-<div class="page imgpage" data-key="p4"><img src="books/sd3b/p-004.webp" alt="Sahifa 4" loading="lazy"></div>
-<div class="page imgpage" data-key="p5"><img src="books/sd3b/p-005.webp" alt="Sahifa 5" loading="lazy"></div>
-<div class="page imgpage" data-key="p6"><img src="books/sd3b/p-006.webp" alt="Sahifa 6" loading="lazy"></div>
-<div class="page imgpage" data-key="p7"><img src="books/sd3b/p-007.webp" alt="Sahifa 7" loading="lazy"></div>
-<div class="page imgpage" data-key="p8"><img src="books/sd3b/p-008.webp" alt="Sahifa 8" loading="lazy"></div>
-<div class="page imgpage" data-key="p9"><img src="books/sd3b/p-009.webp" alt="Sahifa 9" loading="lazy"></div>
-<div class="page imgpage" data-key="p10"><img src="books/sd3b/p-010.webp" alt="Sahifa 10" loading="lazy"></div>
-<div class="page imgpage" data-key="p11"><img src="books/sd3b/p-011.webp" alt="Sahifa 11" loading="lazy"></div>
-<div class="page imgpage" data-key="p12"><img src="books/sd3b/p-012.webp" alt="Sahifa 12" loading="lazy"></div>
-<div class="page imgpage" data-key="p13"><img src="books/sd3b/p-013.webp" alt="Sahifa 13" loading="lazy"></div>
-<div class="page imgpage" data-key="p14"><img src="books/sd3b/p-014.webp" alt="Sahifa 14" loading="lazy"></div>
-<div class="page imgpage" data-key="p15"><img src="books/sd3b/p-015.webp" alt="Sahifa 15" loading="lazy"></div>
-<div class="page imgpage" data-key="p16"><img src="books/sd3b/p-016.webp" alt="Sahifa 16" loading="lazy"></div>
-<div class="page imgpage" data-key="p17"><img src="books/sd3b/p-017.webp" alt="Sahifa 17" loading="lazy"></div>
-<div class="page imgpage" data-key="p18"><img src="books/sd3b/p-018.webp" alt="Sahifa 18" loading="lazy"></div>
-<div class="page imgpage" data-key="p19"><img src="books/sd3b/p-019.webp" alt="Sahifa 19" loading="lazy"></div>
-<div class="page imgpage" data-key="p20"><img src="books/sd3b/p-020.webp" alt="Sahifa 20" loading="lazy"></div>
-<div class="page imgpage" data-key="p21"><img src="books/sd3b/p-021.webp" alt="Sahifa 21" loading="lazy"></div>
-<div class="page imgpage" data-key="p22"><img src="books/sd3b/p-022.webp" alt="Sahifa 22" loading="lazy"></div>
-<div class="page imgpage" data-key="p23"><img src="books/sd3b/p-023.webp" alt="Sahifa 23" loading="lazy"></div>
-<div class="page imgpage" data-key="p24"><img src="books/sd3b/p-024.webp" alt="Sahifa 24" loading="lazy"></div>
-<div class="page imgpage" data-key="p25"><img src="books/sd3b/p-025.webp" alt="Sahifa 25" loading="lazy"></div>
-<div class="page imgpage" data-key="p26"><img src="books/sd3b/p-026.webp" alt="Sahifa 26" loading="lazy"></div>
-<div class="page imgpage" data-key="p27"><img src="books/sd3b/p-027.webp" alt="Sahifa 27" loading="lazy"></div>
-<div class="page imgpage" data-key="p28"><img src="books/sd3b/p-028.webp" alt="Sahifa 28" loading="lazy"></div>
-<div class="page imgpage" data-key="p29"><img src="books/sd3b/p-029.webp" alt="Sahifa 29" loading="lazy"></div>
-<div class="page imgpage" data-key="p30"><img src="books/sd3b/p-030.webp" alt="Sahifa 30" loading="lazy"></div>
-<div class="page imgpage" data-key="p31"><img src="books/sd3b/p-031.webp" alt="Sahifa 31" loading="lazy"></div>
-<div class="page imgpage" data-key="p32"><img src="books/sd3b/p-032.webp" alt="Sahifa 32" loading="lazy"></div>
-<div class="page imgpage" data-key="p33"><img src="books/sd3b/p-033.webp" alt="Sahifa 33" loading="lazy"></div>
-<div class="page imgpage" data-key="p34"><img src="books/sd3b/p-034.webp" alt="Sahifa 34" loading="lazy"></div>
-<div class="page imgpage" data-key="p35"><img src="books/sd3b/p-035.webp" alt="Sahifa 35" loading="lazy"></div>
-<div class="page imgpage" data-key="p36"><img src="books/sd3b/p-036.webp" alt="Sahifa 36" loading="lazy"></div>
-<div class="page imgpage" data-key="p37"><img src="books/sd3b/p-037.webp" alt="Sahifa 37" loading="lazy"></div>
-<div class="page imgpage" data-key="p38"><img src="books/sd3b/p-038.webp" alt="Sahifa 38" loading="lazy"></div>
-<div class="page imgpage" data-key="p39"><img src="books/sd3b/p-039.webp" alt="Sahifa 39" loading="lazy"></div>
-<div class="page imgpage" data-key="p40"><img src="books/sd3b/p-040.webp" alt="Sahifa 40" loading="lazy"></div>
-<div class="page imgpage" data-key="p41"><img src="books/sd3b/p-041.webp" alt="Sahifa 41" loading="lazy"></div>
-<div class="page imgpage" data-key="p42"><img src="books/sd3b/p-042.webp" alt="Sahifa 42" loading="lazy"></div>
-<div class="page imgpage" data-key="p43"><img src="books/sd3b/p-043.webp" alt="Sahifa 43" loading="lazy"></div>
-<div class="page imgpage" data-key="p44"><img src="books/sd3b/p-044.webp" alt="Sahifa 44" loading="lazy"></div>
-<div class="page imgpage" data-key="p45"><img src="books/sd3b/p-045.webp" alt="Sahifa 45" loading="lazy"></div>
-<div class="page imgpage" data-key="p46"><img src="books/sd3b/p-046.webp" alt="Sahifa 46" loading="lazy"></div>
-<div class="page imgpage" data-key="p47"><img src="books/sd3b/p-047.webp" alt="Sahifa 47" loading="lazy"></div>
-<div class="page imgpage" data-key="p48"><img src="books/sd3b/p-048.webp" alt="Sahifa 48" loading="lazy"></div>
-<div class="page imgpage" data-key="p49"><img src="books/sd3b/p-049.webp" alt="Sahifa 49" loading="lazy"></div>
-<div class="page imgpage" data-key="p50"><img src="books/sd3b/p-050.webp" alt="Sahifa 50" loading="lazy"></div>
-<div class="page imgpage" data-key="p51"><img src="books/sd3b/p-051.webp" alt="Sahifa 51" loading="lazy"></div>
-<div class="page imgpage" data-key="p52"><img src="books/sd3b/p-052.webp" alt="Sahifa 52" loading="lazy"></div>
-<div class="page imgpage" data-key="p53"><img src="books/sd3b/p-053.webp" alt="Sahifa 53" loading="lazy"></div>
-<div class="page imgpage" data-key="p54"><img src="books/sd3b/p-054.webp" alt="Sahifa 54" loading="lazy"></div>
-<div class="page imgpage" data-key="p55"><img src="books/sd3b/p-055.webp" alt="Sahifa 55" loading="lazy"></div>
-<div class="page imgpage" data-key="p56"><img src="books/sd3b/p-056.webp" alt="Sahifa 56" loading="lazy"></div>
-<div class="page imgpage" data-key="p57"><img src="books/sd3b/p-057.webp" alt="Sahifa 57" loading="lazy"></div>
-<div class="page imgpage" data-key="p58"><img src="books/sd3b/p-058.webp" alt="Sahifa 58" loading="lazy"></div>
-<div class="page imgpage" data-key="p59"><img src="books/sd3b/p-059.webp" alt="Sahifa 59" loading="lazy"></div>
-<div class="page imgpage" data-key="p60"><img src="books/sd3b/p-060.webp" alt="Sahifa 60" loading="lazy"></div>
-<div class="page imgpage" data-key="p61"><img src="books/sd3b/p-061.webp" alt="Sahifa 61" loading="lazy"></div>
-<div class="page imgpage" data-key="p62"><img src="books/sd3b/p-062.webp" alt="Sahifa 62" loading="lazy"></div>
-<div class="page imgpage" data-key="p63"><img src="books/sd3b/p-063.webp" alt="Sahifa 63" loading="lazy"></div>
-<div class="page imgpage" data-key="p64"><img src="books/sd3b/p-064.webp" alt="Sahifa 64" loading="lazy"></div>
-<div class="page imgpage" data-key="p65"><img src="books/sd3b/p-065.webp" alt="Sahifa 65" loading="lazy"></div>
-<div class="page imgpage" data-key="p66"><img src="books/sd3b/p-066.webp" alt="Sahifa 66" loading="lazy"></div>
-<div class="page imgpage" data-key="p67"><img src="books/sd3b/p-067.webp" alt="Sahifa 67" loading="lazy"></div>
-<div class="page imgpage" data-key="p68"><img src="books/sd3b/p-068.webp" alt="Sahifa 68" loading="lazy"></div>
-<div class="page imgpage" data-key="p69"><img src="books/sd3b/p-069.webp" alt="Sahifa 69" loading="lazy"></div>
-<div class="page imgpage" data-key="p70"><img src="books/sd3b/p-070.webp" alt="Sahifa 70" loading="lazy"></div>
-<div class="page imgpage" data-key="p71"><img src="books/sd3b/p-071.webp" alt="Sahifa 71" loading="lazy"></div>
-<div class="page imgpage" data-key="p72"><img src="books/sd3b/p-072.webp" alt="Sahifa 72" loading="lazy"></div>
-<div class="page imgpage" data-key="p73"><img src="books/sd3b/p-073.webp" alt="Sahifa 73" loading="lazy"></div>
-<div class="page imgpage" data-key="p74"><img src="books/sd3b/p-074.webp" alt="Sahifa 74" loading="lazy"></div>
-<div class="page imgpage" data-key="p75"><img src="books/sd3b/p-075.webp" alt="Sahifa 75" loading="lazy"></div>
-<div class="page imgpage" data-key="p76"><img src="books/sd3b/p-076.webp" alt="Sahifa 76" loading="lazy"></div>
-<div class="page imgpage" data-key="p77"><img src="books/sd3b/p-077.webp" alt="Sahifa 77" loading="lazy"></div>
-<div class="page imgpage" data-key="p78"><img src="books/sd3b/p-078.webp" alt="Sahifa 78" loading="lazy"></div>
-<div class="page imgpage" data-key="p79"><img src="books/sd3b/p-079.webp" alt="Sahifa 79" loading="lazy"></div>
-<div class="page imgpage" data-key="p80"><img src="books/sd3b/p-080.webp" alt="Sahifa 80" loading="lazy"></div>
-<div class="page imgpage" data-key="p81"><img src="books/sd3b/p-081.webp" alt="Sahifa 81" loading="lazy"></div>
-<div class="page imgpage" data-key="p82"><img src="books/sd3b/p-082.webp" alt="Sahifa 82" loading="lazy"></div>
-<div class="page imgpage" data-key="p83"><img src="books/sd3b/p-083.webp" alt="Sahifa 83" loading="lazy"></div>
-<div class="page imgpage" data-key="p84"><img src="books/sd3b/p-084.webp" alt="Sahifa 84" loading="lazy"></div>
-<div class="page imgpage" data-key="p85"><img src="books/sd3b/p-085.webp" alt="Sahifa 85" loading="lazy"></div>
-<div class="page imgpage" data-key="p86"><img src="books/sd3b/p-086.webp" alt="Sahifa 86" loading="lazy"></div>
-<div class="page imgpage" data-key="p87"><img src="books/sd3b/p-087.webp" alt="Sahifa 87" loading="lazy"></div>
-<div class="page imgpage" data-key="p88"><img src="books/sd3b/p-088.webp" alt="Sahifa 88" loading="lazy"></div>
-<div class="page imgpage" data-key="p89"><img src="books/sd3b/p-089.webp" alt="Sahifa 89" loading="lazy"></div>
-<div class="page imgpage" data-key="p90"><img src="books/sd3b/p-090.webp" alt="Sahifa 90" loading="lazy"></div>
-<div class="page imgpage" data-key="p91"><img src="books/sd3b/p-091.webp" alt="Sahifa 91" loading="lazy"></div>
-<div class="page imgpage" data-key="p92"><img src="books/sd3b/p-092.webp" alt="Sahifa 92" loading="lazy"></div>
-<div class="page imgpage" data-key="p93"><img src="books/sd3b/p-093.webp" alt="Sahifa 93" loading="lazy"></div>
-<div class="page imgpage" data-key="p94"><img src="books/sd3b/p-094.webp" alt="Sahifa 94" loading="lazy"></div>
-<div class="page imgpage" data-key="p95"><img src="books/sd3b/p-095.webp" alt="Sahifa 95" loading="lazy"></div>
-<div class="page imgpage" data-key="p96"><img src="books/sd3b/p-096.webp" alt="Sahifa 96" loading="lazy"></div>
-<div class="page imgpage" data-key="p97"><img src="books/sd3b/p-097.webp" alt="Sahifa 97" loading="lazy"></div>
-<div class="page imgpage" data-key="p98"><img src="books/sd3b/p-098.webp" alt="Sahifa 98" loading="lazy"></div>
-<div class="page imgpage" data-key="p99"><img src="books/sd3b/p-099.webp" alt="Sahifa 99" loading="lazy"></div>
-<div class="page imgpage" data-key="p100"><img src="books/sd3b/p-100.webp" alt="Sahifa 100" loading="lazy"></div>
-<div class="page imgpage" data-key="p101"><img src="books/sd3b/p-101.webp" alt="Sahifa 101" loading="lazy"></div>
-<div class="page imgpage" data-key="p102"><img src="books/sd3b/p-102.webp" alt="Sahifa 102" loading="lazy"></div>
-<div class="page imgpage" data-key="p103"><img src="books/sd3b/p-103.webp" alt="Sahifa 103" loading="lazy"></div>
-<div class="page imgpage" data-key="p104"><img src="books/sd3b/p-104.webp" alt="Sahifa 104" loading="lazy"></div>
-<div class="page imgpage" data-key="p105"><img src="books/sd3b/p-105.webp" alt="Sahifa 105" loading="lazy"></div>
-<div class="page imgpage" data-key="p106"><img src="books/sd3b/p-106.webp" alt="Sahifa 106" loading="lazy"></div>
-<div class="page imgpage" data-key="p107"><img src="books/sd3b/p-107.webp" alt="Sahifa 107" loading="lazy"></div>
-<div class="page imgpage" data-key="p108"><img src="books/sd3b/p-108.webp" alt="Sahifa 108" loading="lazy"></div>
-<div class="page imgpage" data-key="p109"><img src="books/sd3b/p-109.webp" alt="Sahifa 109" loading="lazy"></div>
-<div class="page imgpage" data-key="p110"><img src="books/sd3b/p-110.webp" alt="Sahifa 110" loading="lazy"></div>
-<div class="page imgpage" data-key="p111"><img src="books/sd3b/p-111.webp" alt="Sahifa 111" loading="lazy"></div>
-<div class="page imgpage" data-key="p112"><img src="books/sd3b/p-112.webp" alt="Sahifa 112" loading="lazy"></div>
-<div class="page imgpage" data-key="p113"><img src="books/sd3b/p-113.webp" alt="Sahifa 113" loading="lazy"></div>
-<div class="page imgpage" data-key="p114"><img src="books/sd3b/p-114.webp" alt="Sahifa 114" loading="lazy"></div>
-<div class="page imgpage" data-key="p115"><img src="books/sd3b/p-115.webp" alt="Sahifa 115" loading="lazy"></div>
-<div class="page imgpage" data-key="p116"><img src="books/sd3b/p-116.webp" alt="Sahifa 116" loading="lazy"></div>
-<div class="page imgpage" data-key="p117"><img src="books/sd3b/p-117.webp" alt="Sahifa 117" loading="lazy"></div>
-<div class="page imgpage" data-key="p118"><img src="books/sd3b/p-118.webp" alt="Sahifa 118" loading="lazy"></div>
-<div class="page imgpage" data-key="p119"><img src="books/sd3b/p-119.webp" alt="Sahifa 119" loading="lazy"></div>
-<div class="page imgpage" data-key="p120"><img src="books/sd3b/p-120.webp" alt="Sahifa 120" loading="lazy"></div>
-<div class="page imgpage" data-key="p121"><img src="books/sd3b/p-121.webp" alt="Sahifa 121" loading="lazy"></div>
-<div class="page imgpage" data-key="p122"><img src="books/sd3b/p-122.webp" alt="Sahifa 122" loading="lazy"></div>
-<div class="page imgpage" data-key="p123"><img src="books/sd3b/p-123.webp" alt="Sahifa 123" loading="lazy"></div>
-<div class="page imgpage" data-key="p124"><img src="books/sd3b/p-124.webp" alt="Sahifa 124" loading="lazy"></div>
-<div class="page imgpage" data-key="p125"><img src="books/sd3b/p-125.webp" alt="Sahifa 125" loading="lazy"></div>
-<div class="page imgpage" data-key="p126"><img src="books/sd3b/p-126.webp" alt="Sahifa 126" loading="lazy"></div>
-<div class="page imgpage" data-key="p127"><img src="books/sd3b/p-127.webp" alt="Sahifa 127" loading="lazy"></div>
-<div class="page imgpage" data-key="p128"><img src="books/sd3b/p-128.webp" alt="Sahifa 128" loading="lazy"></div>
-<div class="page imgpage" data-key="p129"><img src="books/sd3b/p-129.webp" alt="Sahifa 129" loading="lazy"></div>
-<div class="page imgpage" data-key="p130"><img src="books/sd3b/p-130.webp" alt="Sahifa 130" loading="lazy"></div>
-<div class="page imgpage" data-key="p131"><img src="books/sd3b/p-131.webp" alt="Sahifa 131" loading="lazy"></div>
-<div class="page imgpage" data-key="p132"><img src="books/sd3b/p-132.webp" alt="Sahifa 132" loading="lazy"></div>
-<div class="page imgpage" data-key="p133"><img src="books/sd3b/p-133.webp" alt="Sahifa 133" loading="lazy"></div>
-<div class="page imgpage" data-key="p134"><img src="books/sd3b/p-134.webp" alt="Sahifa 134" loading="lazy"></div>
-<div class="page imgpage" data-key="p135"><img src="books/sd3b/p-135.webp" alt="Sahifa 135" loading="lazy"></div>
-<div class="page imgpage" data-key="p136"><img src="books/sd3b/p-136.webp" alt="Sahifa 136" loading="lazy"></div>
-<div class="page imgpage" data-key="p137"><img src="books/sd3b/p-137.webp" alt="Sahifa 137" loading="lazy"></div>
-<div class="page imgpage" data-key="p138"><img src="books/sd3b/p-138.webp" alt="Sahifa 138" loading="lazy"></div>
-<div class="page imgpage" data-key="p139"><img src="books/sd3b/p-139.webp" alt="Sahifa 139" loading="lazy"></div>
-<div class="page imgpage" data-key="p140"><img src="books/sd3b/p-140.webp" alt="Sahifa 140" loading="lazy"></div>
-<div class="page imgpage" data-key="p141"><img src="books/sd3b/p-141.webp" alt="Sahifa 141" loading="lazy"></div>
-<div class="page imgpage" data-key="p142"><img src="books/sd3b/p-142.webp" alt="Sahifa 142" loading="lazy"></div>
-<div class="page imgpage" data-key="p143"><img src="books/sd3b/p-143.webp" alt="Sahifa 143" loading="lazy"></div>
-<div class="page imgpage" data-key="p144"><img src="books/sd3b/p-144.webp" alt="Sahifa 144" loading="lazy"></div>
-<div class="page imgpage" data-key="p145"><img src="books/sd3b/p-145.webp" alt="Sahifa 145" loading="lazy"></div>
-<div class="page imgpage" data-key="p146"><img src="books/sd3b/p-146.webp" alt="Sahifa 146" loading="lazy"></div>
-<div class="page imgpage" data-key="p147"><img src="books/sd3b/p-147.webp" alt="Sahifa 147" loading="lazy"></div>
-<div class="page imgpage" data-key="p148"><img src="books/sd3b/p-148.webp" alt="Sahifa 148" loading="lazy"></div>
-<div class="page imgpage" data-key="p149"><img src="books/sd3b/p-149.webp" alt="Sahifa 149" loading="lazy"></div>
-<div class="page imgpage" data-key="p150"><img src="books/sd3b/p-150.webp" alt="Sahifa 150" loading="lazy"></div>
-<div class="page imgpage" data-key="p151"><img src="books/sd3b/p-151.webp" alt="Sahifa 151" loading="lazy"></div>
-<div class="page imgpage" data-key="p152"><img src="books/sd3b/p-152.webp" alt="Sahifa 152" loading="lazy"></div>
-<div class="page imgpage" data-key="p153"><img src="books/sd3b/p-153.webp" alt="Sahifa 153" loading="lazy"></div>
-<div class="page imgpage" data-key="p154"><img src="books/sd3b/p-154.webp" alt="Sahifa 154" loading="lazy"></div>
-<div class="page imgpage" data-key="p155"><img src="books/sd3b/p-155.webp" alt="Sahifa 155" loading="lazy"></div>
-<div class="page imgpage" data-key="p156"><img src="books/sd3b/p-156.webp" alt="Sahifa 156" loading="lazy"></div>
-<div class="page imgpage" data-key="p157"><img src="books/sd3b/p-157.webp" alt="Sahifa 157" loading="lazy"></div>
-<div class="page imgpage" data-key="p158"><img src="books/sd3b/p-158.webp" alt="Sahifa 158" loading="lazy"></div>
-<div class="page imgpage" data-key="p159"><img src="books/sd3b/p-159.webp" alt="Sahifa 159" loading="lazy"></div>
-<div class="page imgpage" data-key="p160"><img src="books/sd3b/p-160.webp" alt="Sahifa 160" loading="lazy"></div>
-<div class="page imgpage" data-key="p161"><img src="books/sd3b/p-161.webp" alt="Sahifa 161" loading="lazy"></div>
-<div class="page imgpage" data-key="p162"><img src="books/sd3b/p-162.webp" alt="Sahifa 162" loading="lazy"></div>
-<div class="page imgpage" data-key="p163"><img src="books/sd3b/p-163.webp" alt="Sahifa 163" loading="lazy"></div>
-<div class="page imgpage" data-key="p164"><img src="books/sd3b/p-164.webp" alt="Sahifa 164" loading="lazy"></div>
-<div class="page imgpage" data-key="p165"><img src="books/sd3b/p-165.webp" alt="Sahifa 165" loading="lazy"></div>
-<div class="page imgpage" data-key="p166"><img src="books/sd3b/p-166.webp" alt="Sahifa 166" loading="lazy"></div>
-<div class="page imgpage" data-key="p167"><img src="books/sd3b/p-167.webp" alt="Sahifa 167" loading="lazy"></div>
-<div class="page imgpage" data-key="p168"><img src="books/sd3b/p-168.webp" alt="Sahifa 168" loading="lazy"></div>
-<div class="page imgpage" data-key="p169"><img src="books/sd3b/p-169.webp" alt="Sahifa 169" loading="lazy"></div>
-<div class="page imgpage" data-key="p170"><img src="books/sd3b/p-170.webp" alt="Sahifa 170" loading="lazy"></div>
-<div class="page imgpage" data-key="p171"><img src="books/sd3b/p-171.webp" alt="Sahifa 171" loading="lazy"></div>
+<div class="page pdfpage pending" data-key="p1"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p2"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p3"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p4"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p5"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p6"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p7"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p8"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p9"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p10"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p11"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p12"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p13"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p14"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p15"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p16"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p17"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p18"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p19"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p20"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p21"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p22"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p23"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p24"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p25"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p26"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p27"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p28"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p29"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p30"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p31"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p32"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p33"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p34"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p35"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p36"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p37"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p38"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p39"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p40"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p41"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p42"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p43"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p44"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p45"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p46"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p47"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p48"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p49"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p50"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p51"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p52"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p53"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p54"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p55"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p56"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p57"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p58"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p59"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p60"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p61"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p62"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p63"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p64"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p65"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p66"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p67"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p68"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p69"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p70"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p71"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p72"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p73"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p74"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p75"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p76"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p77"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p78"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p79"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p80"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p81"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p82"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p83"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p84"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p85"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p86"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p87"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p88"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p89"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p90"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p91"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p92"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p93"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p94"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p95"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p96"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p97"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p98"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p99"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p100"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p101"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p102"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p103"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p104"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p105"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p106"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p107"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p108"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p109"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p110"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p111"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p112"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p113"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p114"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p115"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p116"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p117"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p118"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p119"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p120"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p121"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p122"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p123"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p124"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p125"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p126"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p127"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p128"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p129"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p130"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p131"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p132"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p133"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p134"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p135"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p136"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p137"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p138"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p139"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p140"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p141"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p142"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p143"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p144"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p145"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p146"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p147"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p148"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p149"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p150"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p151"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p152"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p153"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p154"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p155"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p156"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p157"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p158"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p159"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p160"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p161"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p162"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p163"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p164"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p165"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p166"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p167"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p168"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p169"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p170"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p171"><canvas></canvas></div>
 </div></div>
 
 <div id="word-tip"><div class="kr"></div><div class="uz"></div></div>
@@ -1615,6 +1623,97 @@ tspan.gg { text-decoration-color:#0E9F6E; }
 
   scaleStage();
   updatePageChrome();
+})();
+</script>
+
+<script type="module">
+// Draw each page from the book's PDF at the resolution it is actually displayed at, so zooming in
+// re-renders sharply instead of magnifying pixels.
+import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.6.82/pdf.min.mjs";
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.6.82/pdf.worker.min.mjs";
+
+const PAGES = 171;
+const note = document.getElementById("pdf-note");
+const pageEls = Array.from({ length: PAGES }, (_, i) => document.querySelector('.page[data-key="p' + (i + 1) + '"]'));
+const rendered = new Map();          // page number -> scale it was drawn at
+const inflight = new Map();          // page number -> running render task
+let doc = null;
+
+const cssWidth = () => pageEls[0].clientWidth || 794;
+function targetScale(viewportWidth) {
+  const stage = document.getElementById("stage-inner");
+  const m = /scale\(([\d.]+)\)/.exec(stage.style.transform || "");
+  const shown = (m ? +m[1] : 1) * cssWidth() * (window.devicePixelRatio || 1);
+  return Math.min(4.5, Math.max(1.2, shown / viewportWidth));
+}
+
+async function draw(n) {
+  if (!doc) return;
+  const el = pageEls[n - 1];
+  const page = await doc.getPage(n);
+  const base = page.getViewport({ scale: 1 });
+  const scale = targetScale(base.width);
+  if ((rendered.get(n) || 0) >= scale - 0.05) return;
+  const running = inflight.get(n);
+  if (running) { try { running.cancel(); } catch (e) {} inflight.delete(n); }
+  const viewport = page.getViewport({ scale });
+  const canvas = el.querySelector("canvas");
+  canvas.width = Math.round(viewport.width);
+  canvas.height = Math.round(viewport.height);
+  const task = page.render({ canvasContext: canvas.getContext("2d", { alpha: false }), viewport });
+  inflight.set(n, task);
+  try {
+    await task.promise;
+    rendered.set(n, scale);
+    el.classList.remove("pending");
+  } catch (e) {
+    rendered.delete(n);            // cancelled or failed — let a later pass retry
+  } finally {
+    if (inflight.get(n) === task) inflight.delete(n);
+  }
+}
+
+// keep canvases only around the viewport; far pages give their memory back
+function release(n) {
+  if (inflight.has(n)) return;
+  const c = pageEls[n - 1].querySelector("canvas");
+  if (!c.width) return;
+  c.width = c.height = 0;
+  rendered.delete(n);
+  pageEls[n - 1].classList.add("pending");
+}
+
+function nearPages() {
+  const out = [];
+  pageEls.forEach((el, i) => {
+    const r = el.getBoundingClientRect();
+    if (r.bottom > -window.innerHeight && r.top < window.innerHeight * 2) out.push(i + 1);
+  });
+  return out;
+}
+
+let pass = 0;
+async function refresh() {
+  const mine = ++pass;
+  const near = nearPages();
+  const keep = new Set(near);
+  for (let i = 0; i < near.length; i += 2) {
+    if (mine !== pass) return;                       // a newer pass took over
+    await Promise.all(near.slice(i, i + 2).map(draw));
+  }
+  rendered.forEach((_, n) => { if (!keep.has(n) && (n < near[0] - 4 || n > near[near.length - 1] + 4)) release(n); });
+}
+
+let t = null;
+const onChange = () => { clearTimeout(t); t = setTimeout(refresh, 180); };
+document.getElementById("stage-outer").addEventListener("scroll", onChange, { passive: true });
+window.addEventListener("resize", onChange);
+new MutationObserver(onChange).observe(document.getElementById("stage-inner"), { attributes: true, attributeFilter: ["style"] });
+
+(async () => {
+  doc = await pdfjsLib.getDocument({ url: "books_pdf/sd3b.pdf", disableAutoFetch: true, disableStream: false }).promise;
+  note.classList.add("hidden");
+  refresh();
 })();
 </script>
 </body>
