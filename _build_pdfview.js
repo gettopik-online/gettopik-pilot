@@ -22,17 +22,21 @@ const PDFJS = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.6.82";
 const viewerCss = `
   .page.pdfpage{padding:0;overflow:hidden;background:#fff}
   .page.pdfpage canvas{display:block;width:100%;height:100%}
-  .page.pdfpage.pending::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,#fff,#fff 28px,#FAFBFD 28px,#FAFBFD 56px)}
-  #pdf-note{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:60;background:#0F1A2B;color:#fff;
-    font:600 13px/1.4 "Segoe UI",sans-serif;padding:8px 16px;border-radius:999px;opacity:.92;transition:opacity .3s}
+  .page.pdfpage.pending::after{content:"Sahifa yuklanmoqda…";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font:600 22px/1.4 "Segoe UI",sans-serif;color:#9AA3B2;background:#F7F9FC}
+  #pdf-note{position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:60;background:#1E4E8C;color:#fff;
+    font:600 14px/1.4 "Segoe UI",sans-serif;padding:9px 18px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.18);transition:opacity .3s}
   #pdf-note.hidden{opacity:0;pointer-events:none}
+  #pdf-note.error{background:#C4263B}
 `;
 
 const viewerJs = (key, pages) => `
 <script type="module">
 // Draw each page from the book's PDF at the resolution it is actually displayed at, so zooming in
 // re-renders sharply instead of magnifying pixels.
-import * as pdfjsLib from "${PDFJS}/pdf.min.mjs";
+// PDF.js 4 relies on Promise.withResolvers (Chrome 119+, Safari 17.4+); older browsers get a shim.
+if (!Promise.withResolvers) Promise.withResolvers = function () { let resolve, reject; const promise = new Promise((a, b) => { resolve = a; reject = b; }); return { promise, resolve, reject }; };
+const pdfjsLib = await import("${PDFJS}/pdf.min.mjs");
 pdfjsLib.GlobalWorkerOptions.workerSrc = "${PDFJS}/pdf.worker.min.mjs";
 
 const PAGES = ${pages};
@@ -114,9 +118,15 @@ window.addEventListener("resize", onChange);
 new MutationObserver(onChange).observe(document.getElementById("stage-inner"), { attributes: true, attributeFilter: ["style"] });
 
 (async () => {
-  doc = await pdfjsLib.getDocument({ url: "books_pdf/${key}.pdf", disableAutoFetch: true, disableStream: false }).promise;
-  note.classList.add("hidden");
-  refresh();
+  try {
+    // linearized PDF + 1 MB range chunks: page 1 arrives in a couple of requests, not dozens
+    doc = await pdfjsLib.getDocument({ url: "books_pdf/${key}.pdf", rangeChunkSize: 1048576, disableAutoFetch: true }).promise;
+    await refresh();
+    note.classList.add("hidden");                  // only once the first pages are actually on screen
+  } catch (e) {
+    note.textContent = "Kitob ochilmadi — sahifani yangilang (" + (e && e.message ? e.message : "xato") + ")";
+    note.classList.add("error");
+  }
 })();
 </script>
 `;
@@ -125,14 +135,17 @@ for (const [key, name] of BOOKS) {
   const pages = +execFileSync(PDFINFO, [`books_pdf/${key}.pdf`]).toString().match(/^Pages:\s+(\d+)/m)[1];
   const src = fs.readFileSync(`${key}.html`, "utf8");
   const lines = src.split("\n");
-  const first = lines.findIndex((l) => l.includes('class="page imgpage"') || l.includes('class="page pdfpage"'));
-  const lastIdx = lines.length - 1 - [...lines].reverse().findIndex((l) => l.includes('class="page imgpage"') || l.includes('class="page pdfpage"'));
+  const first = lines.findIndex((l) => l.includes('class="page imgpage"') || l.includes('class="page pdfpage'));
+  const lastIdx = lines.length - 1 - [...lines].reverse().findIndex((l) => l.includes('class="page imgpage"') || l.includes('class="page pdfpage'));
   const divs = Array.from({ length: pages }, (_, i) => `<div class="page pdfpage pending" data-key="p${i + 1}"><canvas></canvas></div>`);
+  if (first < 0) throw new Error(`${key}.html: no page divs found`);
   let out = [...lines.slice(0, first), ...divs, ...lines.slice(lastIdx + 1)].join("\n");
 
+  // drop the viewer CSS / script a previous run added, so re-running never stacks copies
+  out = out.replace(/\r?\n {2}\.page\.pdfpage\{[\s\S]*?#pdf-note\.(?:error|hidden)\{[^}]*\}(?:\r?\n {2}#pdf-note\.error\{[^}]*\})?/g, "");
+  out = out.replace(/<script type="module">[\s\S]*?<\/script>\r?\n?(?=<\/body>)/g, "");
   out = out.replace("</style>", viewerCss + "</style>");
-  out = out.replace('<div id="stage-outer">', '<div id="pdf-note">Kitob yuklanmoqda…</div>\n<div id="stage-outer">');
-  out = out.replace(/<script type="module">[\s\S]*?<\/script>\n?(?=<\/body>)/, "");
+  if (!out.includes('id="pdf-note"')) out = out.replace('<div id="stage-outer">', '<div id="pdf-note">Kitob yuklanmoqda…</div>\n<div id="stage-outer">');
   out = out.replace("</body>", viewerJs(key, pages) + "</body>");
 
   const order = Array.from({ length: pages }, (_, i) => "p" + (i + 1));
