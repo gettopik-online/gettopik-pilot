@@ -72,6 +72,7 @@ async function draw(n) {
     await task.promise;
     rendered.set(n, scale);
     el.classList.remove("pending");
+    note.classList.add("hidden");                    // the first sharp page is on screen
   } catch (e) {
     rendered.delete(n);            // cancelled or failed — let a later pass retry
   } finally {
@@ -89,13 +90,19 @@ function release(n) {
   pageEls[n - 1].classList.add("pending");
 }
 
+// pages on screen first, then the next few ahead (and one behind), so paging on shows a sharp page
 function nearPages() {
-  const out = [];
+  const onScreen = [];
   pageEls.forEach((el, i) => {
     const r = el.getBoundingClientRect();
-    if (r.bottom > -window.innerHeight && r.top < window.innerHeight * 2) out.push(i + 1);
+    if (r.bottom > 0 && r.top < window.innerHeight) onScreen.push(i + 1);
   });
-  return out;
+  if (!onScreen.length) return [];
+  const lo = onScreen[0], hi = onScreen[onScreen.length - 1];
+  const ahead = [];
+  for (let n = hi + 1; n <= Math.min(PAGES, hi + 3); n++) ahead.push(n);
+  if (lo > 1) ahead.push(lo - 1);
+  return onScreen.concat(ahead);
 }
 
 let pass = 0;
@@ -107,7 +114,9 @@ async function refresh() {
     if (mine !== pass) return;                       // a newer pass took over
     await Promise.all(near.slice(i, i + 2).map(draw));
   }
-  rendered.forEach((_, n) => { if (!keep.has(n) && (n < near[0] - 4 || n > near[near.length - 1] + 4)) release(n); });
+  if (!near.length) return;
+  const lo = Math.min(...near), hi = Math.max(...near);
+  rendered.forEach((_, n) => { if (!keep.has(n) && (n < lo - 4 || n > hi + 4)) release(n); });
 }
 
 let t = null;
@@ -118,10 +127,10 @@ new MutationObserver(onChange).observe(document.getElementById("stage-inner"), {
 
 (async () => {
   try {
-    // linearized PDF + 1 MB range chunks: page 1 arrives in a couple of requests, not dozens
-    doc = await pdfjsLib.getDocument({ url: "books_pdf/${key}.pdf", rangeChunkSize: 1048576, disableAutoFetch: true }).promise;
-    await refresh();
-    note.classList.add("hidden");                  // only once the first pages are actually on screen
+    // linearized PDF + 1 MB range chunks: page 1 arrives in a couple of requests; after that the rest
+    // of the book keeps downloading in the background, so later pages draw without waiting
+    doc = await pdfjsLib.getDocument({ url: "books_pdf/${key}.pdf", rangeChunkSize: 1048576, disableAutoFetch: false }).promise;
+    refresh();
   } catch (e) {
     note.textContent = "Kitob ochilmadi — sahifani yangilang (" + (e && e.message ? e.message : "xato") + ")";
     note.classList.add("error");
