@@ -634,21 +634,25 @@ tspan.gg { text-decoration-color:#0E9F6E; }
 
 
 
-  .page.pdfpage{padding:0;overflow:hidden;background:#fff}
+
+
+
+  .page.pdfpage{padding:0;overflow:hidden;background:#fff;height:auto;aspect-ratio:var(--pw)/var(--ph)}
   .page.pdfpage .prev{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill}
   .page.pdfpage canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
   #pdf-note{position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:60;background:#1E4E8C;color:#fff;
     font:600 14px/1.4 "Segoe UI",sans-serif;padding:9px 18px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.18);transition:opacity .3s}
   #pdf-note.hidden{opacity:0;pointer-events:none}
   #pdf-note.error{background:#C4263B}
+  :root{--pw:594.96;--ph:793.73}
 </style>
 </head>
 <body>
 <div id="pdf-note">Tiniq ko'rinish yuklanmoqda…</div>
 <div id="stage-outer"><div id="stage-inner">
-<div class="page pdfpage pending" data-key="p1"><img class="prev" src="books_prev/sd3b/p-001.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p2"><img class="prev" src="books_prev/sd3b/p-002.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p3"><img class="prev" src="books_prev/sd3b/p-003.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p1"><img class="prev" src="books_prev/sd3b/p-001.webp" alt="" loading="eager" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p2"><img class="prev" src="books_prev/sd3b/p-002.webp" alt="" loading="eager" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p3"><img class="prev" src="books_prev/sd3b/p-003.webp" alt="" loading="eager" decoding="async"><canvas></canvas></div>
 <div class="page pdfpage pending" data-key="p4"><img class="prev" src="books_prev/sd3b/p-004.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
 <div class="page pdfpage pending" data-key="p5"><img class="prev" src="books_prev/sd3b/p-005.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
 <div class="page pdfpage pending" data-key="p6"><img class="prev" src="books_prev/sd3b/p-006.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
@@ -1632,6 +1636,9 @@ tspan.gg { text-decoration-color:#0E9F6E; }
   updatePageChrome();
 })();
 </script>
+
+
+
 
 
 

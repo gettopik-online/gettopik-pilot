@@ -20,7 +20,7 @@ const BOOKS = [
 const PDFJS = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.6.82";
 
 const viewerCss = `
-  .page.pdfpage{padding:0;overflow:hidden;background:#fff}
+  .page.pdfpage{padding:0;overflow:hidden;background:#fff;height:auto;aspect-ratio:var(--pw)/var(--ph)}
   .page.pdfpage .prev{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill}
   .page.pdfpage canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
   #pdf-note{position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:60;background:#1E4E8C;color:#fff;
@@ -131,21 +131,25 @@ new MutationObserver(onChange).observe(document.getElementById("stage-inner"), {
 `;
 
 for (const [key, name] of BOOKS) {
-  const pages = +execFileSync(PDFINFO, [`books_pdf/${key}.pdf`]).toString().match(/^Pages:\s+(\d+)/m)[1];
+  const info = execFileSync(PDFINFO, [`books_pdf/${key}.pdf`]).toString();
+  const pages = +info.match(/^Pages:\s+(\d+)/m)[1];
+  // the page box takes the book's real proportions (3B is shorter than A4)
+  const [pw, ph] = info.match(/^Page size:\s+([\d.]+) x ([\d.]+)/m).slice(1).map(Number);
   const src = fs.readFileSync(`${key}.html`, "utf8");
   const lines = src.split("\n");
   const first = lines.findIndex((l) => l.includes('class="page imgpage"') || l.includes('class="page pdfpage'));
   const lastIdx = lines.length - 1 - [...lines].reverse().findIndex((l) => l.includes('class="page imgpage"') || l.includes('class="page pdfpage'));
   // a light preview image shows the page at once; the sharp vector render is drawn over it
   const pad = (i) => String(i).padStart(String(pages).length < 3 ? 3 : String(pages).length, "0");
-  const divs = Array.from({ length: pages }, (_, i) => `<div class="page pdfpage pending" data-key="p${i + 1}"><img class="prev" src="books_prev/${key}/p-${pad(i + 1)}.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>`);
+  const divs = Array.from({ length: pages }, (_, i) => `<div class="page pdfpage pending" data-key="p${i + 1}"><img class="prev" src="books_prev/${key}/p-${pad(i + 1)}.webp" alt="" loading="${i < 3 ? "eager" : "lazy"}" decoding="async"><canvas></canvas></div>`);
   if (first < 0) throw new Error(`${key}.html: no page divs found`);
   let out = [...lines.slice(0, first), ...divs, ...lines.slice(lastIdx + 1)].join("\n");
 
   // drop the viewer CSS / script a previous run added, so re-running never stacks copies
   out = out.replace(/\r?\n {2}\.page\.pdfpage\{[\s\S]*?#pdf-note\.(?:error|hidden)\{[^}]*\}(?:\r?\n {2}#pdf-note\.error\{[^}]*\})?/g, "");
   out = out.replace(/<script type="module">[\s\S]*?<\/script>\r?\n?(?=<\/body>)/g, "");
-  out = out.replace("</style>", viewerCss + "</style>");
+  out = out.replace(/\r?\n {2}:root\{--pw:[^}]*\}/g, "");
+  out = out.replace("</style>", viewerCss + `  :root{--pw:${pw};--ph:${ph}}\n` + "</style>");
   if (!out.includes('id="pdf-note"')) out = out.replace('<div id="stage-outer">', '<div id="pdf-note"></div>\n<div id="stage-outer">');
   // the preview is already on screen, so the note only announces the sharp version
   out = out.replace(/<div id="pdf-note">[^<]*<\/div>/, `<div id="pdf-note">Tiniq ko'rinish yuklanmoqda…</div>`);
