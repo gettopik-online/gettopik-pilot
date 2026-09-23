@@ -630,10 +630,13 @@ tspan.gg { text-decoration-color:#0E9F6E; }
 
 
 
+
+
+
+
   .page.pdfpage{padding:0;overflow:hidden;background:#fff}
-  .page.pdfpage canvas{display:block;width:100%;height:100%}
-  .page.pdfpage.pending::after{content:"Sahifa yuklanmoqda…";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-    font:600 22px/1.4 "Segoe UI",sans-serif;color:#9AA3B2;background:#F7F9FC}
+  .page.pdfpage .prev{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill}
+  .page.pdfpage canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
   #pdf-note{position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:60;background:#1E4E8C;color:#fff;
     font:600 14px/1.4 "Segoe UI",sans-serif;padding:9px 18px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.18);transition:opacity .3s}
   #pdf-note.hidden{opacity:0;pointer-events:none}
@@ -641,109 +644,109 @@ tspan.gg { text-decoration-color:#0E9F6E; }
 </style>
 </head>
 <body>
-<div id="pdf-note">Kitob yuklanmoqda…</div>
+<div id="pdf-note">Tiniq ko'rinish yuklanmoqda…</div>
 <div id="stage-outer"><div id="stage-inner">
-<div class="page pdfpage pending" data-key="p1"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p2"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p3"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p4"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p5"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p6"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p7"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p8"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p9"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p10"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p11"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p12"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p13"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p14"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p15"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p16"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p17"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p18"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p19"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p20"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p21"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p22"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p23"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p24"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p25"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p26"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p27"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p28"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p29"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p30"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p31"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p32"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p33"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p34"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p35"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p36"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p37"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p38"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p39"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p40"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p41"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p42"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p43"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p44"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p45"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p46"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p47"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p48"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p49"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p50"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p51"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p52"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p53"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p54"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p55"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p56"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p57"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p58"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p59"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p60"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p61"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p62"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p63"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p64"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p65"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p66"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p67"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p68"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p69"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p70"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p71"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p72"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p73"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p74"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p75"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p76"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p77"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p78"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p79"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p80"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p81"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p82"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p83"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p84"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p85"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p86"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p87"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p88"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p89"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p90"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p91"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p92"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p93"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p94"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p95"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p96"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p97"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p98"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p99"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p100"><canvas></canvas></div>
-<div class="page pdfpage pending" data-key="p101"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p1"><img class="prev" src="books_prev/sd1a/p-001.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p2"><img class="prev" src="books_prev/sd1a/p-002.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p3"><img class="prev" src="books_prev/sd1a/p-003.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p4"><img class="prev" src="books_prev/sd1a/p-004.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p5"><img class="prev" src="books_prev/sd1a/p-005.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p6"><img class="prev" src="books_prev/sd1a/p-006.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p7"><img class="prev" src="books_prev/sd1a/p-007.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p8"><img class="prev" src="books_prev/sd1a/p-008.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p9"><img class="prev" src="books_prev/sd1a/p-009.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p10"><img class="prev" src="books_prev/sd1a/p-010.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p11"><img class="prev" src="books_prev/sd1a/p-011.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p12"><img class="prev" src="books_prev/sd1a/p-012.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p13"><img class="prev" src="books_prev/sd1a/p-013.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p14"><img class="prev" src="books_prev/sd1a/p-014.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p15"><img class="prev" src="books_prev/sd1a/p-015.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p16"><img class="prev" src="books_prev/sd1a/p-016.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p17"><img class="prev" src="books_prev/sd1a/p-017.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p18"><img class="prev" src="books_prev/sd1a/p-018.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p19"><img class="prev" src="books_prev/sd1a/p-019.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p20"><img class="prev" src="books_prev/sd1a/p-020.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p21"><img class="prev" src="books_prev/sd1a/p-021.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p22"><img class="prev" src="books_prev/sd1a/p-022.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p23"><img class="prev" src="books_prev/sd1a/p-023.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p24"><img class="prev" src="books_prev/sd1a/p-024.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p25"><img class="prev" src="books_prev/sd1a/p-025.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p26"><img class="prev" src="books_prev/sd1a/p-026.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p27"><img class="prev" src="books_prev/sd1a/p-027.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p28"><img class="prev" src="books_prev/sd1a/p-028.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p29"><img class="prev" src="books_prev/sd1a/p-029.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p30"><img class="prev" src="books_prev/sd1a/p-030.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p31"><img class="prev" src="books_prev/sd1a/p-031.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p32"><img class="prev" src="books_prev/sd1a/p-032.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p33"><img class="prev" src="books_prev/sd1a/p-033.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p34"><img class="prev" src="books_prev/sd1a/p-034.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p35"><img class="prev" src="books_prev/sd1a/p-035.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p36"><img class="prev" src="books_prev/sd1a/p-036.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p37"><img class="prev" src="books_prev/sd1a/p-037.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p38"><img class="prev" src="books_prev/sd1a/p-038.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p39"><img class="prev" src="books_prev/sd1a/p-039.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p40"><img class="prev" src="books_prev/sd1a/p-040.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p41"><img class="prev" src="books_prev/sd1a/p-041.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p42"><img class="prev" src="books_prev/sd1a/p-042.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p43"><img class="prev" src="books_prev/sd1a/p-043.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p44"><img class="prev" src="books_prev/sd1a/p-044.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p45"><img class="prev" src="books_prev/sd1a/p-045.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p46"><img class="prev" src="books_prev/sd1a/p-046.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p47"><img class="prev" src="books_prev/sd1a/p-047.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p48"><img class="prev" src="books_prev/sd1a/p-048.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p49"><img class="prev" src="books_prev/sd1a/p-049.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p50"><img class="prev" src="books_prev/sd1a/p-050.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p51"><img class="prev" src="books_prev/sd1a/p-051.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p52"><img class="prev" src="books_prev/sd1a/p-052.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p53"><img class="prev" src="books_prev/sd1a/p-053.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p54"><img class="prev" src="books_prev/sd1a/p-054.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p55"><img class="prev" src="books_prev/sd1a/p-055.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p56"><img class="prev" src="books_prev/sd1a/p-056.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p57"><img class="prev" src="books_prev/sd1a/p-057.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p58"><img class="prev" src="books_prev/sd1a/p-058.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p59"><img class="prev" src="books_prev/sd1a/p-059.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p60"><img class="prev" src="books_prev/sd1a/p-060.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p61"><img class="prev" src="books_prev/sd1a/p-061.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p62"><img class="prev" src="books_prev/sd1a/p-062.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p63"><img class="prev" src="books_prev/sd1a/p-063.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p64"><img class="prev" src="books_prev/sd1a/p-064.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p65"><img class="prev" src="books_prev/sd1a/p-065.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p66"><img class="prev" src="books_prev/sd1a/p-066.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p67"><img class="prev" src="books_prev/sd1a/p-067.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p68"><img class="prev" src="books_prev/sd1a/p-068.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p69"><img class="prev" src="books_prev/sd1a/p-069.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p70"><img class="prev" src="books_prev/sd1a/p-070.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p71"><img class="prev" src="books_prev/sd1a/p-071.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p72"><img class="prev" src="books_prev/sd1a/p-072.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p73"><img class="prev" src="books_prev/sd1a/p-073.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p74"><img class="prev" src="books_prev/sd1a/p-074.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p75"><img class="prev" src="books_prev/sd1a/p-075.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p76"><img class="prev" src="books_prev/sd1a/p-076.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p77"><img class="prev" src="books_prev/sd1a/p-077.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p78"><img class="prev" src="books_prev/sd1a/p-078.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p79"><img class="prev" src="books_prev/sd1a/p-079.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p80"><img class="prev" src="books_prev/sd1a/p-080.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p81"><img class="prev" src="books_prev/sd1a/p-081.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p82"><img class="prev" src="books_prev/sd1a/p-082.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p83"><img class="prev" src="books_prev/sd1a/p-083.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p84"><img class="prev" src="books_prev/sd1a/p-084.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p85"><img class="prev" src="books_prev/sd1a/p-085.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p86"><img class="prev" src="books_prev/sd1a/p-086.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p87"><img class="prev" src="books_prev/sd1a/p-087.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p88"><img class="prev" src="books_prev/sd1a/p-088.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p89"><img class="prev" src="books_prev/sd1a/p-089.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p90"><img class="prev" src="books_prev/sd1a/p-090.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p91"><img class="prev" src="books_prev/sd1a/p-091.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p92"><img class="prev" src="books_prev/sd1a/p-092.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p93"><img class="prev" src="books_prev/sd1a/p-093.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p94"><img class="prev" src="books_prev/sd1a/p-094.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p95"><img class="prev" src="books_prev/sd1a/p-095.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p96"><img class="prev" src="books_prev/sd1a/p-096.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p97"><img class="prev" src="books_prev/sd1a/p-097.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p98"><img class="prev" src="books_prev/sd1a/p-098.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p99"><img class="prev" src="books_prev/sd1a/p-099.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p100"><img class="prev" src="books_prev/sd1a/p-100.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
+<div class="page pdfpage pending" data-key="p101"><img class="prev" src="books_prev/sd1a/p-101.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>
 </div></div>
 
 <div id="word-tip"><div class="kr"></div><div class="uz"></div></div>
@@ -1559,6 +1562,10 @@ tspan.gg { text-decoration-color:#0E9F6E; }
   updatePageChrome();
 })();
 </script>
+
+
+
+
 
 
 

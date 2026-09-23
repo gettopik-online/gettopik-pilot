@@ -21,9 +21,8 @@ const PDFJS = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.6.82";
 
 const viewerCss = `
   .page.pdfpage{padding:0;overflow:hidden;background:#fff}
-  .page.pdfpage canvas{display:block;width:100%;height:100%}
-  .page.pdfpage.pending::after{content:"Sahifa yuklanmoqda…";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-    font:600 22px/1.4 "Segoe UI",sans-serif;color:#9AA3B2;background:#F7F9FC}
+  .page.pdfpage .prev{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill}
+  .page.pdfpage canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
   #pdf-note{position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:60;background:#1E4E8C;color:#fff;
     font:600 14px/1.4 "Segoe UI",sans-serif;padding:9px 18px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.18);transition:opacity .3s}
   #pdf-note.hidden{opacity:0;pointer-events:none}
@@ -137,7 +136,9 @@ for (const [key, name] of BOOKS) {
   const lines = src.split("\n");
   const first = lines.findIndex((l) => l.includes('class="page imgpage"') || l.includes('class="page pdfpage'));
   const lastIdx = lines.length - 1 - [...lines].reverse().findIndex((l) => l.includes('class="page imgpage"') || l.includes('class="page pdfpage'));
-  const divs = Array.from({ length: pages }, (_, i) => `<div class="page pdfpage pending" data-key="p${i + 1}"><canvas></canvas></div>`);
+  // a light preview image shows the page at once; the sharp vector render is drawn over it
+  const pad = (i) => String(i).padStart(String(pages).length < 3 ? 3 : String(pages).length, "0");
+  const divs = Array.from({ length: pages }, (_, i) => `<div class="page pdfpage pending" data-key="p${i + 1}"><img class="prev" src="books_prev/${key}/p-${pad(i + 1)}.webp" alt="" loading="lazy" decoding="async"><canvas></canvas></div>`);
   if (first < 0) throw new Error(`${key}.html: no page divs found`);
   let out = [...lines.slice(0, first), ...divs, ...lines.slice(lastIdx + 1)].join("\n");
 
@@ -145,7 +146,9 @@ for (const [key, name] of BOOKS) {
   out = out.replace(/\r?\n {2}\.page\.pdfpage\{[\s\S]*?#pdf-note\.(?:error|hidden)\{[^}]*\}(?:\r?\n {2}#pdf-note\.error\{[^}]*\})?/g, "");
   out = out.replace(/<script type="module">[\s\S]*?<\/script>\r?\n?(?=<\/body>)/g, "");
   out = out.replace("</style>", viewerCss + "</style>");
-  if (!out.includes('id="pdf-note"')) out = out.replace('<div id="stage-outer">', '<div id="pdf-note">Kitob yuklanmoqda…</div>\n<div id="stage-outer">');
+  if (!out.includes('id="pdf-note"')) out = out.replace('<div id="stage-outer">', '<div id="pdf-note"></div>\n<div id="stage-outer">');
+  // the preview is already on screen, so the note only announces the sharp version
+  out = out.replace(/<div id="pdf-note">[^<]*<\/div>/, `<div id="pdf-note">Tiniq ko'rinish yuklanmoqda…</div>`);
   out = out.replace("</body>", viewerJs(key, pages) + "</body>");
 
   const order = Array.from({ length: pages }, (_, i) => "p" + (i + 1));
