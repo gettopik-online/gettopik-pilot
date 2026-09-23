@@ -130,6 +130,9 @@ if (sessionStorage.getItem("gettopik_ok") !== "1") {
   .tbook i{font-style:normal;font-size:12.5px;color:var(--muted)}
   .allbooks{margin-top:8px;font-size:14px;font-weight:700;color:var(--blue-dark);border-bottom:1px dashed #BBD4F8;padding-bottom:2px}
   .allbooks:hover{color:var(--dark)}
+  .cover.linked{cursor:pointer}
+  .cover.linked .img{transition:box-shadow .15s,transform .12s}
+  .cover.linked:hover .img{transform:translateY(-3px);box-shadow:0 14px 28px rgba(15,76,163,.22)}
 </style>
 </head>
 <body>
@@ -174,11 +177,12 @@ const TIME = {
   '파이널 패스': { cycle:{ sub:'3 kunlik sikl takrorlanadi', days:[ [['듣기 1 – 30'],"To'liq ishlash + tahlil"], [['읽기 1 – 20','쓰기 51 · 52'],"To'liq ishlash + tahlil"], [['읽기 21 – 31','쓰기 53'],"To'liq ishlash + tahlil"] ] } },
 };
 const TEACHER = {
-  '1B': [['TOPIK Ⅰ 종합 학습가이드','topik1.html']],
-  '2A': [['TOPIK Ⅰ 종합 학습가이드','topik1.html']],
-  '2B': [['TOPIK Ⅰ 종합 학습가이드','topik1.html']],
-  '3A': [['TOPIK Ⅱ 종합 학습가이드','topik2.html'],['쓰기 51 · 52 · 53','yozish.html']],
-  '3B': [['TOPIK Ⅱ 종합 학습가이드','topik2.html'],['쓰기 51 · 52 · 53','yozish.html']],
+  '1A': [['서울대 한국어 1A','sd1a.html']],
+  '1B': [['서울대 한국어 1B','sd1b.html'],['TOPIK Ⅰ 종합 학습가이드','topik1.html']],
+  '2A': [['서울대 한국어 2A','sd2a.html'],['TOPIK Ⅰ 종합 학습가이드','topik1.html']],
+  '2B': [['서울대 한국어 2B','sd2b.html'],['TOPIK Ⅰ 종합 학습가이드','topik1.html']],
+  '3A': [['서울대 한국어 3A','sd3a.html'],['TOPIK Ⅱ 종합 학습가이드','topik2.html'],['쓰기 51 · 52 · 53','yozish.html']],
+  '3B': [['서울대 한국어 3B','sd3b.html'],['TOPIK Ⅱ 종합 학습가이드','topik2.html'],['쓰기 51 · 52 · 53','yozish.html']],
   '파이널 패스': [['TOPIK 학습가이드 (18유닛)','pilot.html']],
 };
 const ICON_BOOK = '<svg viewBox="0 0 448 512"><path d="M448 358V25c0-14-11-25-25-25H96C43 0 0 43 0 96v320c0 53 43 96 96 96h327c14 0 25-11 25-25v-16c0-8-4-15-10-20-5-18-5-70 0-88 6-5 10-12 10-20zM128 134c0-3 3-6 6-6h212c3 0 6 3 6 6v20c0 3-3 6-6 6H134c-3 0-6-3-6-6v-20zm0 64c0-3 3-6 6-6h212c3 0 6 3 6 6v20c0 3-3 6-6 6H134c-3 0-6-3-6-6v-20zm253 250H96c-18 0-32-14-32-32 0-18 14-32 32-32h285c-2 17-2 47 0 64z"/></svg>';
@@ -211,7 +215,8 @@ function pageLevel(id){
 function pageBook(k){
   const B = BOOKS[k]; if(!B) return pageMenu();
   const L = LEVELS[B.level];
-  const covers = B.covers.map(c=>`<div class="cover"><div class="img" style="font-size:${c.t2?'clamp(12px,2.2vw,22px)':'inherit'}">${c.t2?t2cover():`<img src="program/${c.img}" alt="">`}</div><div class="cap ko">${esc(c.cap)}</div></div>`).join('');
+  const links = Object.fromEntries((TEACHER[k]||[]).map(t=>[t[0],t[1]]));
+  const covers = B.covers.map(c=>`<div class="cover${links[c.cap]?' linked':''}" ${links[c.cap]?`onclick="location.href='${links[c.cap]}'"`:''}><div class="img" style="font-size:${c.t2?'clamp(12px,2.2vw,22px)':'inherit'}">${c.t2?t2cover():`<img src="program/${c.img}" alt="">`}</div><div class="cap ko">${esc(c.cap)}</div></div>`).join('');
   const rows = B.rows.map(r=>`<div class="row"><div class="num"><b>${r[0]}</b><span>ta dars</span></div><div><div class="ttl ko">${esc(r[1])}</div><div class="det ko">${r[2].map(esc).join('<br>')}</div></div></div>`).join('');
   const left = TIME[k] ? `<a class="pill-btn primary" href="#/time/${encodeURIComponent(k)}">${ICON_CLOCK}80 daqiqa</a>` : '';
   const tb = (TEACHER[k]||[]).map(t=>`<a class="tbook" href="${t[1]}"><span class="ic">${ICON_BOOK}</span><span><b class="ko">${esc(t[0])}</b><i>O'qituvchi nusxasi — interaktiv</i></span></a>`).join('');
