@@ -91,8 +91,28 @@ const pageHtml = pages.map((p, i) => {
       (A.marks || []).filter((m) => !(model && m.text)).map((m, k) => m.circle ? `<path pathLength="1" d="${handCircle(m.circle, i * 5 + k + 11)}"/>`
         : m.text ? `<text x="${m.text[0]}" y="${m.text[1]}" font-size="${m.text[3] || 11}" style="animation-delay:${(0.15 + k * 0.2).toFixed(2)}s${m.text[4] ? ";text-anchor:" + m.text[4] : ""}">${esc(m.text[2])}</text>`
         : `<path pathLength="1" d="${handLine(m.line)}"/>`).join("") + `</svg>`;
+    // 정답/예시 sits at the right end of the dashed line under the heading, right-aligned to the card (or its code)
+    let ansBtn = "";
+    if (A) {
+      const MID = 297.5, rightCol = r.x > MID;
+      const nums = p.runs.filter((q) => /^\s*\d{1,2}\s*$/.test(q.t) && Math.abs(q.s - 9.3) < 0.3 && (Math.abs(q.x - 53) < 5 || Math.abs(q.x - 306) < 6));
+      const span = (n) => { const next = nums.filter((q) => (q.x > MID) === (n.x > MID) && q.y > n.y + 5).map((q) => q.y); return [n.y, next.length ? Math.min(...next) : 800]; };
+      const mine = nums.filter((q) => (q.x > MID) === rightCol && q.y <= r.y + 2).sort((a, b) => b.y - a.y)[0];
+      const [top0, bot0] = mine ? span(mine) : [r.y - 12, 800];
+      const half = rightCol || nums.some((q) => q.x > MID && (() => { const [a, b] = span(q); return a < bot0 - 10 && b > top0 + 10; })());
+      const head = p.runs.filter((q) => q.y >= r.y - 14 && q.y <= r.y + 48 && (rightCol ? q.x > MID : q.x < MID) && (q.s >= 9.9 || Math.abs(q.s - 7.07) < 0.15));
+      let bottom = head.length ? Math.max(...head.map((q) => q.y + q.h)) : r.y + r.h;
+      if (code) bottom = Math.max(bottom, code.y + code.h);
+      const right = code ? code.x + code.w : rightCol || !half ? 533 : 278;
+      const model = A.label === "예시";
+      const icon = model
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>'
+        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+      ansBtn = `<button type="button" class="rt-ans${model ? " ink" : ""}" data-id="${id}" disabled title="${model ? "예시 — namunaviy javob" : "정답 — to‘g‘ri javob"} (taymer tugagach ochiladi)" ` +
+        `style="left:${px(right)};top:${px(bottom + 4)}">${icon}<span>${A.label || "정답"}</span></button>`;
+    }
     // the clock hangs under the section's own "읽기 N" label
-    return marks + lines + `<button type="button" class="rt c" data-id="${id}"${A ? ' data-an="1"' : ""} title="${sec} taymeri — bosing va vaqtni belgilang" ` +
+    return marks + lines + ansBtn + `<button type="button" class="rt c" data-id="${id}"${A ? ' data-an="1"' : ""} title="${sec} taymeri — bosing va vaqtni belgilang" ` +
       `aria-label="${sec} taymeri" style="left:${px(r.x + r.w / 2)};top:${px(r.y + r.h + 4)}">${CLOCK}<span class="an">${(A && A.label) || "정답"}</span></button>`;
   }).join("");
   return `<div class="page hpage" data-key="p${i + 1}" style="height:${px(p.h)}"><img class="pbg" src="${dir}/${p.bg}" loading="lazy" decoding="async" alt="">${runs}${qa}${tools}${timers}</div>`;
@@ -163,6 +183,21 @@ const css = `
   .page.hpage .rt-an:focus-visible{outline:2px solid #1968D8;outline-offset:2px}
   @keyframes rtAn{from{opacity:0;transform:translateX(-50%) scale(.4)}to{opacity:1;transform:translateX(-50%)}}
   @media (prefers-reduced-motion:reduce){.page.hpage .rt-an{animation:none}}
+  /* 정답 / 예시 button: grey and locked while the timer runs, coloured once the time is up */
+  .page.hpage .rt-ans{position:absolute;z-index:4;transform:translateX(-100%);display:flex;align-items:center;gap:4px;height:22px;
+    padding:0 9px 0 7px;border-radius:11px;border:1px solid #E1DDD8;background:#F7F5F2;color:#B7AFA6;
+    font:700 10px/1 "Malgun Gothic",sans-serif;letter-spacing:.2px;cursor:not-allowed;white-space:nowrap;transition:all .2s}
+  .page.hpage .rt-ans svg{width:12px;height:12px}
+  .page.hpage .rt-ans:not([disabled]){cursor:pointer;border-color:#F3CDB6;background:#FFF6EF;color:#C8561E;
+    box-shadow:0 1px 5px rgba(200,86,30,.18);animation:rtReady .5s cubic-bezier(.3,1.6,.5,1)}
+  .page.hpage .rt-ans:not([disabled]):hover{background:#FFEBDD}
+  .page.hpage .rt-ans.shown{background:#F26B2A;border-color:#F26B2A;color:#fff}
+  .page.hpage .rt-ans.ink:not([disabled]){border-color:#C5D8EF;background:#F2F7FD;color:#2C6FB7;box-shadow:0 1px 5px rgba(44,111,183,.18)}
+  .page.hpage .rt-ans.ink:not([disabled]):hover{background:#E4EFFA}
+  .page.hpage .rt-ans.ink.shown{background:#2C6FB7;border-color:#2C6FB7;color:#fff}
+  .page.hpage .rt-ans:focus-visible{outline:2px solid #1968D8;outline-offset:2px}
+  @keyframes rtReady{0%{transform:translateX(-100%) scale(.85)}60%{transform:translateX(-100%) scale(1.08)}100%{transform:translateX(-100%)}}
+  @media (prefers-reduced-motion:reduce){.page.hpage .rt-ans:not([disabled]){animation:none}}
   /* 쓰기 예시: one ink colour (the book's own blue), editable lines, size controls */
   .page.hpage .qa-marks.ink path{stroke:#2C6FB7}
   .page.hpage .wx-set[hidden]{display:none}
@@ -570,7 +605,7 @@ const qaJs = `
 // 읽기 timers (see .rt / .rt-bar above). Clicking the badge starts; clicking it or ⏸ pauses and resumes; the line
 // can be dragged to give more or less time; × resets. The last ten seconds tick, the end rings.
 const rtJs = `
-<script id="rt-v12">
+<script id="rt-v13">
 (function(){
   var PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12.5-7.5z"/></svg>',
       PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="5.5" y="4.5" width="4.5" height="15" rx="1"/><rect x="14" y="4.5" width="4.5" height="15" rx="1"/></svg>',
@@ -625,14 +660,22 @@ const rtJs = `
       if (running) raf = requestAnimationFrame(tick);
     }
     var marks = badge.parentNode.querySelector('.qa-marks[data-id="' + badge.dataset.id + '"]');
-    function unlock(){ if (badge.dataset.an) { badge.classList.add("ans"); badge.title = "정답 — to‘g‘ri javobni ko‘rsatish / yashirish"; } }
+    var ansBtn = badge.parentNode.querySelector('.rt-ans[data-id="' + badge.dataset.id + '"]');
+    function unlock(){ if (ansBtn && ansBtn.disabled) { ansBtn.disabled = false; ansBtn.title = ansBtn.title.split(" (taymer tugagach ochiladi)").join(""); } }
+    if (ansBtn) {
+      ansBtn.addEventListener("click", function(e){
+        e.preventDefault(); e.stopPropagation();
+        if (!ansBtn.disabled) showAnswer(!ansBtn.classList.contains("shown"));
+      });
+      ansBtn.addEventListener("pointerdown", function(e){ e.stopPropagation(); });
+    }
     var lines = badge.parentNode.querySelector('.wx-set[data-id="' + badge.dataset.id + '"]');
     function showAnswer(on){
       if (marks) marks.classList.toggle("show", on);
       if (lines) {
         lines.hidden = !on;
       }
-      badge.classList.toggle("shown", on);
+      if (ansBtn) ansBtn.classList.toggle("shown", on);
     }
     if (lines) Writing(lines);
     function go(){
@@ -643,7 +686,9 @@ const rtJs = `
     function hold(){ running = false; cancelAnimationFrame(raf); paint(); }
     function reset(){
       hold(); total = 0; left = 0; if (bar) { bar.el.remove(); bar = null; }
-      badge.classList.remove("ans"); showAnswer(false); if (lines && lines.restore) lines.restore(); paint();
+      showAnswer(false); if (lines && lines.restore) lines.restore();
+      if (ansBtn && !ansBtn.disabled) { ansBtn.disabled = true; ansBtn.title += " (taymer tugagach ochiladi)"; }
+      paint();
     }
     // typed time: 4 = 4 min, 3:30 = 3 min 30 s, 2.5 / 2,5 = 2 min 30 s, 90s = 90 s
     function parse(v){
