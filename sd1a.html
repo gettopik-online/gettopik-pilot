@@ -639,17 +639,23 @@ tspan.gg { text-decoration-color:#0E9F6E; }
   .page.hpage .qa.on{background:rgba(242,107,42,.14);box-shadow:0 0 0 4px #F26B2A;animation:qaPulse 1.6s ease-in-out infinite}
   @keyframes qaPulse{50%{box-shadow:0 0 0 7px rgba(242,107,42,.45)}}
   @media (prefers-reduced-motion:reduce){.page.hpage .qa.on{animation:none}}
-  #qa-player{position:fixed;right:16px;bottom:58px;z-index:700;width:340px;max-width:calc(100vw - 24px);background:#fff;
-    border-radius:14px;box-shadow:0 12px 40px rgba(15,25,45,.28);overflow:hidden;font-family:"Malgun Gothic",sans-serif;display:none}
+  #qa-player{position:fixed;right:16px;bottom:56px;z-index:700;width:min(356px,calc(100vw - 16px));background:#1E2430;border-radius:12px;
+    box-shadow:0 10px 32px rgba(10,16,30,.35);overflow:hidden;font-family:"Malgun Gothic",sans-serif;display:none;touch-action:none}
   #qa-player.open{display:block}
-  #qa-player .hd{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 14px;font-size:13px;font-weight:700;color:#1E2A3A}
-  #qa-player .hd .ic{width:18px;height:18px;color:#F26B2A;flex:none}
-  #qa-player .hd .ttl{flex:1}
-  #qa-player .hd button{width:30px;height:30px;border:0;border-radius:8px;background:#F1F3F7;color:#3A4658;font-size:18px;line-height:1;cursor:pointer}
-  #qa-player .hd button:hover{background:#E3E7EE}
-  #qa-player .fr{position:relative;aspect-ratio:16/9;background:#000}
+  #qa-player.drag{box-shadow:0 16px 44px rgba(10,16,30,.5);opacity:.96}
+  #qa-player .hd{display:flex;align-items:center;gap:6px;height:34px;padding:0 4px 0 8px;color:#E8ECF3;font-size:12.5px;font-weight:700;
+    cursor:grab;user-select:none}
+  #qa-player.drag .hd{cursor:grabbing}
+  #qa-player .hd .grip{width:14px;height:14px;color:#7D8798;flex:none}
+  #qa-player .hd .ic{width:15px;height:15px;color:#FF9A5C;flex:none}
+  #qa-player .hd .ttl{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #qa-player .hd button{width:28px;height:26px;border:0;border-radius:7px;background:transparent;color:#C9D0DC;cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;padding:0}
+  #qa-player .hd button:hover{background:rgba(255,255,255,.12);color:#fff}
+  #qa-player .hd button:focus-visible{outline:2px solid #8DB8FF;outline-offset:1px}
+  #qa-player .hd button svg{width:15px;height:15px}
+  #qa-player .fr{position:relative;width:100%;height:200px;background:#000}
   #qa-player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-  @media (max-width:560px){#qa-player{right:12px;left:12px;width:auto}}
 </style>
 <style id="perf-v1">
 /* off-screen pages are skipped entirely until they come near the viewport */
@@ -1627,14 +1633,33 @@ tspan.gg { text-decoration-color:#0E9F6E; }
 </script>
 
 <div id="qa-player" role="region" aria-label="Audio">
-  <div class="hd"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
-    stroke-linejoin="round"><path d="M3 14v-2a9 9 0 0 1 18 0v2"/><rect x="2.5" y="14" width="5" height="7" rx="1.5"/><rect x="16.5" y="14" width="5" height="7" rx="1.5"/></svg>
-    <span class="ttl"></span><button type="button" class="x" title="Yopish" aria-label="Yopish">×</button></div>
+  <div class="hd" title="Sudrab boshqa joyga qo'yish mumkin">
+    <svg class="grip" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.7"/><circle cx="15" cy="6" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="18" r="1.7"/><circle cx="15" cy="18" r="1.7"/></svg>
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14v-2a9 9 0 0 1 18 0v2"/><rect x="2.5" y="14" width="5" height="7" rx="1.5"/><rect x="16.5" y="14" width="5" height="7" rx="1.5"/></svg>
+    <span class="ttl"></span>
+    <button type="button" class="mv" title="Boshqa burchakka o'tkazish" aria-label="Boshqa burchakka o'tkazish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 15v5h-5M4 4l6 6M20 20l-6-6"/></svg></button>
+    <button type="button" class="x" title="Yopish" aria-label="Yopish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
   <div class="fr"></div>
 </div>
-<script id="qa-v1">
+<script id="qa-v2">
 (function(){
-  var box = document.getElementById("qa-player"), frame = box.querySelector(".fr"), ttl = box.querySelector(".ttl"), cur = null;
+  var box = document.getElementById("qa-player"), hd = box.querySelector(".hd"), frame = box.querySelector(".fr"),
+      ttl = box.querySelector(".ttl"), cur = null, M = innerWidth < 400 ? 8 : 12, BAR = 44, pos = null, corner = 0;
+  try { pos = JSON.parse(localStorage.getItem("qaPos") || "null"); } catch (e) {}
+  function clamp(x, y){
+    var w = box.offsetWidth, h = box.offsetHeight;
+    return [Math.max(M, Math.min(x, innerWidth - w - M)), Math.max(M, Math.min(y, innerHeight - BAR - h - M))];
+  }
+  function place(x, y, save){
+    var c = clamp(x, y); pos = { x: c[0], y: c[1] };
+    box.style.left = c[0] + "px"; box.style.top = c[1] + "px"; box.style.right = "auto"; box.style.bottom = "auto";
+    if (save) try { localStorage.setItem("qaPos", JSON.stringify(pos)); } catch (e) {}
+  }
+  function toCorner(i){                       // 0 bottom-right, 1 bottom-left, 2 top-left, 3 top-right
+    var right = i === 0 || i === 3, bottom = i < 2;
+    place(right ? innerWidth : 0, bottom ? innerHeight : 0, true);
+  }
   function stop(){
     frame.innerHTML = ""; box.classList.remove("open");
     if (cur) cur.classList.remove("on"); cur = null;
@@ -1645,15 +1670,31 @@ tspan.gg { text-decoration-color:#0E9F6E; }
     cur = btn; btn.classList.add("on");
     ttl.textContent = "Audio · " + btn.dataset.pg + "-bet";
     frame.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + btn.dataset.yt +
-      '?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media" allowfullscreen title="Audio"></iframe>';
+      '?autoplay=1&rel=0&playsinline=1&iv_load_policy=3" allow="autoplay; encrypted-media" allowfullscreen title="Audio"></iframe>';
     box.classList.add("open");
+    if (pos) place(pos.x, pos.y); else toCorner(0);
   }
   document.addEventListener("click", function(e){
     var b = e.target.closest && e.target.closest(".qa");
     if (b) { e.preventDefault(); play(b); }
   });
   box.querySelector(".x").addEventListener("click", stop);
+  box.querySelector(".mv").addEventListener("click", function(){ corner = (corner + 1) % 4; toCorner(corner); });
   document.addEventListener("keydown", function(e){ if (e.key === "Escape" && cur) stop(); });
+  addEventListener("resize", function(){ if (pos && box.classList.contains("open")) place(pos.x, pos.y); });
+
+  // drag by the title bar (mouse, pen or finger); the video itself stays clickable
+  var start = null;
+  hd.addEventListener("pointerdown", function(e){
+    if (e.target.closest("button")) return;
+    var r = box.getBoundingClientRect();
+    start = { dx: e.clientX - r.left, dy: e.clientY - r.top };
+    hd.setPointerCapture(e.pointerId); box.classList.add("drag"); frame.style.pointerEvents = "none";
+  });
+  hd.addEventListener("pointermove", function(e){ if (start) place(e.clientX - start.dx, e.clientY - start.dy); });
+  function end(){ if (!start) return; start = null; box.classList.remove("drag"); frame.style.pointerEvents = "";
+    if (pos) place(pos.x, pos.y, true); }
+  hd.addEventListener("pointerup", end); hd.addEventListener("pointercancel", end);
 })();
 </script>
 </body>
