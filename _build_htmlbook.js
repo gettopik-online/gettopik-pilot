@@ -51,12 +51,13 @@ const css = `
     display:flex;align-items:center;justify-content:center;padding:0}
   .page.hpage .qa-bar .pp svg{width:11px;height:11px}
   .page.hpage .qa-bar .pp:focus-visible,.page.hpage .qa-bar input:focus-visible{outline:2px solid #1968D8;outline-offset:2px}
-  .page.hpage .qa-bar input{flex:1;min-width:0;height:18px;margin:0;background:transparent;cursor:pointer;-webkit-appearance:none;appearance:none}
+  .page.hpage .qa-bar input{flex:1;min-width:0;height:28px;margin:0;background:transparent;cursor:pointer;-webkit-appearance:none;appearance:none;
+    touch-action:none}
   .page.hpage .qa-bar input::-webkit-slider-runnable-track{height:5px;border-radius:3px;
     background:linear-gradient(to right,#F26B2A 0 var(--p,0%),#F3DDD0 var(--p,0%) 100%)}
   .page.hpage .qa-bar input::-moz-range-track{height:5px;border-radius:3px;background:#F3DDD0}
   .page.hpage .qa-bar input::-moz-range-progress{height:5px;border-radius:3px;background:#F26B2A}
-  .page.hpage .qa-bar input::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;margin-top:-4px;border-radius:50%;
+  .page.hpage .qa-bar input::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;margin-top:-5px;border-radius:50%;
     background:#fff;border:2.5px solid #F26B2A}
   .page.hpage .qa-bar input::-moz-range-thumb{width:9px;height:9px;border-radius:50%;background:#fff;border:2.5px solid #F26B2A}
   .page.hpage .qa-bar .tm{flex:none;min-width:34px;text-align:right;font-variant-numeric:tabular-nums}
@@ -92,7 +93,7 @@ const fitJs = `
 `;
 
 const qaJs = `
-<script id="qa-v6">
+<script id="qa-v7">
 (function(){
   // one recording at a time. Clicking a code plays it; a bar above the code shows play/pause, a line that can be
   // dragged or clicked to jump anywhere in the recording, and the time left. Clicking the code again pauses/resumes;
@@ -141,10 +142,25 @@ const qaJs = `
     ["play", "pause", "timeupdate", "loadedmetadata", "durationchange"].forEach(function(ev){ audio.addEventListener(ev, draw); });
     audio.addEventListener("ended", stop);
     audio.addEventListener("error", function(){ if (cur === c) { c.tm.textContent = "xato"; btn.classList.remove("on"); } });
-    c.range.addEventListener("pointerdown", function(){ c.seeking = true; });
-    c.range.addEventListener("input", function(){ c.seeking = true; draw(); });
-    c.range.addEventListener("change", function(){ audio.currentTime = +c.range.value; c.seeking = false; draw(); });
-    c.range.addEventListener("pointerup", function(){ audio.currentTime = +c.range.value; c.seeking = false; });
+    // the line follows the pointer itself (mouse, finger or pen) so a drag is never taken for page scrolling
+    var r = c.range;
+    function seekTo(e){
+      var b = r.getBoundingClientRect(), d = audio.duration || 0;
+      if (!d || !b.width) return;
+      r.value = Math.min(1, Math.max(0, (e.clientX - b.left) / b.width)) * d;
+      audio.currentTime = +r.value;
+      draw();
+    }
+    r.addEventListener("pointerdown", function(e){
+      e.preventDefault(); e.stopPropagation();
+      c.seeking = true; try { r.setPointerCapture(e.pointerId); } catch (err) {}
+      seekTo(e);
+    });
+    r.addEventListener("pointermove", function(e){ if (c.seeking) seekTo(e); });
+    function endSeek(e){ if (!c.seeking) return; seekTo(e); c.seeking = false; draw(); }
+    r.addEventListener("pointerup", endSeek);
+    r.addEventListener("pointercancel", function(){ c.seeking = false; });
+    r.addEventListener("input", function(){ if (!c.seeking) { audio.currentTime = +r.value; draw(); } });   // arrow keys
     c.pp.addEventListener("click", function(e){ e.stopPropagation(); toggle(); });
     bar.addEventListener("click", function(e){ e.stopPropagation(); });
     draw();
