@@ -55,6 +55,10 @@ const ANSWERS = fs.existsSync(anFile) ? JSON.parse(fs.readFileSync(anFile, "utf8
 const CLOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">' +
   '<circle cx="12" cy="13" r="8.5"/><path d="M12 8.5V13l3 2M9.5 2.5h5"/></svg>';
 
+// writing spots (html_books/<key>/<key>.slots.json, keyed by page)
+const slFile = `${dir}/${key}.slots.json`;
+const SLOTS = fs.existsSync(slFile) ? JSON.parse(fs.readFileSync(slFile, "utf8")) : {};
+
 const pageHtml = pages.map((p, i) => {
   const runs = p.runs.map((r) => {
     const st = [
@@ -115,7 +119,13 @@ const pageHtml = pages.map((p, i) => {
     return marks + lines + ansBtn + `<button type="button" class="rt c" data-id="${id}"${A ? ' data-an="1"' : ""} title="${sec} taymeri — bosing va vaqtni belgilang" ` +
       `aria-label="${sec} taymeri" style="left:${px(r.x + r.w / 2)};top:${px(r.y + r.h + 4)}">${CLOCK}<span class="an">${(A && A.label) || "정답"}</span></button>`;
   }).join("");
-  return `<div class="page hpage" data-key="p${i + 1}" style="height:${px(p.h)}"><img class="pbg" src="${dir}/${p.bg}" loading="lazy" decoding="async" alt="">${runs}${qa}${tools}${timers}</div>`;
+  const slots = (SLOTS[i + 1] || []).map((o) => {
+    const [x0, y0, x1, y1] = o.t || o.c, box = `left:${px(x0)};top:${px(y0)};width:${px(x1 - x0)};height:${px(y1 - y0)}`;
+    return o.c ? `<button type="button" class="wck" title="Belgilash" aria-label="Belgilash" aria-pressed="false" style="${box}"></button>`
+      : `<div class="ws${o.wrap ? " wrap" : ""}" contenteditable="true" spellcheck="false" title="Bosib yozing" ` +
+        `style="${box};--fs:${((o.fs || 9) * PT).toFixed(2)}px${o.wrap ? "" : ";line-height:" + px(y1 - y0)}"></div>`;
+  }).join("");
+  return `<div class="page hpage" data-key="p${i + 1}" style="height:${px(p.h)}"><img class="pbg" src="${dir}/${p.bg}" loading="lazy" decoding="async" alt="">${runs}${qa}${tools}${timers}${slots}</div>`;
 });
 
 const css = `
@@ -183,6 +193,18 @@ const css = `
   .page.hpage .rt-an:focus-visible{outline:2px solid #1968D8;outline-offset:2px}
   @keyframes rtAn{from{opacity:0;transform:translateX(-50%) scale(.4)}to{opacity:1;transform:translateX(-50%)}}
   @media (prefers-reduced-motion:reduce){.page.hpage .rt-an{animation:none}}
+  /* writing spots: invisible until pointed at; the teacher types in the book's face, in blue */
+  .page.hpage .ws{position:absolute;z-index:3;box-sizing:border-box;padding:0 2px;text-align:center;white-space:nowrap;overflow:hidden;
+    font-family:"Malgun Gothic","맑은 고딕","Noto Sans KR","Apple SD Gothic Neo",sans-serif;font-size:var(--fs);color:#2C6FB7;
+    -webkit-font-smoothing:antialiased;border-radius:4px;outline:none;cursor:text;transition:box-shadow .15s,background .15s}
+  .page.hpage .ws.wrap{display:flex;align-items:center;justify-content:center;white-space:normal;word-break:keep-all;line-height:1.35;padding:4px}
+  .page.hpage .ws:hover{box-shadow:inset 0 0 0 1px rgba(44,111,183,.45);background:rgba(44,111,183,.04)}
+  .page.hpage .ws:focus{box-shadow:inset 0 0 0 1.5px rgba(44,111,183,.7);background:rgba(44,111,183,.07)}
+  .page.hpage .wck{position:absolute;z-index:3;padding:0;border:0;background:transparent;cursor:pointer;border-radius:2px}
+  .page.hpage .wck:hover{box-shadow:0 0 0 1.5px rgba(44,111,183,.5)}
+  .page.hpage .wck:focus-visible{outline:2px solid #1968D8;outline-offset:2px}
+  .page.hpage .wck[aria-pressed="true"]::after{content:"";position:absolute;left:18%;top:-12%;width:38%;height:72%;
+    border:solid #2C6FB7;border-width:0 2.4px 2.4px 0;transform:rotate(40deg)}
   /* 정답 / 예시 button: grey and locked while the timer runs, coloured once the time is up */
   .page.hpage .rt-ans{position:absolute;z-index:4;transform:translateX(-100%);display:flex;align-items:center;gap:4px;height:22px;
     padding:0 9px 0 7px;border-radius:11px;border:1px solid #E1DDD8;background:#F7F5F2;color:#B7AFA6;
@@ -817,6 +839,42 @@ const rtJs = `
 </script>
 `;
 
+// writing spots: typing stays in the spot (page keys and arrows do nothing else), Enter ends a one-line spot
+const wsJs = `
+<script id="ws-v1">
+(function(){
+  // a long word in a short blank gets smaller until it fits (down to about half size)
+  function fit(el){
+    if (el.classList.contains("wrap")) return;
+    el.style.fontSize = "";
+    var w = el.clientWidth, sw = el.scrollWidth;
+    if (sw > w + 1) el.style.fontSize = "calc(var(--fs) * " + Math.max(0.5, (w - 2) / sw).toFixed(3) + ")";
+  }
+  document.querySelectorAll(".page.hpage .ws").forEach(function(el){
+    el.addEventListener("input", function(){ fit(el); });
+    el.addEventListener("keydown", function(e){
+      e.stopPropagation();
+      if (e.key === "Enter" && !el.classList.contains("wrap")) { e.preventDefault(); el.blur(); }
+      if (e.key === "Escape") el.blur();
+    });
+    el.addEventListener("pointerdown", function(e){ e.stopPropagation(); });
+    el.addEventListener("click", function(e){ e.stopPropagation(); });
+    el.addEventListener("paste", function(e){
+      e.preventDefault();
+      var t = (e.clipboardData || window.clipboardData).getData("text").split(String.fromCharCode(13)).join(" ").split(String.fromCharCode(10)).join(" ");
+      document.execCommand("insertText", false, t);
+    });
+  });
+  document.querySelectorAll(".page.hpage .wck").forEach(function(b){
+    b.addEventListener("click", function(e){
+      e.preventDefault(); e.stopPropagation();
+      b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") === "true" ? "false" : "true");
+    });
+  });
+})();
+</script>
+`;
+
 const tpl = fs.readFileSync("yozish.html", "utf8");
 const lines = tpl.split("\n");
 const coverLine = lines.findIndex((l) => l.includes('data-key="cover"'));
@@ -826,7 +884,7 @@ if (coverLine < 0 || firstImg < 0) throw new Error("template markers not found")
 
 let out = [...lines.slice(0, coverLine), ...pageHtml, ...lines.slice(lastImg + 1)].join("\n");
 out = out.replace("</style>", css + "</style>");
-out = out.replace("</body>", fitJs + (qrs.length ? `<script>window.QA_LISTEN = ${JSON.stringify(LISTEN)};</script>` + qaJs : "") + (out.includes('class="rt') ? rtJs : "") + "</body>");
+out = out.replace("</body>", fitJs + (qrs.length ? `<script>window.QA_LISTEN = ${JSON.stringify(LISTEN)};</script>` + qaJs : "") + (out.includes('class="rt') ? rtJs : "") + (out.includes('class="ws') || out.includes('class="wck') ? wsJs : "") + "</body>");
 // no tap-to-translate on these books: skip the dictionary pass over book pages
 out = out.replace("    var root = pagesEls[key];", "    var root = pagesEls[key];\n    if (root.classList.contains(\"hpage\")) return;");
 const order = pages.map((_, i) => "p" + (i + 1));
