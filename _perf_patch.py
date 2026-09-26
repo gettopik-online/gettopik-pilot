@@ -115,6 +115,83 @@ NEW_SCALE = """    var so = stageOuter, mid = so.getBoundingClientRect().top + s
     }
   }"""
 
+
+NAV_ANCHOR = "  scaleStage();\n  updatePageChrome();"
+NAV_JS = """  scaleStage();
+  updatePageChrome();
+
+  // ---------- nav-v1: where am I, go to a page, come back to the same page after a reload ----------
+  (function(){
+    var lbl = document.getElementById("pageLbl"), KEY = "gt-pos:" + location.pathname.split("/").pop();
+    function where(){                                  // the page under the middle of the screen, and how far into it
+      var el = pagesEls[ORDER[cur]], r = el.getBoundingClientRect(), o = stageOuter.getBoundingClientRect();
+      return { k: ORDER[cur], f: r.height ? Math.max(0, Math.min(1, (o.top + 40 - r.top) / r.height)) : 0 };
+    }
+    var saveT = 0;
+    function save(){
+      clearTimeout(saveT);
+      saveT = setTimeout(function(){
+        var w = where();
+        try { localStorage.setItem(KEY, JSON.stringify(w)); } catch (e) {}
+        try { history.replaceState(null, "", location.pathname + location.search + "#" + (cur + 1)); } catch (e) {}
+      }, 250);
+    }
+    stageOuter.addEventListener("scroll", save, { passive: true });
+    function goTo(k, f){
+      var el = pagesEls[k];
+      if (!el) return;
+      var r = el.getBoundingClientRect(), o = stageOuter.getBoundingClientRect();
+      stageOuter.scrollTop += r.top - o.top + (f || 0) * r.height - 40 * (f ? 1 : 0);
+    }
+    // back to where the teacher was: #N in the address wins, then the last spot in this browser
+    var want = null, m = location.hash.match(/^#p?(\\d+)$/);
+    if (m && ORDER[+m[1] - 1]) want = { k: ORDER[+m[1] - 1], f: 0 };
+    else { try { want = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) {} }
+    if (want && pagesEls[want.k] && want.k !== ORDER[0]) {
+      goTo(want.k, want.f);
+      setTimeout(function(){ goTo(want.k, want.f); }, 700);           // again once pages have their real height
+    }
+    // the page label is also a box to type a page number into
+    lbl.setAttribute("role", "button"); lbl.tabIndex = 0;
+    lbl.title = "Bet raqamini yozib o'tish uchun bosing";
+    function ask(){
+      if (lbl.querySelector("input")) return;
+      var box = document.createElement("input");
+      box.type = "text"; box.inputMode = "numeric"; box.placeholder = (cur + 1) + ""; box.setAttribute("aria-label", "Bet raqami");
+      box.className = "go-page";
+      lbl.textContent = ""; lbl.appendChild(box);
+      var total = document.createElement("span"); total.className = "go-total"; total.textContent = " / " + ORDER.length;
+      lbl.appendChild(total);
+      box.focus();
+      var done = false;
+      function finish(go){
+        if (done) return; done = true;
+        var n = parseInt(box.value, 10);
+        updatePageChrome();
+        if (go && n >= 1 && n <= ORDER.length) scrollToPage(ORDER[n - 1]);
+      }
+      box.addEventListener("keydown", function(e){
+        e.stopPropagation();
+        if (e.key === "Enter") finish(true);
+        if (e.key === "Escape") finish(false);
+      });
+      box.addEventListener("input", function(){ box.value = box.value.replace(/[^0-9]/g, "").slice(0, 3); });
+      box.addEventListener("blur", function(){ finish(true); });
+    }
+    lbl.addEventListener("click", ask);
+    lbl.addEventListener("keydown", function(e){ if (e.key === "Enter" && e.target === lbl) ask(); });
+  })();"""
+NAV_CSS = """<style id="nav-v1">
+#nav-bar #pageLbl { cursor:pointer; border-radius:8px; padding:5px 10px; background:rgba(255,255,255,.08); color:#fff;
+  font-size:13.5px; font-weight:700; font-variant-numeric:tabular-nums; }
+#nav-bar #pageLbl:hover { background:rgba(255,255,255,.18); }
+#nav-bar #pageLbl:focus-visible { outline:2px solid #8DB8FF; outline-offset:2px; }
+#nav-bar #pageLbl .go-page { width:52px; height:24px; border:0; border-radius:6px; padding:0 6px; text-align:center;
+  font:700 14px/1 Calibri, Arial, sans-serif; color:#14161C; background:#fff; outline:2px solid #3D80E8; }
+#nav-bar #pageLbl .go-total { color:#cfd6e4; font-weight:700; }
+</style>
+"""
+
 BG = re.compile(r'(<div class="page hpage" data-key="[^"]+" style="height:[^;"]+);background-image:url\(([^)]+)\)">')
 
 def patch(name):
@@ -139,6 +216,9 @@ def patch(name):
   }"""
     if OLD2 in s and "anchor = null" not in s:                 # TOPIK I / II shell spells it this way
         s = s.replace(OLD2, NEW_SCALE.replace("(fitScale*zoomFactor)", "((availW / natW)*zoomFactor)"), 1)
+    if "nav-v1" not in s and NAV_ANCHOR in s:
+        s = s.replace(NAV_ANCHOR, NAV_JS, 1)
+        s = s.replace("</head>", NAV_CSS + "</head>", 1)
     if OLD_FIT in s:
         s = s.replace(OLD_FIT, NEW_FIT, 1)
     # page backgrounds become lazy, asynchronously decoded images
@@ -148,7 +228,7 @@ def patch(name):
         open(p, "w", encoding="utf-8").write(s)
     print(f"{name}: {'patched' if s != before else 'already done'}, lazy backgrounds {n}, "
           f"scroll {'ok' if NEW_SCROLL in s else 'MISSING'}, search {'ok' if NEW_FIND in s else 'MISSING'}, "
-          f"zoom {'ok' if 'anchor = null' in s else 'MISSING'}")
+          f"zoom {'ok' if 'anchor = null' in s else 'MISSING'}, nav {'ok' if 'nav-v1' in s else 'MISSING'}")
 
 for b in (sys.argv[1:] or BOOKS):
     patch(b)
