@@ -44,8 +44,8 @@ const css = `
   .page.hpage .qa.on{background:rgba(242,107,42,.14);box-shadow:0 0 0 4px #F26B2A;animation:qaPulse 1.6s ease-in-out infinite}
   @keyframes qaPulse{50%{box-shadow:0 0 0 7px rgba(242,107,42,.45)}}
   @media (prefers-reduced-motion:reduce){.page.hpage .qa.on{animation:none}}
-  .page.hpage .qa-bar{position:absolute;z-index:5;display:flex;align-items:center;gap:7px;width:250px;height:34px;
-    padding:0 11px 0 3px;cursor:grab;touch-action:none;border-radius:17px;background:#fff;border:1px solid #F3CDB6;box-shadow:0 3px 12px rgba(30,20,10,.16);
+  .page.hpage .qa-bar{position:absolute;z-index:5;display:flex;align-items:center;gap:7px;width:276px;height:34px;
+    padding:0 4px 0 3px;cursor:grab;touch-action:none;border-radius:17px;background:#fff;border:1px solid #F3CDB6;box-shadow:0 3px 12px rgba(30,20,10,.16);
     font:700 12.5px/1 "Malgun Gothic",sans-serif;color:#3A2A20;user-select:none}
   .page.hpage .qa-bar .pp{flex:none;width:26px;height:26px;border:0;border-radius:50%;background:#F26B2A;color:#fff;cursor:pointer;
     display:flex;align-items:center;justify-content:center;padding:0}
@@ -62,6 +62,11 @@ const css = `
   .page.hpage .qa-bar input::-moz-range-thumb{width:9px;height:9px;border-radius:50%;background:#fff;border:2.5px solid #F26B2A}
   .page.hpage .qa-bar .tm{flex:none;min-width:34px;text-align:right;font-variant-numeric:tabular-nums}
   .page.hpage .qa-bar.paused .pp{background:#8A94A6}
+  .page.hpage .qa-bar .cl{flex:none;width:24px;height:24px;border:0;border-radius:50%;background:transparent;color:#9A8577;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+  .page.hpage .qa-bar .cl:hover{background:#F6E6DC;color:#3A2A20}
+  .page.hpage .qa-bar .cl:focus-visible{outline:2px solid #1968D8;outline-offset:1px}
+  .page.hpage .qa-bar .cl svg{width:12px;height:12px}
   .page.hpage .qa-bar .grip{flex:none;width:12px;height:18px;color:#C9A48E}
   .page.hpage .qa-bar.moving{cursor:grabbing;box-shadow:0 8px 24px rgba(30,20,10,.28)}
 `;
@@ -95,14 +100,14 @@ const fitJs = `
 `;
 
 const qaJs = `
-<script id="qa-v8">
+<script id="qa-v9">
 (function(){
   // one recording at a time. Clicking a code plays it; a bar above the code shows play/pause, a line that can be
   // dragged or clicked to jump anywhere in the recording, and the time left. Clicking the code again pauses/resumes;
   // starting another code stops the first.
   var PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12.5-7.5z"/></svg>',
       PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="5.5" y="4.5" width="4.5" height="15" rx="1"/><rect x="14" y="4.5" width="4.5" height="15" rx="1"/></svg>';
-  var W = 250, H = 34, cur = null;                  // { btn, audio, bar, pp, range, tm, seeking }
+  var W = 276, H = 34, cur = null;                  // { btn, audio, bar, pp, range, tm, seeking }
   function fmt(t){ t = Math.max(0, Math.ceil(t || 0)); return Math.floor(t / 60) + ":" + ("0" + t % 60).slice(-2); }
   function draw(){
     if (!cur) return;
@@ -134,7 +139,9 @@ const qaJs = `
     bar.innerHTML = '<svg class="grip" viewBox="0 0 12 18" fill="currentColor"><circle cx="3" cy="3" r="1.6"/><circle cx="9" cy="3" r="1.6"/>' +
       '<circle cx="3" cy="9" r="1.6"/><circle cx="9" cy="9" r="1.6"/><circle cx="3" cy="15" r="1.6"/><circle cx="9" cy="15" r="1.6"/></svg>' +
       '<button type="button" class="pp"></button><input type="range" min="0" max="1" step="0.05" value="0" ' +
-      'aria-label="Audio joyi"><span class="tm">…</span>';
+      'aria-label="Audio joyi"><span class="tm">…</span>' +
+      '<button type="button" class="cl" title="Yopish" aria-label="Yopish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+      'stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>';
     // above the code, kept inside the page
     var cx = btn.offsetLeft + btn.offsetWidth / 2, top = btn.offsetTop - H - 8;
     if (top < 4) top = btn.offsetTop + btn.offsetHeight + 8;
@@ -167,10 +174,11 @@ const qaJs = `
     r.addEventListener("pointercancel", function(){ c.seeking = false; });
     r.addEventListener("input", function(){ if (!c.seeking) { audio.currentTime = +r.value; draw(); } });   // arrow keys
     c.pp.addEventListener("click", function(e){ e.stopPropagation(); toggle(); });
+    bar.querySelector(".cl").addEventListener("click", function(e){ e.stopPropagation(); stop(); });
     // the whole bar can be picked up (anywhere but its button and line) and put elsewhere on the page
     var mv = null;
     bar.addEventListener("pointerdown", function(e){
-      if (e.target.closest(".pp") || e.target === r) return;
+      if (e.target.closest(".pp") || e.target.closest(".cl") || e.target === r) return;
       e.preventDefault(); e.stopPropagation();
       var k = page.getBoundingClientRect().width / page.offsetWidth || 1;     // the page is drawn scaled
       mv = { x: e.clientX, y: e.clientY, l: bar.offsetLeft, t: bar.offsetTop, k: k };
