@@ -980,7 +980,19 @@ body { font-family:"Noto Sans KR","Malgun Gothic",sans-serif; color:#1a1a1a; fon
   function scaleStage(){
     var natW = 210 * 96 / 25.4;
     var availW = stageOuter.clientWidth - 24;
+    var so = stageOuter, mid = so.getBoundingClientRect().top + so.clientHeight / 2, anchor = null;
+    if (stageInner.style.transform) {
+      var lo = 0, hi = ORDER.length - 1, at = 0;
+      while (lo <= hi) { var m = (lo + hi) >> 1;
+        if (pagesEls[ORDER[m]].getBoundingClientRect().top <= mid) { at = m; lo = m + 1; } else hi = m - 1; }
+      var r0 = pagesEls[ORDER[at]].getBoundingClientRect();
+      anchor = { el: pagesEls[ORDER[at]], f: r0.height ? (mid - r0.top) / r0.height : 0 };
+    }
     stageInner.style.transform = "scale("+((availW / natW)*zoomFactor)+")";
+    if (anchor) {
+      var r1 = anchor.el.getBoundingClientRect();
+      so.scrollTop += r1.top + anchor.f * r1.height - mid;
+    }
   }
   window.addEventListener("resize", scaleStage);
   function setZoom(z){

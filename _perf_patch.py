@@ -96,6 +96,25 @@ NEW_FIT = """<script id="fit-v2">
 })();
 </script>"""
 
+OLD_SCALE = """    stageInner.style.transform = "scale("+(fitScale*zoomFactor)+")";
+  }"""
+# zooming keeps the spot in the middle of the screen where it was, instead of leaving the scroll offset
+# unchanged (which showed a different page after every zoom step)
+NEW_SCALE = """    var so = stageOuter, mid = so.getBoundingClientRect().top + so.clientHeight / 2, anchor = null;
+    if (stageInner.style.transform) {
+      var lo = 0, hi = ORDER.length - 1, at = 0;
+      while (lo <= hi) { var m = (lo + hi) >> 1;
+        if (pagesEls[ORDER[m]].getBoundingClientRect().top <= mid) { at = m; lo = m + 1; } else hi = m - 1; }
+      var r0 = pagesEls[ORDER[at]].getBoundingClientRect();
+      anchor = { el: pagesEls[ORDER[at]], f: r0.height ? (mid - r0.top) / r0.height : 0 };
+    }
+    stageInner.style.transform = "scale("+(fitScale*zoomFactor)+")";
+    if (anchor) {
+      var r1 = anchor.el.getBoundingClientRect();
+      so.scrollTop += r1.top + anchor.f * r1.height - mid;
+    }
+  }"""
+
 BG = re.compile(r'(<div class="page hpage" data-key="[^"]+" style="height:[^;"]+);background-image:url\(([^)]+)\)">')
 
 def patch(name):
@@ -114,6 +133,12 @@ def patch(name):
         s = s.replace(OLD_SCROLL, NEW_SCROLL, 1)
     if OLD_FIND in s:
         s = s.replace(OLD_FIND, NEW_FIND, 1)
+    if OLD_SCALE in s and "anchor = null" not in s:
+        s = s.replace(OLD_SCALE, NEW_SCALE, 1)
+    OLD2 = """    stageInner.style.transform = "scale("+((availW / natW)*zoomFactor)+")";
+  }"""
+    if OLD2 in s and "anchor = null" not in s:                 # TOPIK I / II shell spells it this way
+        s = s.replace(OLD2, NEW_SCALE.replace("(fitScale*zoomFactor)", "((availW / natW)*zoomFactor)"), 1)
     if OLD_FIT in s:
         s = s.replace(OLD_FIT, NEW_FIT, 1)
     # page backgrounds become lazy, asynchronously decoded images
@@ -122,7 +147,8 @@ def patch(name):
     if s != before:
         open(p, "w", encoding="utf-8").write(s)
     print(f"{name}: {'patched' if s != before else 'already done'}, lazy backgrounds {n}, "
-          f"scroll {'ok' if NEW_SCROLL in s else 'MISSING'}, search {'ok' if NEW_FIND in s else 'MISSING'}")
+          f"scroll {'ok' if NEW_SCROLL in s else 'MISSING'}, search {'ok' if NEW_FIND in s else 'MISSING'}, "
+          f"zoom {'ok' if 'anchor = null' in s else 'MISSING'}")
 
 for b in (sys.argv[1:] or BOOKS):
     patch(b)

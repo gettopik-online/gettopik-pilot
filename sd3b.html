@@ -962,7 +962,19 @@ tspan.gg { text-decoration-color:#0E9F6E; }
     var outer = document.getElementById("stage-outer");
     var availW = outer.clientWidth - 24;
     var fitScale = availW / natW; // width-only: the page's real height rides along at the same scale
+    var so = stageOuter, mid = so.getBoundingClientRect().top + so.clientHeight / 2, anchor = null;
+    if (stageInner.style.transform) {
+      var lo = 0, hi = ORDER.length - 1, at = 0;
+      while (lo <= hi) { var m = (lo + hi) >> 1;
+        if (pagesEls[ORDER[m]].getBoundingClientRect().top <= mid) { at = m; lo = m + 1; } else hi = m - 1; }
+      var r0 = pagesEls[ORDER[at]].getBoundingClientRect();
+      anchor = { el: pagesEls[ORDER[at]], f: r0.height ? (mid - r0.top) / r0.height : 0 };
+    }
     stageInner.style.transform = "scale("+(fitScale*zoomFactor)+")";
+    if (anchor) {
+      var r1 = anchor.el.getBoundingClientRect();
+      so.scrollTop += r1.top + anchor.f * r1.height - mid;
+    }
   }
   window.addEventListener("resize", scaleStage);
   document.getElementById("zoomOutBtn").onclick = function(){
