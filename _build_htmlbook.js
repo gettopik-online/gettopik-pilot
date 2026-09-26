@@ -48,6 +48,9 @@ function handLine([x1, y1, x2, y2]) {
 const tmFile = `${dir}/${key}.timers.json`;
 const TIMER = Object.assign({ "읽기 1": 3, "읽기 2": 5 }, fs.existsSync(tmFile) ? JSON.parse(fs.readFileSync(tmFile, "utf8")) : {});
 const ALLQR = fs.existsSync(qrFile) ? JSON.parse(fs.readFileSync(qrFile, "utf8")) : [];
+// 정답 for 읽기 sections, keyed "<page>:<section>" (html_books/<key>/<key>.answers.json)
+const anFile = `${dir}/${key}.answers.json`;
+const ANSWERS = fs.existsSync(anFile) ? JSON.parse(fs.readFileSync(anFile, "utf8")) : {};
 const CLOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">' +
   '<circle cx="12" cy="13" r="8.5"/><path d="M12 8.5V13l3 2M9.5 2.5h5"/></svg>';
 
@@ -76,9 +79,15 @@ const pageHtml = pages.map((p, i) => {
     const sec = r.t.replace(/\s+/g, " ").trim(), min = TIMER[sec];
     if (!min) return "";
     const code = ALLQR.find((q) => q.page === i + 1 && new RegExp(sec.replace(" ", "\\s*") + "(\\s|$)").test(q.title || ""));
+    const id = `${i + 1}:${sec}`, A = ANSWERS[id];
+    const cx = code ? code.x + code.w / 2 : r.x - 1 + 12 / PT, cy = code ? code.y + code.h + 4 : r.y + r.h + 3;
+    const answer = !A ? "" :
+      `<button type="button" class="rt-an" data-id="${id}" hidden title="정답 — to'g'ri javob" style="left:${px(cx + 15 / PT * 1.3)};top:${px(cy)}">정답</button>` +
+      `<svg class="qa-marks" data-id="${id}" viewBox="0 0 ${p.w} ${p.h}" preserveAspectRatio="none" aria-hidden="true">` +
+      (A.marks || []).map((m, k) => m.circle ? `<path pathLength="1" d="${handCircle(m.circle, i * 5 + k + 11)}"/>` : `<path pathLength="1" d="${handLine(m.line)}"/>`).join("") + `</svg>`;
     return code
-      ? `<button type="button" class="rt c" data-min="${min}" title="${sec}: ${min} daqiqa — bosing, taymer boshlanadi" aria-label="${sec} taymeri, ${min} daqiqa" style="left:${px(code.x + code.w / 2)};top:${px(code.y + code.h + 4)}">${CLOCK}</button>`
-      : `<button type="button" class="rt" data-min="${min}" title="${sec}: ${min} daqiqa — bosing, taymer boshlanadi" aria-label="${sec} taymeri, ${min} daqiqa" style="left:${px(r.x - 1)};top:${px(r.y + r.h + 3)}">${CLOCK}</button>`;
+      ? answer + `<button type="button" class="rt c" data-id="${id}" data-min="${min}" title="${sec}: ${min} daqiqa — bosing, taymer boshlanadi" aria-label="${sec} taymeri, ${min} daqiqa" style="left:${px(code.x + code.w / 2)};top:${px(code.y + code.h + 4)}">${CLOCK}</button>`
+      : answer + `<button type="button" class="rt" data-id="${id}" data-min="${min}" title="${sec}: ${min} daqiqa — bosing, taymer boshlanadi" aria-label="${sec} taymeri, ${min} daqiqa" style="left:${px(r.x - 1)};top:${px(r.y + r.h + 3)}">${CLOCK}</button>`;
   }).join("");
   return `<div class="page hpage" data-key="p${i + 1}" style="height:${px(p.h)}"><img class="pbg" src="${dir}/${p.bg}" loading="lazy" decoding="async" alt="">${runs}${qa}${tools}${timers}</div>`;
 });
@@ -131,6 +140,16 @@ const css = `
   .page.hpage .rt.hold{color:#8A94A6}
   .page.hpage .rt.end{color:#fff;background:#E8264A}
   .page.hpage .rt:focus-visible{outline:2px solid #1968D8;outline-offset:3px}
+  /* 정답 beside the clock: hidden until the time is up, then it pops in */
+  .page.hpage .rt-an{position:absolute;z-index:4;height:24px;padding:0 8px;border-radius:12px;border:1px solid #F3CDB6;background:#FFFBF7;
+    color:#C8561E;font:700 9.6px/1 "Malgun Gothic",sans-serif;cursor:pointer;box-shadow:0 1px 4px rgba(120,60,20,.12);
+    animation:rtAn .35s cubic-bezier(.3,1.6,.5,1)}
+  .page.hpage .rt-an[hidden]{display:none}
+  .page.hpage .rt-an:hover{background:#FFEBDD}
+  .page.hpage .rt-an.on{background:#F26B2A;border-color:#F26B2A;color:#fff}
+  .page.hpage .rt-an:focus-visible{outline:2px solid #1968D8;outline-offset:2px}
+  @keyframes rtAn{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.page.hpage .rt-an{animation:none}}
   /* its bar: a compact pill that can be moved anywhere on the page */
   .page.hpage .rt-bar{position:absolute;z-index:5;display:flex;align-items:center;gap:5px;width:168px;height:28px;padding:0 3px;
     border-radius:14px;background:#fff;border:1px solid #F3CDB6;box-shadow:0 2px 10px rgba(30,20,10,.14);cursor:grab;touch-action:none;
@@ -504,7 +523,7 @@ const qaJs = `
 // 읽기 timers (see .rt / .rt-bar above). Clicking the badge starts; clicking it or ⏸ pauses and resumes; the line
 // can be dragged to give more or less time; × resets. The last ten seconds tick, the end rings.
 const rtJs = `
-<script id="rt-v2">
+<script id="rt-v3">
 (function(){
   var PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12.5-7.5z"/></svg>',
       PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="5.5" y="4.5" width="4.5" height="15" rx="1"/><rect x="14" y="4.5" width="4.5" height="15" rx="1"/></svg>',
@@ -553,9 +572,13 @@ const rtJs = `
     function tick(now){
       if (!running) return;
       left = Math.max(0, left - (now - last) / 1000); last = now;
-      if (left <= 0) { running = false; beep(true); }
+      if (left <= 0) { running = false; beep(true); unlock(); }
       paint();
       if (running) raf = requestAnimationFrame(tick);
+    }
+    function unlock(){
+      var an = badge.parentNode.querySelector('.rt-an[data-id="' + badge.dataset.id + '"]');
+      if (an && an.hidden) an.hidden = false;
     }
     function go(){ if (left <= 0) left = total; running = true; last = performance.now(); lastSec = null; raf = requestAnimationFrame(tick); paint(); }
     function hold(){ running = false; cancelAnimationFrame(raf); paint(); }
@@ -584,7 +607,8 @@ const rtJs = `
       bar.ln.addEventListener("pointerdown", function(e){ e.preventDefault(); e.stopPropagation(); seeking = true;
         try { bar.ln.setPointerCapture(e.pointerId); } catch (err) {} seek(e); });
       bar.ln.addEventListener("pointermove", function(e){ if (seeking) seek(e); });
-      bar.ln.addEventListener("pointerup", function(e){ if (seeking) { seek(e); seeking = false; last = performance.now(); } });
+      bar.ln.addEventListener("pointerup", function(e){ if (seeking) { seek(e); seeking = false; last = performance.now();
+        if (left <= 0) { running = false; beep(true); unlock(); paint(); } } });
       bar.ln.addEventListener("pointercancel", function(){ seeking = false; });
       // move the whole bar
       var mv = null;
@@ -612,6 +636,13 @@ const rtJs = `
     paint();
   }
   document.querySelectorAll(".page.hpage .rt").forEach(Timer);
+  document.addEventListener("click", function(e){
+    var b = e.target.closest && e.target.closest(".rt-an");
+    if (!b) return;
+    e.preventDefault(); e.stopPropagation();
+    var svg = b.parentNode.querySelector('.qa-marks[data-id="' + b.dataset.id + '"]'), on = !svg.classList.contains("show");
+    svg.classList.toggle("show", on); b.classList.toggle("on", on);
+  });
   document.addEventListener("keydown", function(e){ if (e.key === "Escape") document.querySelectorAll(".rt-bar .cl").forEach(function(b){ b.click(); }); });
 })();
 </script>

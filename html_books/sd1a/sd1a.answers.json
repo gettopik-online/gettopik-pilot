@@ -1,0 +1,5 @@
+{
+  "_": "정답 for 읽기 sections, keyed \"<teacher-book page>:<section>\". Answers from the Student's Book 모범 답안 (p.158-159); marks in PDF points on the teacher-book page: circle = [cx, cy, rx, ry], line = [x1, y1, x2, y2]. The 정답 badge opens only after that section's timer has run out.",
+  "13:읽기 1": { "answer": "②", "marks": [ { "circle": [150.0, 413.6, 53.0, 9.8] } ] },
+  "13:읽기 2": { "answer": "③", "marks": [ { "circle": [393.6, 410.1, 68.5, 9.8] } ] }
+}
