@@ -55,6 +55,35 @@ const ANSWERS = fs.existsSync(anFile) ? JSON.parse(fs.readFileSync(anFile, "utf8
 const CLOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">' +
   '<circle cx="12" cy="13" r="8.5"/><path d="M12 8.5V13l3 2M9.5 2.5h5"/></svg>';
 
+// grammar pages: where each part of each grammar sits (left and right column)
+const GRAM = {};
+pages.forEach((p, i) => {
+  if (!p.runs.some((r) => r.t.trim() === "▶") || !p.runs.some((r) => /^\s*연습/.test(r.t))) return;
+  const cols = {};
+  [["L", 30, 297.5, 32, 292], ["R", 297.5, 580, 307, 567]].forEach(([c, a, b, x0, x1]) => {
+    const R = p.runs.filter((r) => r.x >= a && r.x < b);
+    const find = (f) => R.filter(f).sort((u, v) => u.y - v.y)[0];
+    const title = R.filter((r) => r.s >= 12 && r.y > 70 && r.y < 110).sort((u, v) => v.s - u.s)[0];
+    const tri = find((r) => r.t.trim() === "▶"), ye = find((r) => r.t.trim() === "예" && r.c === "#FFFFFF");
+    const tips = find((r) => r.t.trim() === "TIPS"), drill = find((r) => /^\s*연습/.test(r.t));
+    if (!title || !tri || !ye || !drill) return;
+    const tableTop = Math.min(...R.filter((r) => r.y > tri.y + 4 && r.y < ye.y - 3 && r.x < tri.x + 9).map((r) => r.y));
+    const box = (y0, y1) => [x0, Math.round(y0 * 10) / 10, x1, Math.round(y1 * 10) / 10];
+    const part = [
+      ["Grammatika", box(title.y - 10, title.y + title.h + 9)],
+      ["Rasmli misol", box(title.y + title.h + 11, tri.y - 6)],
+      ["Qoida", box(tri.y - 5, tableTop - 9)],
+      ["Misollar", box(ye.y - 7, (tips || drill).y - 13)],
+      ["Jadval", box(tableTop - 6, ye.y - 7)],
+    ];
+    if (tips) part.push(["TIPS", box(tips.y - 6, drill.y - 15)]);
+    part.push(["Mashq", box(drill.y - 8, 796)]);
+    const name = R.filter((r) => Math.abs(r.y - title.y) < 5 && r.s >= 11).sort((u, v) => u.x - v.x).map((r) => r.t).join("").replace(/\s+/g, " ").trim();
+    cols[c] = { title: name, part };
+  });
+  if (Object.keys(cols).length) GRAM["p" + (i + 1)] = cols;
+});
+
 // writing spots (html_books/<key>/<key>.slots.json, keyed by page)
 const slFile = `${dir}/${key}.slots.json`;
 const SLOTS = fs.existsSync(slFile) ? JSON.parse(fs.readFileSync(slFile, "utf8")) : {};
@@ -132,8 +161,11 @@ const pageHtml = pages.map((p, i) => {
     const lab = near.find((q) => q.t.trim() === "문법과");
     const x0 = lab ? lab.x - 9 : Math.min(...near.map((q) => q.x)) - 34, x1 = Math.max(...near.map((q) => q.x + q.w)) + 6;
     const y0 = Math.min(...near.map((q) => q.y)) - 5, y1 = Math.max(...near.map((q) => q.y + q.h)) + 5;
-    return `<a class="gref" href="#${target + 1}" data-go="p${target + 1}" data-n="${n}" title="${n}-bet: grammatika izohi" ` +
-      `style="left:${px(x0)};top:${px(y0)};width:${px(x1 - x0)};height:${px(y1 - y0)}"></a>`;
+    const lines = [...new Set(near.filter((q) => !/^(\s*문법과|\s*표현|\s*☞|\s*\d+\s*쪽|\s*[명동형]\s*)$/.test(q.t)).map((q) => Math.round(q.y)))].sort((u, v) => u - v);
+    const rows = lines.length > 1 ? [[y0, (lines[0] + lines[lines.length - 1]) / 2 + 5], [(lines[0] + lines[lines.length - 1]) / 2 + 5, y1]] : [[y0, y1]];
+    return rows.map(([a, b], k) =>
+      `<a class="gref" href="#${target + 1}" data-go="p${target + 1}" data-col="${k ? "R" : "L"}" data-n="${n}" title="Grammatikani ochish (${n}-bet)" ` +
+      `style="left:${px(x0)};top:${px(a)};width:${px(x1 - x0)};height:${px(b - a)}"></a>`).join("");
   }).join("");
   return `<div class="page hpage" data-key="p${i + 1}" style="height:${px(p.h)}"><img class="pbg" src="${dir}/${p.bg}" loading="lazy" decoding="async" alt="">${runs}${qa}${tools}${timers}${slots}${grefs}</div>`;
 });
@@ -895,6 +927,115 @@ const wsJs = `
 </script>
 `;
 
+// grammar presentation
+const gpCss = `
+  #gp{position:fixed;inset:0;z-index:950;background:#fff;display:none;flex-direction:column;font-family:"Malgun Gothic",sans-serif}
+  #gp.on{display:flex}
+  #gp .bar{flex:none;display:flex;align-items:center;gap:14px;height:54px;padding:0 18px;border-bottom:1px solid #F1E7DE}
+  #gp .lbl{font-size:14px;font-weight:700;color:#C8561E;white-space:nowrap}
+  #gp .lbl small{color:#9A8577;font-weight:400;margin-left:8px}
+  #gp .steps{flex:1;display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
+  #gp .steps button{height:26px;padding:0 11px;border:1px solid #F1DDCF;border-radius:13px;background:#fff;color:#B7A596;
+    font:700 11.5px/1 "Malgun Gothic",sans-serif;cursor:pointer}
+  #gp .steps button.done{color:#C8561E;border-color:#F3CDB6;background:#FFF6EF}
+  #gp .steps button.now{background:#F26B2A;border-color:#F26B2A;color:#fff}
+  #gp .x,#gp .pg{height:32px;border:0;border-radius:16px;background:#F4F1EE;color:#5B4A3E;cursor:pointer;font:700 12px/1 "Malgun Gothic",sans-serif}
+  #gp .x{width:32px;font-size:18px}
+  #gp .pg{padding:0 12px}
+  #gp .x:hover,#gp .pg:hover{background:#EAE3DC}
+  #gp .stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:24px;overflow:hidden}
+  #gp .stage.tall{align-items:flex-start;overflow-y:auto}
+  #gp .cut{position:relative;overflow:hidden;transform-origin:0 0;animation:gpIn .35s ease-out}
+  #gp .cut .pbg{position:absolute;max-width:none}
+  #gp .cut .t{position:absolute;white-space:pre;transform-origin:0 0;font-family:"Malgun Gothic","맑은 고딕","Noto Sans KR","Apple SD Gothic Neo",sans-serif;
+    color:#231F20;-webkit-font-smoothing:antialiased}
+  @keyframes gpIn{from{opacity:0;translate:0 12px}to{opacity:1;translate:0 0}}
+  @media (prefers-reduced-motion:reduce){#gp .cut{animation:none}}
+  #gp .nav{flex:none;display:flex;justify-content:center;align-items:center;gap:12px;height:70px}
+  #gp .nav button{height:42px;padding:0 22px;border:0;border-radius:21px;cursor:pointer;font:700 15px/1 "Malgun Gothic",sans-serif}
+  #gp .prev{background:#F4F1EE;color:#5B4A3E}
+  #gp .next{background:#F26B2A;color:#fff;min-width:160px;box-shadow:0 3px 12px rgba(242,107,42,.3)}
+  #gp .nav button:disabled{opacity:.35;cursor:default;box-shadow:none}
+  #gp button:focus-visible{outline:2px solid #1968D8;outline-offset:2px}
+`;
+const gpJs = `
+<div id="gp" role="dialog" aria-modal="true" aria-label="Grammatika">
+  <div class="bar"><span class="lbl"></span><span class="steps"></span>
+    <button type="button" class="pg" title="Kitobdagi betni ochish"></button><button type="button" class="x" title="Yopish (Esc)" aria-label="Yopish">×</button></div>
+  <div class="stage"></div>
+  <div class="nav"><button type="button" class="prev">◀ Oldingi</button><button type="button" class="next">Keyingi ▶</button></div>
+</div>
+<script id="gp-v1">
+(function(){
+  var GRAM = window.GRAM || {}, PT = 96 / 72;
+  var gp = document.getElementById("gp"), stage = gp.querySelector(".stage"), steps = gp.querySelector(".steps"),
+      lbl = gp.querySelector(".lbl"), nextB = gp.querySelector(".next"), prevB = gp.querySelector(".prev"), pgB = gp.querySelector(".pg");
+  var cur = null, k = 0;
+  function cut(page, b){                               // a piece of the book page, rebuilt from its picture and its text
+    var x0 = b[0] * PT, y0 = b[1] * PT, w = (b[2] - b[0]) * PT, h = (b[3] - b[1]) * PT;
+    var box = document.createElement("div"); box.className = "cut"; box.style.width = w + "px"; box.style.height = h + "px";
+    var bg = page.querySelector("img.pbg");
+    if (bg) { var im = document.createElement("img"); im.className = "pbg"; im.src = bg.getAttribute("src"); im.alt = "";
+      im.style.left = -x0 + "px"; im.style.top = -y0 + "px"; im.style.width = page.offsetWidth + "px"; im.style.height = page.offsetHeight + "px"; box.appendChild(im); }
+    page.querySelectorAll(".t").forEach(function(t){
+      var l = parseFloat(t.style.left), tp = parseFloat(t.style.top);
+      if (l >= x0 - 2 && l < x0 + w && tp >= y0 - 2 && tp < y0 + h) {
+        var c = t.cloneNode(true); c.style.left = (l - x0) + "px"; c.style.top = (tp - y0) + "px"; c.style.transform = ""; box.appendChild(c);
+      }
+    });
+    return box;
+  }
+  function fitText(box){
+    var els = box.querySelectorAll(".t"), wd = [], i;
+    for (i = 0; i < els.length; i++) wd.push(els[i].offsetWidth);
+    for (i = 0; i < els.length; i++) {
+      var sx = wd[i] > 0 && +els[i].dataset.w > 0 ? +els[i].dataset.w / wd[i] : 1, rot = els[i].style.getPropertyValue("--rot");
+      els[i].style.transform = (rot ? "rotate(" + rot + ") " : "") + (Math.abs(sx - 1) > 0.01 ? "scaleX(" + sx.toFixed(4) + ")" : "");
+    }
+  }
+  function show(){
+    var part = cur.g.part[k], box = cut(cur.page, part[1]);
+    stage.innerHTML = ""; stage.appendChild(box); fitText(box);
+    var w = parseFloat(box.style.width), h = parseFloat(box.style.height);
+    var s = Math.min((stage.clientWidth - 48) / w, (stage.clientHeight - 48) / h, k === 0 ? 3.4 : 2.6), tall = s < 1.6;
+    if (tall) s = Math.min((stage.clientWidth - 48) / w, 2.2);                      // tall part: fill the width, scroll down
+    stage.classList.toggle("tall", tall); stage.scrollTop = 0;
+    box.style.transform = "scale(" + s + ")"; box.style.marginRight = (w * s - w) + "px"; box.style.marginBottom = (h * s - h) + "px";
+    Array.prototype.forEach.call(steps.children, function(b, i){ b.className = i === k ? "now" : i < k ? "done" : ""; });
+    prevB.disabled = k === 0; nextB.disabled = k === cur.g.part.length - 1;
+    nextB.textContent = k < cur.g.part.length - 1 ? cur.g.part[k + 1][0] + " ▶" : "Tugadi";
+  }
+  function open(pageKey, col, from){
+    var g = GRAM[pageKey] && GRAM[pageKey][col], page = document.querySelector('.page[data-key="' + pageKey + '"]');
+    if (!g || !page) return false;
+    cur = { g: g, page: page, key: pageKey }; k = 0;
+    lbl.innerHTML = ""; lbl.textContent = g.title;
+    var sm = document.createElement("small"); sm.textContent = "grammatika"; lbl.appendChild(sm);
+    steps.innerHTML = "";
+    g.part.forEach(function(p, i){ var b = document.createElement("button"); b.type = "button"; b.textContent = p[0];
+      b.addEventListener("click", function(){ k = i; show(); }); steps.appendChild(b); });
+    pgB.textContent = "📖 " + pageKey.slice(1) + "-bet";
+    gp.classList.add("on"); show(); nextB.focus();
+    return true;
+  }
+  function close(){ gp.classList.remove("on"); stage.innerHTML = ""; cur = null; }
+  nextB.addEventListener("click", function(){ if (cur && k < cur.g.part.length - 1) { k++; show(); } });
+  prevB.addEventListener("click", function(){ if (cur && k > 0) { k--; show(); } });
+  gp.querySelector(".x").addEventListener("click", close);
+  pgB.addEventListener("click", function(){ var key = cur.key; close(); if (window.gpJump) window.gpJump(key); });
+  document.addEventListener("keydown", function(e){
+    if (!cur) return;
+    e.stopPropagation();
+    if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { e.preventDefault(); nextB.click(); }
+    if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); prevB.click(); }
+    if (e.key === "Escape") close();
+  }, true);
+  addEventListener("resize", function(){ if (cur) show(); });
+  window.gpOpen = open;
+})();
+</script>
+`;
+
 // grammar links: jump to the page, and a button brings the teacher back to the exact spot of the lesson
 const grefJs = `
 <button type="button" id="gref-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
@@ -907,13 +1048,18 @@ const grefJs = `
     var a = e.target.closest && e.target.closest(".gref");
     if (!a) return;
     e.preventDefault(); e.stopPropagation();
-    var page = a.closest(".page"), n = page.dataset.key.slice(1), to = document.querySelector('.page[data-key="' + a.dataset.go + '"]');
+    if (window.gpOpen && window.gpOpen(a.dataset.go, a.dataset.col || "L")) return;
+    jump(a.dataset.go);
+  });
+  function jump(key){
+    var to = document.querySelector('.page[data-key="' + key + '"]'), n = document.getElementById("pageLbl").textContent.split(" ")[0];
     if (!to) return;
     from = so.scrollTop;
     back.querySelector("span").textContent = n + "-betga qaytish";
     back.classList.add("on");
     so.scrollTop = top(to);
-  });
+  }
+  window.gpJump = jump;
   back.addEventListener("click", function(){
     if (from !== null) so.scrollTop = from;
     from = null; back.classList.remove("on");
@@ -930,8 +1076,8 @@ const lastImg = lines.length - 1 - [...lines].reverse().findIndex((l) => l.inclu
 if (coverLine < 0 || firstImg < 0) throw new Error("template markers not found");
 
 let out = [...lines.slice(0, coverLine), ...pageHtml, ...lines.slice(lastImg + 1)].join("\n");
-out = out.replace("</style>", css + "</style>");
-out = out.replace("</body>", fitJs + (qrs.length ? `<script>window.QA_LISTEN = ${JSON.stringify(LISTEN)};</script>` + qaJs : "") + (out.includes('class="rt') ? rtJs : "") + (out.includes('class="ws') || out.includes('class="wck') ? wsJs : "") + (out.includes('class="gref"') ? grefJs : "") + "</body>");
+out = out.replace("</style>", css + (Object.keys(GRAM).length ? gpCss : "") + "</style>");
+out = out.replace("</body>", fitJs + (qrs.length ? `<script>window.QA_LISTEN = ${JSON.stringify(LISTEN)};</script>` + qaJs : "") + (out.includes('class="rt') ? rtJs : "") + (out.includes('class="ws') || out.includes('class="wck') ? wsJs : "") + (Object.keys(GRAM).length ? `<script>window.GRAM = ${JSON.stringify(GRAM)};</script>` + gpJs : "") + (out.includes('class="gref"') ? grefJs : "") + "</body>");
 // no tap-to-translate on these books: skip the dictionary pass over book pages
 out = out.replace("    var root = pagesEls[key];", "    var root = pagesEls[key];\n    if (root.classList.contains(\"hpage\")) return;");
 const order = pages.map((_, i) => "p" + (i + 1));
