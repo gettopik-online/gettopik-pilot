@@ -44,6 +44,13 @@ function handLine([x1, y1, x2, y2]) {
   return `M${x1},${y1} Q${(mx - dy * 0.12).toFixed(1)},${(my + dx * 0.12).toFixed(1)} ${x2},${y2}`;
 }
 
+// reading time per section (minutes); a book can override it in html_books/<key>/<key>.timers.json {"읽기 1": 3, ...}
+const tmFile = `${dir}/${key}.timers.json`;
+const TIMER = Object.assign({ "읽기 1": 3, "읽기 2": 5 }, fs.existsSync(tmFile) ? JSON.parse(fs.readFileSync(tmFile, "utf8")) : {});
+const ALLQR = fs.existsSync(qrFile) ? JSON.parse(fs.readFileSync(qrFile, "utf8")) : [];
+const CLOCK = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#0F4CA3" stroke-width="2"/>' +
+  '<path d="M12 7v5l3.5 2" stroke="#0F4CA3" stroke-width="2" stroke-linecap="round"/></svg>';
+
 const pageHtml = pages.map((p, i) => {
   const runs = p.runs.map((r) => {
     const st = [
@@ -65,7 +72,15 @@ const pageHtml = pages.map((p, i) => {
       `<button type="button" class="qt-an" title="정답 — to'g'ri javob">정답</button></span>` +
       (marks ? `<svg class="qa-marks" data-yt="${q.yt}" viewBox="0 0 ${p.w} ${p.h}" preserveAspectRatio="none" aria-hidden="true">${marks}</svg>` : "");
   }).join("");
-  return `<div class="page hpage" data-key="p${i + 1}" style="height:${px(p.h)}"><img class="pbg" src="${dir}/${p.bg}" loading="lazy" decoding="async" alt="">${runs}${qa}${tools}</div>`;
+  const timers = p.runs.filter((r) => /^\s*읽기\s*[12]\s*$/.test(r.t)).map((r) => {
+    const sec = r.t.replace(/\s+/g, " ").trim(), min = TIMER[sec];
+    if (!min) return "";
+    const code = ALLQR.find((q) => q.page === i + 1 && new RegExp(sec.replace(" ", "\\s*") + "(\\s|$)").test(q.title || ""));
+    return code
+      ? `<span class="time sdtime" title="${sec}: ${min} daqiqa" style="left:${px(code.x + code.w / 2)};top:${px(code.y + code.h + 5)};transform:translateX(-50%)">${CLOCK}${min}분</span>`
+      : `<span class="time sdtime" title="${sec}: ${min} daqiqa" style="left:${px(r.x - 1)};top:${px(r.y + r.h + 3)}">${CLOCK}${min}분</span>`;
+  }).join("");
+  return `<div class="page hpage" data-key="p${i + 1}" style="height:${px(p.h)}"><img class="pbg" src="${dir}/${p.bg}" loading="lazy" decoding="async" alt="">${runs}${qa}${tools}${timers}</div>`;
 });
 
 const css = `
@@ -103,6 +118,9 @@ const css = `
   .page.hpage .qa-bar .cl:hover{background:#F6E6DC;color:#3A2A20}
   .page.hpage .qa-bar .cl:focus-visible{outline:2px solid #1968D8;outline-offset:1px}
   .page.hpage .qa-bar .cl svg{width:12px;height:12px}
+  .page.hpage .time.sdtime{position:absolute;z-index:4;margin:0;font-size:11px;padding:4px 10px 4px 8px;gap:4px;
+    box-shadow:0 1px 4px rgba(15,76,163,.14);white-space:nowrap}
+  .page.hpage .time.sdtime svg{width:13px;height:13px}
   /* 대본 / 정답: two small round badges hanging under the code */
   .page.hpage .qa-tools{position:absolute;z-index:4;display:flex;gap:4px;transform:translateX(-50%)}
   .page.hpage .qa-tools button{width:29px;height:29px;padding:0;border-radius:50%;border:1.2px solid #F3CDB6;background:#FFFBF7;
