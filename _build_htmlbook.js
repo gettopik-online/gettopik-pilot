@@ -81,13 +81,20 @@ const pageHtml = pages.map((p, i) => {
     const sec = r.t.replace(/\s+/g, " ").trim(), min = TIMER[`${i + 1}:${sec}`] || TIMER[sec] || 0;
     const code = ALLQR.find((q) => q.page === i + 1 && new RegExp(sec.replace(" ", "\\s*") + "(\\s|$)").test(q.title || ""));
     const id = `${i + 1}:${sec}`, A = ANSWERS[id];
+    const model = A && A.label === "예시";
+    const lines = !model ? "" : `<div class="wx-set" data-id="${id}" hidden>` + (A.marks || []).map((m, k) => !m.text ? "" :
+      `<div class="wx${m.text[4] === "start" ? "" : " mid"}" data-k="${k}" contenteditable="true" spellcheck="false" ` +
+      `style="left:${px(m.text[0])};top:${px(m.text[1] - (m.text[3] || 11) * 0.86)};--fs:${((m.text[3] || 11) * PT).toFixed(2)}px">${esc(m.text[2])}</div>`).join("") +
+      `<span class="wx-tools"><button type="button" class="wx-sm" title="Kichikroq yozuv" aria-label="Kichikroq yozuv">A−</button>` +
+      `<button type="button" class="wx-lg" title="Kattaroq yozuv" aria-label="Kattaroq yozuv">A+</button>` +
+      `<button type="button" class="wx-rs" title="Asl namunani qaytarish" aria-label="Asl namunani qaytarish">↺</button></span></div>`;
     const marks = !A ? "" :
-      `<svg class="qa-marks" data-id="${id}" viewBox="0 0 ${p.w} ${p.h}" preserveAspectRatio="none" aria-hidden="true">` +
-      (A.marks || []).map((m, k) => m.circle ? `<path pathLength="1" d="${handCircle(m.circle, i * 5 + k + 11)}"/>`
+      `<svg class="qa-marks${model ? " ink" : ""}" data-id="${id}" viewBox="0 0 ${p.w} ${p.h}" preserveAspectRatio="none" aria-hidden="true">` +
+      (A.marks || []).filter((m) => !(model && m.text)).map((m, k) => m.circle ? `<path pathLength="1" d="${handCircle(m.circle, i * 5 + k + 11)}"/>`
         : m.text ? `<text x="${m.text[0]}" y="${m.text[1]}" font-size="${m.text[3] || 11}" style="animation-delay:${(0.15 + k * 0.2).toFixed(2)}s${m.text[4] ? ";text-anchor:" + m.text[4] : ""}">${esc(m.text[2])}</text>`
         : `<path pathLength="1" d="${handLine(m.line)}"/>`).join("") + `</svg>`;
     // the clock hangs under the section's own "읽기 N" label
-    return marks + `<button type="button" class="rt c" data-id="${id}"${A ? ' data-an="1"' : ""} title="${sec} taymeri — bosing va vaqtni belgilang" ` +
+    return marks + lines + `<button type="button" class="rt c" data-id="${id}"${A ? ' data-an="1"' : ""} title="${sec} taymeri — bosing va vaqtni belgilang" ` +
       `aria-label="${sec} taymeri" style="left:${px(r.x + r.w / 2)};top:${px(r.y + r.h + 4)}">${CLOCK}<span class="an">${(A && A.label) || "정답"}</span></button>`;
   }).join("");
   return `<div class="page hpage" data-key="p${i + 1}" style="height:${px(p.h)}"><img class="pbg" src="${dir}/${p.bg}" loading="lazy" decoding="async" alt="">${runs}${qa}${tools}${timers}</div>`;
@@ -158,6 +165,23 @@ const css = `
   .page.hpage .rt-an:focus-visible{outline:2px solid #1968D8;outline-offset:2px}
   @keyframes rtAn{from{opacity:0;transform:translateX(-50%) scale(.4)}to{opacity:1;transform:translateX(-50%)}}
   @media (prefers-reduced-motion:reduce){.page.hpage .rt-an{animation:none}}
+  /* 쓰기 예시: one ink colour (the book's own blue), editable lines, size controls */
+  .page.hpage .qa-marks.ink path{stroke:#2C6FB7}
+  .page.hpage .wx-set[hidden]{display:none}
+  .page.hpage .wx-set{--s:1}
+  .page.hpage .wx{position:absolute;z-index:4;font-family:"Gaegu","Malgun Gothic",sans-serif;font-weight:700;color:#2C6FB7;
+    font-size:calc(var(--fs) * var(--s));line-height:1.05;white-space:nowrap;padding:0 2px;border-radius:4px;outline:none;cursor:text;
+    animation:qaWrite .35s ease-out both}
+  .page.hpage .wx.mid{transform:translateX(-50%)}
+  .page.hpage .wx:hover{background:rgba(44,111,183,.08)}
+  .page.hpage .wx:focus{background:rgba(44,111,183,.10);box-shadow:0 0 0 1px rgba(44,111,183,.45)}
+  .page.hpage .wx-tools{position:absolute;z-index:6;display:flex;gap:3px;padding:3px;border-radius:14px;background:#fff;
+    border:1px solid #CFDDF0;box-shadow:0 2px 8px rgba(20,50,90,.14);opacity:0;pointer-events:none;transition:opacity .15s}
+  .page.hpage .wx-tools.on{opacity:1;pointer-events:auto}
+  .page.hpage .wx-tools button{min-width:26px;height:22px;padding:0 5px;border:0;border-radius:11px;background:#EEF4FB;color:#2C6FB7;
+    font:700 11px/1 "Malgun Gothic",sans-serif;cursor:pointer}
+  .page.hpage .wx-tools button:hover{background:#DCE9F8}
+  .page.hpage .wx-tools button:focus-visible{outline:2px solid #1968D8;outline-offset:1px}
   /* its bar: a compact pill that can be moved anywhere on the page */
   .page.hpage .rt-bar{position:absolute;z-index:5;display:flex;align-items:center;gap:5px;width:182px;height:28px;padding:0 3px;
     border-radius:14px;background:#fff;border:1px solid #F3CDB6;box-shadow:0 2px 10px rgba(30,20,10,.14);cursor:grab;touch-action:none;
@@ -546,7 +570,7 @@ const qaJs = `
 // 읽기 timers (see .rt / .rt-bar above). Clicking the badge starts; clicking it or ⏸ pauses and resumes; the line
 // can be dragged to give more or less time; × resets. The last ten seconds tick, the end rings.
 const rtJs = `
-<script id="rt-v8">
+<script id="rt-v10">
 (function(){
   var PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12.5-7.5z"/></svg>',
       PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="5.5" y="4.5" width="4.5" height="15" rx="1"/><rect x="14" y="4.5" width="4.5" height="15" rx="1"/></svg>',
@@ -602,10 +626,15 @@ const rtJs = `
     }
     var marks = badge.parentNode.querySelector('.qa-marks[data-id="' + badge.dataset.id + '"]');
     function unlock(){ if (badge.dataset.an) { badge.classList.add("ans"); badge.title = "정답 — to‘g‘ri javobni ko‘rsatish / yashirish"; } }
+    var lines = badge.parentNode.querySelector('.wx-set[data-id="' + badge.dataset.id + '"]');
     function showAnswer(on){
-      if (!marks) return;
-      marks.classList.toggle("show", on); badge.classList.toggle("shown", on);
+      if (marks) marks.classList.toggle("show", on);
+      if (lines) {
+        lines.hidden = !on;
+      }
+      badge.classList.toggle("shown", on);
     }
+    if (lines) Writing(lines);
     function go(){
       if (total <= 0) { ask(); return; }                     // nothing to count yet: ask for the time
       if (left <= 0) left = total;
@@ -719,6 +748,53 @@ const rtJs = `
       if (running) hold(); else go();
     });
     paint();
+  }
+  // 쓰기 예시 lines: the teacher can rewrite any part; size and text are kept in this browser, ↺ restores the model
+  function Writing(set){
+    var KEY = "gt-wx:" + BOOK + ":" + set.dataset.id, st = { s: 1, t: {} };
+    var items = Array.prototype.slice.call(set.querySelectorAll(".wx")), orig = items.map(function(el){ return el.textContent; });
+    try { st = Object.assign(st, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) {}
+    function save(){ try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+    function apply(){
+      set.style.setProperty("--s", st.s);
+      items.forEach(function(el, i){ var k = el.dataset.k; el.textContent = (st.t[k] != null) ? st.t[k] : orig[i]; });
+    }
+    apply();
+    items.forEach(function(el){
+      el.addEventListener("input", function(){ st.t[el.dataset.k] = el.textContent; save(); });
+      el.addEventListener("keydown", function(e){ e.stopPropagation(); if (e.key === "Enter") { e.preventDefault(); el.blur(); } });
+      el.addEventListener("pointerdown", function(e){ e.stopPropagation(); });
+      el.addEventListener("click", function(e){ e.stopPropagation(); });
+      el.addEventListener("paste", function(e){                  // plain text only
+        e.preventDefault();
+        var t = (e.clipboardData || window.clipboardData).getData("text").split(String.fromCharCode(13)).join(" ").split(String.fromCharCode(10)).join(" ");
+        document.execCommand("insertText", false, t);
+      });
+    });
+    function size(d){ st.s = Math.max(0.6, Math.min(1.8, Math.round((st.s + d) * 10) / 10)); save(); apply(); }
+    set.querySelector(".wx-sm").addEventListener("click", function(e){ e.stopPropagation(); size(-0.1); });
+    set.querySelector(".wx-lg").addEventListener("click", function(e){ e.stopPropagation(); size(0.1); });
+    set.querySelector(".wx-rs").addEventListener("click", function(e){ e.stopPropagation(); st = { s: 1, t: {} }; save(); apply(); });
+    var tools = set.querySelector(".wx-tools"), hideT = 0;
+    tools.addEventListener("pointerdown", function(e){ e.stopPropagation(); });
+    function near(el){
+      var page = set.parentNode, pr = page.getBoundingClientRect(), r = el.getBoundingClientRect(), k = pr.width / page.offsetWidth || 1;
+      var left = (r.right - pr.left) / k + 6, top = (r.top - pr.top) / k - 3;
+      tools.style.left = Math.min(left, page.offsetWidth - tools.offsetWidth - 4) + "px"; tools.style.top = top + "px";
+      clearTimeout(hideT); tools.classList.add("on");
+    }
+    function later(){
+      clearTimeout(hideT);
+      hideT = setTimeout(function(){ if (!set.contains(document.activeElement) && !tools.matches(":hover")) tools.classList.remove("on"); }, 1200);
+    }
+    items.forEach(function(el){
+      el.addEventListener("mouseenter", function(){ near(el); });
+      el.addEventListener("focus", function(){ near(el); });
+      el.addEventListener("mouseleave", later);
+      el.addEventListener("blur", later);
+    });
+    tools.addEventListener("mouseenter", function(){ clearTimeout(hideT); });
+    tools.addEventListener("mouseleave", later);
   }
   document.querySelectorAll(".page.hpage .rt").forEach(Timer);
 
