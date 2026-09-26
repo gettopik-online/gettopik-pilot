@@ -711,7 +711,9 @@ tspan.gg { text-decoration-color:#0E9F6E; }
     font-size:12.6px;line-height:1.45;color:#2B2320;transition:background .2s,border-color .2s,box-shadow .2s}
   .page.hpage .qa-sc .ln.r .bb{border-radius:14px 14px 4px 14px;background:#FFF3EA}
   .page.hpage .qa-sc .ln:hover .bb{border-color:#F3B38F}
-  .page.hpage .qa-sc .ln.now .bb{background:#FFE3D0;border-color:#F26B2A;box-shadow:0 0 0 3px rgba(242,107,42,.16)}
+  .page.hpage .qa-sc .ln.now .bb{background:#fff;border-color:#F26B2A;box-shadow:0 0 0 3px rgba(242,107,42,.16)}
+  .page.hpage .qa-sc .wd{background-image:linear-gradient(#BCDDFF,#BCDDFF);background-repeat:no-repeat;background-position:0 62%;
+    background-size:0% 78%;border-radius:3px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
   .page.hpage .qa-sc .ln.now.paused .bb{background:#FFF6EF;border-style:dashed;box-shadow:none}
   .page.hpage .qa-sc .ln.now.paused .nm::after{content:" · pauza";color:#C8561E}
   .page.hpage .qa-bar .grip{flex:none;width:12px;height:18px;color:#C9A48E}
@@ -1703,8 +1705,8 @@ tspan.gg { text-decoration-color:#0E9F6E; }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(start); else window.addEventListener("load", start);
 })();
 </script>
-<script>window.QA_LISTEN = {"0bL8A1_A5_k":{"title":"듣기 1","lines":[{"n":"나나","g":"f","t":11.5,"x":"안녕하세요? 저는 나나예요."},{"n":"테오","g":"m","t":15.8,"x":"안녕하세요? 저는 테오예요. 나나 씨는 어느 나라 사람이에요?"},{"n":"나나","g":"f","t":23.2,"x":"저는 중국 사람이에요."},{"n":"테오","g":"m","t":26.35,"x":"아, 네. 저는 브라질 사람이에요. 만나서 반가워요."}],"marks":[{"line":[119.5,347,129.8,352]},{"circle":[159.5,352.2,35.5,9.8]},{"line":[119.5,405,129.8,389.9]},{"circle":[164,389.9,40.5,9.8]}]},"PerMcAhTWdY":{"title":"듣기 2","lines":[{"n":"에릭","g":"m","t":11,"x":"만나서 반가워요. 저는 에릭이에요. 프랑스 사람이에요."},{"n":"마리","g":"f","t":17.8,"x":"여러분 안녕하세요? 저는 마리예요. 일본 사람이에요."},{"n":"닛쿤","g":"m","t":24.3,"x":"반가워요. 저는 닛쿤이에요. 태국에서 왔어요."}],"marks":[{"circle":[375.3,417.2,63,10.2]}]}};</script>
-<script id="qa-v13">
+<script>window.QA_LISTEN = {"0bL8A1_A5_k":{"title":"듣기 1","lines":[{"n":"나나","g":"f","t":11.5,"x":"안녕하세요? 저는 나나예요.","w":[[11.73,12.61],[13.25,13.52],[13.52,14.96]]},{"n":"테오","g":"m","t":15.8,"x":"안녕하세요? 저는 테오예요. 나나 씨는 어느 나라 사람이에요?","w":[[15.99,16.79],[17.35,17.64],[17.64,18.92],[19.95,20.16],[20.16,20.64],[20.64,21.18],[21.18,21.46],[21.46,22.19]]},{"n":"나나","g":"f","t":23.2,"x":"저는 중국 사람이에요.","w":[[23.42,23.76],[23.76,24.52],[24.52,25.55]]},{"n":"테오","g":"m","t":26.35,"x":"아, 네. 저는 브라질 사람이에요. 만나서 반가워요.","w":[[26.35,27.14],[27.42,27.95],[28.68,28.86],[28.86,29.88],[29.88,30.69],[31.52,31.94],[31.94,32.66]]}],"marks":[{"line":[119.5,347,129.8,352]},{"circle":[159.5,352.2,35.5,9.8]},{"line":[119.5,405,129.8,389.9]},{"circle":[164,389.9,40.5,9.8]}]},"PerMcAhTWdY":{"title":"듣기 2","lines":[{"n":"에릭","g":"m","t":11,"x":"만나서 반가워요. 저는 에릭이에요. 프랑스 사람이에요.","w":[[11.16,11.58],[11.58,12.5],[13.39,13.62],[13.62,14.87],[15.85,16.22],[16.22,16.9]]},{"n":"마리","g":"f","t":17.8,"x":"여러분 안녕하세요? 저는 마리예요. 일본 사람이에요.","w":[[17.96,18.32],[18.32,19.59],[20.13,20.44],[20.44,21.56],[22.37,22.6],[22.6,23.5]]},{"n":"닛쿤","g":"m","t":24.3,"x":"반가워요. 저는 닛쿤이에요. 태국에서 왔어요.","w":[[24.3,25.11],[25.76,26],[26,27.21],[28.09,28.52],[28.52,29.06]]}],"marks":[{"circle":[375.3,417.2,63,10.2]}]}};</script>
+<script id="qa-v14">
 (function(){
   // one recording at a time. Clicking a code plays it; a bar above the code shows play/pause, a line that can be
   // dragged or clicked to jump anywhere in the recording, and the time left. Clicking the code again pauses/resumes;
@@ -1844,6 +1846,8 @@ tspan.gg { text-decoration-color:#0E9F6E; }
       var paused = mine && cur.audio.paused;
       box.querySelectorAll(".ln").forEach(function(el, k){ el.classList.toggle("now", k === now); el.classList.toggle("paused", k === now && paused); });
     });
+    paint();
+    if (cur && !cur.audio.paused) run();
   };
   function openScript(tools){
     var yt = tools.dataset.yt, page = tools.parentNode, L = LISTEN[yt], btn = tools.querySelector(".qt-sc");
@@ -1855,7 +1859,7 @@ tspan.gg { text-decoration-color:#0E9F6E; }
     L.lines.forEach(function(l, k){
       if (!(l.n in sides)) sides[l.n] = order++ % 2 ? "r" : "";
       html += '<div class="ln ' + sides[l.n] + '" data-k="' + k + '" title="Bosing: shu gapni tinglash · yana bosing: to‘xtatish / davom ettirish"><span class="av ' + (l.g || "") + '">' +
-        esc(l.n.charAt(0)) + '</span><span class="col"><span class="nm">' + esc(l.n) + '</span><span class="bb">' + esc(l.x) + '</span></span></div>';
+        esc(l.n.charAt(0)) + '</span><span class="col"><span class="nm">' + esc(l.n) + '</span><span class="bb">' + l.x.split(/s+/).map(function(w, j, all){ return '<span class="wd">' + esc(w) + (j < all.length - 1 ? " " : "") + "</span>"; }).join("") + '</span></span></div>';
     });
     var box = document.createElement("div");
     box.className = "qa-sc"; box.innerHTML = html;
@@ -1909,6 +1913,27 @@ tspan.gg { text-decoration-color:#0E9F6E; }
     });
     sync();
   }
+  function paint(){
+    Object.keys(open).forEach(function(yt){
+      var box = open[yt], lines = LISTEN[yt].lines, mine = cur && cur.btn === codeFor(yt, box.parentNode);
+      var t = mine ? cur.audio.currentTime : -1, nowEl = box.querySelector(".ln.now"), now = nowEl ? +nowEl.dataset.k : -1;
+      box.querySelectorAll(".ln").forEach(function(el, k){
+        var w = lines[k].w || [], spans = el.querySelectorAll(".wd");
+        for (var j = 0; j < spans.length; j++) {
+          var p = 0, r = w[j];
+          if (mine && k === now && r) p = t <= r[0] ? 0 : t >= r[1] ? 1 : (t - r[0]) / (r[1] - r[0]);
+          p = Math.round(p * 1000) / 10;
+          if (spans[j]._p !== p) { spans[j]._p = p; spans[j].style.backgroundSize = p + "% 78%"; }
+        }
+      });
+    });
+  }
+  var painting = false;
+  function frame(){
+    paint();
+    if (cur && !cur.audio.paused && Object.keys(open).length) requestAnimationFrame(frame); else painting = false;
+  }
+  function run(){ if (!painting) { painting = true; requestAnimationFrame(frame); } }
   function watch(){
     if (!one || !cur || cur.audio !== one.audio) return;
     var a = one.audio;

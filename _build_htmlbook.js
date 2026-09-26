@@ -152,7 +152,9 @@ const css = `
     font-size:12.6px;line-height:1.45;color:#2B2320;transition:background .2s,border-color .2s,box-shadow .2s}
   .page.hpage .qa-sc .ln.r .bb{border-radius:14px 14px 4px 14px;background:#FFF3EA}
   .page.hpage .qa-sc .ln:hover .bb{border-color:#F3B38F}
-  .page.hpage .qa-sc .ln.now .bb{background:#FFE3D0;border-color:#F26B2A;box-shadow:0 0 0 3px rgba(242,107,42,.16)}
+  .page.hpage .qa-sc .ln.now .bb{background:#fff;border-color:#F26B2A;box-shadow:0 0 0 3px rgba(242,107,42,.16)}
+  .page.hpage .qa-sc .wd{background-image:linear-gradient(#BCDDFF,#BCDDFF);background-repeat:no-repeat;background-position:0 62%;
+    background-size:0% 78%;border-radius:3px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
   .page.hpage .qa-sc .ln.now.paused .bb{background:#FFF6EF;border-style:dashed;box-shadow:none}
   .page.hpage .qa-sc .ln.now.paused .nm::after{content:" · pauza";color:#C8561E}
   .page.hpage .qa-bar .grip{flex:none;width:12px;height:18px;color:#C9A48E}
@@ -188,7 +190,7 @@ const fitJs = `
 `;
 
 const qaJs = `
-<script id="qa-v13">
+<script id="qa-v14">
 (function(){
   // one recording at a time. Clicking a code plays it; a bar above the code shows play/pause, a line that can be
   // dragged or clicked to jump anywhere in the recording, and the time left. Clicking the code again pauses/resumes;
@@ -328,6 +330,8 @@ const qaJs = `
       var paused = mine && cur.audio.paused;
       box.querySelectorAll(".ln").forEach(function(el, k){ el.classList.toggle("now", k === now); el.classList.toggle("paused", k === now && paused); });
     });
+    paint();
+    if (cur && !cur.audio.paused) run();
   };
   function openScript(tools){
     var yt = tools.dataset.yt, page = tools.parentNode, L = LISTEN[yt], btn = tools.querySelector(".qt-sc");
@@ -339,7 +343,7 @@ const qaJs = `
     L.lines.forEach(function(l, k){
       if (!(l.n in sides)) sides[l.n] = order++ % 2 ? "r" : "";
       html += '<div class="ln ' + sides[l.n] + '" data-k="' + k + '" title="Bosing: shu gapni tinglash · yana bosing: to‘xtatish / davom ettirish"><span class="av ' + (l.g || "") + '">' +
-        esc(l.n.charAt(0)) + '</span><span class="col"><span class="nm">' + esc(l.n) + '</span><span class="bb">' + esc(l.x) + '</span></span></div>';
+        esc(l.n.charAt(0)) + '</span><span class="col"><span class="nm">' + esc(l.n) + '</span><span class="bb">' + l.x.split(/\s+/).map(function(w, j, all){ return '<span class="wd">' + esc(w) + (j < all.length - 1 ? " " : "") + "</span>"; }).join("") + '</span></span></div>';
     });
     var box = document.createElement("div");
     box.className = "qa-sc"; box.innerHTML = html;
@@ -393,6 +397,27 @@ const qaJs = `
     });
     sync();
   }
+  function paint(){
+    Object.keys(open).forEach(function(yt){
+      var box = open[yt], lines = LISTEN[yt].lines, mine = cur && cur.btn === codeFor(yt, box.parentNode);
+      var t = mine ? cur.audio.currentTime : -1, nowEl = box.querySelector(".ln.now"), now = nowEl ? +nowEl.dataset.k : -1;
+      box.querySelectorAll(".ln").forEach(function(el, k){
+        var w = lines[k].w || [], spans = el.querySelectorAll(".wd");
+        for (var j = 0; j < spans.length; j++) {
+          var p = 0, r = w[j];
+          if (mine && k === now && r) p = t <= r[0] ? 0 : t >= r[1] ? 1 : (t - r[0]) / (r[1] - r[0]);
+          p = Math.round(p * 1000) / 10;
+          if (spans[j]._p !== p) { spans[j]._p = p; spans[j].style.backgroundSize = p + "% 78%"; }
+        }
+      });
+    });
+  }
+  var painting = false;
+  function frame(){
+    paint();
+    if (cur && !cur.audio.paused && Object.keys(open).length) requestAnimationFrame(frame); else painting = false;
+  }
+  function run(){ if (!painting) { painting = true; requestAnimationFrame(frame); } }
   function watch(){
     if (!one || !cur || cur.audio !== one.audio) return;
     var a = one.audio;
