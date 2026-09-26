@@ -44,11 +44,23 @@ const css = `
   .page.hpage .qa.on{background:rgba(242,107,42,.14);box-shadow:0 0 0 4px #F26B2A;animation:qaPulse 1.6s ease-in-out infinite}
   @keyframes qaPulse{50%{box-shadow:0 0 0 7px rgba(242,107,42,.45)}}
   @media (prefers-reduced-motion:reduce){.page.hpage .qa.on{animation:none}}
-  .page.hpage .qa-pill{position:absolute;z-index:4;transform:translateX(-50%);display:inline-flex;align-items:center;gap:5px;
-    height:24px;padding:0 10px 0 7px;border-radius:12px;background:#F26B2A;color:#fff;font:700 12.5px/1 "Malgun Gothic",sans-serif;
-    font-variant-numeric:tabular-nums;box-shadow:0 2px 8px rgba(242,107,42,.35);cursor:pointer;white-space:nowrap;user-select:none}
-  .page.hpage .qa-pill svg{width:12px;height:12px}
-  .page.hpage .qa-pill.paused{background:#8A94A6;box-shadow:none}
+  .page.hpage .qa-bar{position:absolute;z-index:5;display:flex;align-items:center;gap:8px;width:230px;height:34px;
+    padding:0 11px 0 5px;border-radius:17px;background:#fff;border:1px solid #F3CDB6;box-shadow:0 3px 12px rgba(30,20,10,.16);
+    font:700 12.5px/1 "Malgun Gothic",sans-serif;color:#3A2A20;user-select:none}
+  .page.hpage .qa-bar .pp{flex:none;width:26px;height:26px;border:0;border-radius:50%;background:#F26B2A;color:#fff;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;padding:0}
+  .page.hpage .qa-bar .pp svg{width:11px;height:11px}
+  .page.hpage .qa-bar .pp:focus-visible,.page.hpage .qa-bar input:focus-visible{outline:2px solid #1968D8;outline-offset:2px}
+  .page.hpage .qa-bar input{flex:1;min-width:0;height:18px;margin:0;background:transparent;cursor:pointer;-webkit-appearance:none;appearance:none}
+  .page.hpage .qa-bar input::-webkit-slider-runnable-track{height:5px;border-radius:3px;
+    background:linear-gradient(to right,#F26B2A 0 var(--p,0%),#F3DDD0 var(--p,0%) 100%)}
+  .page.hpage .qa-bar input::-moz-range-track{height:5px;border-radius:3px;background:#F3DDD0}
+  .page.hpage .qa-bar input::-moz-range-progress{height:5px;border-radius:3px;background:#F26B2A}
+  .page.hpage .qa-bar input::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;margin-top:-4px;border-radius:50%;
+    background:#fff;border:2.5px solid #F26B2A}
+  .page.hpage .qa-bar input::-moz-range-thumb{width:9px;height:9px;border-radius:50%;background:#fff;border:2.5px solid #F26B2A}
+  .page.hpage .qa-bar .tm{flex:none;min-width:34px;text-align:right;font-variant-numeric:tabular-nums}
+  .page.hpage .qa-bar.paused .pp{background:#8A94A6}
 `;
 
 // fit every run to the width it has in the book, so lines end exactly where they did in print
@@ -80,46 +92,64 @@ const fitJs = `
 `;
 
 const qaJs = `
-<script id="qa-v4">
+<script id="qa-v5">
 (function(){
-  // one recording at a time: clicking a code plays it, clicking it (or its time pill) again pauses and resumes;
-  // starting another code stops the first. A pill under the code shows the time left.
+  // one recording at a time. Clicking a code plays it; a bar above the code shows play/pause, a line that can be
+  // dragged or clicked to jump anywhere in the recording, and the time left. Clicking the code again pauses/resumes;
+  // starting another code stops the first.
   var PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12.5-7.5z"/></svg>',
       PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="5.5" y="4.5" width="4.5" height="15" rx="1"/><rect x="14" y="4.5" width="4.5" height="15" rx="1"/></svg>';
-  var cur = null;                                   // { btn, audio, pill }
+  var W = 230, H = 34, cur = null;                  // { btn, audio, bar, pp, range, tm, seeking }
   function fmt(t){ t = Math.max(0, Math.ceil(t || 0)); return Math.floor(t / 60) + ":" + ("0" + t % 60).slice(-2); }
   function draw(){
     if (!cur) return;
-    var a = cur.audio, left = (a.duration || 0) - a.currentTime;
-    cur.pill.innerHTML = (a.paused ? PLAY : PAUSE) + "<span>" + (a.duration ? fmt(left) : "…") + "</span>";
-    cur.pill.classList.toggle("paused", a.paused);
+    var a = cur.audio, d = a.duration || 0;
+    cur.pp.innerHTML = a.paused ? PLAY : PAUSE;
+    cur.pp.title = cur.pp.ariaLabel = a.paused ? "Davom ettirish" : "Pauza";
+    cur.bar.classList.toggle("paused", a.paused);
     cur.btn.classList.toggle("on", !a.paused);
+    if (d) {
+      cur.range.max = d;
+      if (!cur.seeking) cur.range.value = a.currentTime;
+      cur.range.style.setProperty("--p", (100 * cur.range.value / d) + "%");
+      cur.tm.textContent = fmt(d - cur.range.value);
+    } else cur.tm.textContent = "…";
   }
   function stop(){
     if (!cur) return;
     cur.audio.pause(); cur.audio.removeAttribute("src"); cur.audio.load();
-    cur.pill.remove(); cur.btn.classList.remove("on"); cur = null;
+    cur.bar.remove(); cur.btn.classList.remove("on"); cur = null;
   }
   function start(btn){
     stop();
-    var pill = document.createElement("span"), audio = new Audio(btn.dataset.src);
-    pill.className = "qa-pill"; pill.setAttribute("role", "button"); pill.title = "To'xtatish / davom ettirish";
-    pill.style.left = (btn.offsetLeft + btn.offsetWidth / 2) + "px";
-    pill.style.top = (btn.offsetTop + btn.offsetHeight + 6) + "px";
-    btn.parentNode.appendChild(pill);
-    cur = { btn: btn, audio: audio, pill: pill };
-    ["play", "pause", "timeupdate", "loadedmetadata"].forEach(function(ev){ audio.addEventListener(ev, draw); });
+    var page = btn.parentNode, audio = new Audio(btn.dataset.src), bar = document.createElement("div");
+    bar.className = "qa-bar";
+    bar.innerHTML = '<button type="button" class="pp"></button><input type="range" min="0" max="1" step="0.05" value="0" ' +
+      'aria-label="Audio joyi"><span class="tm">…</span>';
+    // above the code, kept inside the page
+    var cx = btn.offsetLeft + btn.offsetWidth / 2, top = btn.offsetTop - H - 8;
+    if (top < 4) top = btn.offsetTop + btn.offsetHeight + 8;
+    bar.style.left = Math.max(6, Math.min(cx - W / 2, page.offsetWidth - W - 6)) + "px";
+    bar.style.top = top + "px";
+    page.appendChild(bar);
+    cur = { btn: btn, audio: audio, bar: bar, pp: bar.querySelector(".pp"), range: bar.querySelector("input"),
+            tm: bar.querySelector(".tm"), seeking: false };
+    var c = cur;
+    ["play", "pause", "timeupdate", "loadedmetadata", "durationchange"].forEach(function(ev){ audio.addEventListener(ev, draw); });
     audio.addEventListener("ended", stop);
-    audio.addEventListener("error", function(){ if (cur && cur.audio === audio) { pill.innerHTML = "<span>Audio ochilmadi</span>"; btn.classList.remove("on"); } });
+    audio.addEventListener("error", function(){ if (cur === c) { c.tm.textContent = "xato"; btn.classList.remove("on"); } });
+    c.range.addEventListener("pointerdown", function(){ c.seeking = true; });
+    c.range.addEventListener("input", function(){ c.seeking = true; draw(); });
+    c.range.addEventListener("change", function(){ audio.currentTime = +c.range.value; c.seeking = false; draw(); });
+    c.range.addEventListener("pointerup", function(){ audio.currentTime = +c.range.value; c.seeking = false; });
+    c.pp.addEventListener("click", function(e){ e.stopPropagation(); toggle(); });
+    bar.addEventListener("click", function(e){ e.stopPropagation(); });
     draw();
     audio.play().catch(function(){ draw(); });
   }
   function toggle(){ if (cur.audio.paused) cur.audio.play(); else cur.audio.pause(); }
   document.addEventListener("click", function(e){
-    if (!e.target.closest) return;
-    var pill = e.target.closest(".qa-pill");
-    if (pill && cur && cur.pill === pill) { e.preventDefault(); toggle(); return; }
-    var b = e.target.closest(".qa");
+    var b = e.target.closest && e.target.closest(".qa");
     if (!b) return;
     e.preventDefault();
     if (cur && cur.btn === b) toggle(); else start(b);
