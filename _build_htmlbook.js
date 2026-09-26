@@ -79,7 +79,7 @@ pages.forEach((p, i) => {
     if (tips) part.push(["TIPS", box(tips.y - 6, drill.y - 15)]);
     part.push(["Mashq", box(drill.y - 8, 796)]);
     const name = R.filter((r) => Math.abs(r.y - title.y) < 5 && r.s >= 11).sort((u, v) => u.x - v.x).map((r) => r.t).join("").replace(/\s+/g, " ").trim();
-    cols[c] = { title: name, part };
+    cols[c] = { title: name, part, ans: ANSWERS[`g:p${i + 1}:${c}`] || null };
   });
   if (Object.keys(cols).length) GRAM["p" + (i + 1)] = cols;
 });
@@ -947,6 +947,34 @@ const gpCss = `
   #gp .sheet{margin:0 auto;background:#fff;box-sizing:border-box;padding:44px 44px 60px;box-shadow:0 2px 14px rgba(60,40,20,.12);
     display:flex;flex-direction:column;align-items:center;gap:18px}
   #gp .part{position:relative;flex:none}
+  #gp .sheet{position:relative;cursor:text}
+  #gp .flayer{position:absolute;inset:0;pointer-events:none}
+  #gp .fw{position:absolute;pointer-events:auto;min-width:14px;padding:0 3px;border-radius:4px;outline:none;white-space:pre;
+    font:400 18px/1.35 "Malgun Gothic","맑은 고딕","Noto Sans KR",sans-serif;color:#2C6FB7}
+  #gp .fw:hover{background:rgba(44,111,183,.06)}
+  #gp .fw:focus{background:rgba(44,111,183,.08);box-shadow:0 0 0 1px rgba(44,111,183,.45)}
+  #gp .gx{position:absolute;z-index:2;white-space:nowrap;padding:0 2px;border-radius:3px;outline:none;cursor:text;line-height:1.05;
+    font-family:"Malgun Gothic","맑은 고딕","Noto Sans KR",sans-serif;color:#2C6FB7;animation:gpFade .3s ease-out}
+  #gp .gx[hidden]{display:none}
+  #gp .gx:focus{background:rgba(44,111,183,.10);box-shadow:0 0 0 1px rgba(44,111,183,.45)}
+  @keyframes gpFade{from{opacity:0}to{opacity:1}}
+  #gp .mq{position:absolute;right:0;top:4px;z-index:3;display:flex;align-items:center;gap:6px;cursor:default}
+  #gp .mq button{height:32px;border-radius:16px;font:700 14px/1 "Malgun Gothic",sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+  #gp .mq button svg{width:16px;height:16px}
+  #gp .mt{padding:0 13px 0 10px;border:1px solid #F3CDB6;background:#FFFBF7;color:#C8561E;font-variant-numeric:tabular-nums}
+  #gp .mt.run{background:#F26B2A;border-color:#F26B2A;color:#fff}
+  #gp .mt.hold{background:#8A94A6;border-color:#8A94A6;color:#fff}
+  #gp .mt.end{background:#E8264A;border-color:#E8264A;color:#fff}
+  #gp .mt input{width:58px;height:22px;border:0;border-radius:6px;padding:0 4px;text-align:center;font:700 14px/1 "Malgun Gothic",sans-serif;
+    color:#3A2A20;outline:1.5px solid #F26B2A;background:#fff}
+  #gp .mt input::placeholder{color:#C9A48E}
+  #gp .mx{width:32px;justify-content:center;border:1px solid #E1DDD8;background:#fff;color:#9A8577;font-size:18px}
+  #gp .mx[hidden],#gp .ma[hidden]{display:none}
+  #gp .ma{padding:0 13px 0 10px;border:1px solid #E1DDD8;background:#F7F5F2;color:#B7AFA6}
+  #gp .ma[disabled]{cursor:not-allowed}
+  #gp .ma:not([disabled]){border-color:#F3CDB6;background:#FFF6EF;color:#C8561E;animation:gpReady .5s cubic-bezier(.3,1.6,.5,1)}
+  #gp .ma.on{background:#F26B2A;border-color:#F26B2A;color:#fff}
+  @keyframes gpReady{0%{transform:scale(.85)}60%{transform:scale(1.08)}100%{transform:none}}
   #gp .part.fresh{animation:gpDrop .45s cubic-bezier(.2,.8,.3,1)}
   @keyframes gpDrop{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
   @media (prefers-reduced-motion:reduce){#gp .part.fresh{animation:none}}
@@ -970,12 +998,14 @@ const gpJs = `
   <div class="stage"></div>
   <div class="nav"><button type="button" class="prev">◀ Oldingi</button><button type="button" class="next">Keyingi ▶</button></div>
 </div>
-<script id="gp-v2">
+<script id="gp-v4">
 (function(){
   var GRAM = window.GRAM || {}, PT = 96 / 72;
   var gp = document.getElementById("gp"), stage = gp.querySelector(".stage"), steps = gp.querySelector(".steps"),
       lbl = gp.querySelector(".lbl"), nextB = gp.querySelector(".next"), prevB = gp.querySelector(".prev"), pgB = gp.querySelector(".pg");
-  var cur = null, k = 0;
+  var cur = null, k = 0, sheet = null, ac = null;
+  var CLOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="13" r="8.5"/><path d="M12 8.5V13l3 2M9.5 2.5h5"/></svg>';
+  var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
   function cut(page, b){                               // a piece of the book page, rebuilt from its picture and its text
     var x0 = b[0] * PT, y0 = b[1] * PT, w = (b[2] - b[0]) * PT, h = (b[3] - b[1]) * PT;
     var box = document.createElement("div"); box.className = "cut"; box.style.width = w + "px"; box.style.height = h + "px";
@@ -998,25 +1028,130 @@ const gpJs = `
       els[i].style.transform = (rot ? "rotate(" + rot + ") " : "") + (Math.abs(sx - 1) > 0.01 ? "scaleX(" + sx.toFixed(4) + ")" : "");
     }
   }
+  function keepKeys(el){                               // typing stays in the field
+    el.addEventListener("keydown", function(e){ e.stopPropagation(); if (e.key === "Escape") el.blur(); });
+    el.addEventListener("pointerdown", function(e){ e.stopPropagation(); });
+    el.addEventListener("click", function(e){ e.stopPropagation(); });
+  }
+  function beep(hi){
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      if (ac.state === "suspended") ac.resume();
+      var o = ac.createOscillator(), g = ac.createGain(), len = hi ? 0.5 : 0.08;
+      o.type = "sine"; o.frequency.value = hi ? 660 : 990;
+      g.gain.setValueAtTime(0.18, ac.currentTime); g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + len);
+      o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime + len);
+    } catch (e) {}
+  }
+  function fmt(t){ t = Math.max(0, Math.ceil(t)); return ("0" + Math.floor(t / 60)).slice(-2) + ":" + ("0" + t % 60).slice(-2); }
+  function parse(v){
+    v = String(v).trim();
+    var m = v.match(/^([0-9]{0,2}) *: *([0-9]{1,2})$/);
+    if (m) return (+m[1] || 0) * 60 + +m[2];
+    if (/^[0-9]{3,4}$/.test(v)) return +v.slice(0, -2) * 60 + +v.slice(-2);
+    if (/^[0-9]{1,2}$/.test(v)) return +v * 60;
+    return null;
+  }
+
+  // the exercises: a timer and 정답 beside them; 정답 opens when the time is up, the answers can be rewritten
+  function exercise(wrap, box, b){
+    var bar = document.createElement("div"); bar.className = "mq";
+    bar.innerHTML = '<button type="button" class="mt" title="Taymer: bosing va vaqtni yozing">' + CLOCK + '<span class="tm">__:__</span></button>' +
+      '<button type="button" class="mx" title="Taymerni tozalash" aria-label="Taymerni tozalash" hidden>×</button>' +
+      '<button type="button" class="ma" disabled title="정답 (taymer tugagach ochiladi)">' + CHECK + '<span>정답</span></button>';
+    wrap.appendChild(bar);
+    var mt = bar.querySelector(".mt"), tm = bar.querySelector(".tm"), mx = bar.querySelector(".mx"), ma = bar.querySelector(".ma");
+    var total = 0, left = 0, running = false, last = 0, raf = 0, lastSec = null, typing = false;
+    var lines = [], orig = [];
+    ((cur.g.ans && cur.g.ans.marks) || []).forEach(function(m){
+      if (!m.text) return;
+      var d = document.createElement("div"); d.className = "gx"; d.contentEditable = "true"; d.spellcheck = false; d.hidden = true;
+      d.textContent = m.text[2]; orig.push(m.text[2]);
+      var fs = (m.text[3] || 10.4) * PT;
+      d.style.left = ((m.text[0] - b[0]) * PT) + "px"; d.style.top = ((m.text[1] - (m.text[3] || 10.4) * 0.86 - b[1]) * PT) + "px";
+      d.style.fontSize = fs + "px";
+      keepKeys(d); box.appendChild(d); lines.push(d);
+    });
+    if (!lines.length) ma.hidden = true;
+    function paint(){
+      var set = total > 0;
+      if (!typing) tm.textContent = set ? fmt(left) : "__:__";
+      mt.classList.toggle("run", running && left > 0);
+      mt.classList.toggle("hold", set && !running && left > 0 && left < total);
+      mt.classList.toggle("end", set && left <= 0);
+      mx.hidden = !set;
+    }
+    function tick(now){
+      if (!running) return;
+      left = Math.max(0, left - (now - last) / 1000); last = now;
+      var sec = Math.ceil(left);
+      if (sec !== lastSec) { if (sec <= 10 && sec > 0 && lastSec !== null) beep(false); lastSec = sec; }
+      if (left <= 0) { running = false; beep(true); ma.disabled = false; ma.title = "정답"; }
+      paint();
+      if (running) raf = requestAnimationFrame(tick);
+    }
+    function go(){ if (total <= 0) { ask(); return; } if (left <= 0) left = total; running = true; last = performance.now(); lastSec = null; raf = requestAnimationFrame(tick); paint(); }
+    function hold(){ running = false; cancelAnimationFrame(raf); paint(); }
+    function show(on){ lines.forEach(function(d){ d.hidden = !on; }); ma.classList.toggle("on", on); }
+    function reset(){
+      hold(); total = 0; left = 0; show(false);
+      lines.forEach(function(d, i){ d.textContent = orig[i]; });
+      ma.disabled = true; ma.title = "정답 (taymer tugagach ochiladi)"; paint();
+    }
+    function ask(){
+      if (typing) return;
+      typing = true;
+      var inp = document.createElement("input"); inp.type = "text"; inp.inputMode = "numeric"; inp.placeholder = "__:__"; inp.maxLength = 5;
+      inp.value = total > 0 ? fmt(left) : "";
+      tm.textContent = ""; tm.appendChild(inp); setTimeout(function(){ inp.focus(); inp.select(); }, 0);
+      var done = false;
+      function finish(apply){
+        if (done) return; done = true; typing = false;
+        var sec = apply ? parse(inp.value) : null;
+        if (sec && sec >= 5 && sec <= 3600) { total = sec; left = sec; lastSec = null; if (!running) { paint(); go(); return; } last = performance.now(); }
+        paint();
+      }
+      inp.addEventListener("input", function(){ var d = inp.value.replace(/[^0-9]/g, "").slice(0, 4); inp.value = d.length > 2 ? d.slice(0, -2) + ":" + d.slice(-2) : d; });
+      inp.addEventListener("keydown", function(e){ e.stopPropagation(); if (e.key === "Enter") finish(true); if (e.key === "Escape") finish(false); });
+      inp.addEventListener("blur", function(){ finish(true); });
+      inp.addEventListener("click", function(e){ e.stopPropagation(); });
+    }
+    mt.addEventListener("click", function(e){ e.stopPropagation(); if (total <= 0 || typing) { ask(); return; } if (running) hold(); else go(); });
+    tm.addEventListener("dblclick", function(e){ e.stopPropagation(); ask(); });
+    mx.addEventListener("click", function(e){ e.stopPropagation(); reset(); });
+    ma.addEventListener("click", function(e){ e.stopPropagation(); if (!ma.disabled) show(!ma.classList.contains("on")); });
+    bar.addEventListener("pointerdown", function(e){ e.stopPropagation(); });
+    wrap.cleanup = hold;
+    paint();
+  }
+
   // one clean A4 sheet; parts 0..k stand on it one under another, the newest slides in at the bottom
-  var sheet = null;
   function sheetWidth(){ return Math.min(stage.clientWidth - 60, 860); }
-  function addPart(i, animate){
+  function makePart(i){
     var part = cur.g.part[i], box = cut(cur.page, part[1]), wrap = document.createElement("div");
-    wrap.className = "part" + (animate ? " fresh" : "");
-    wrap.appendChild(box); sheet.appendChild(wrap); fitText(box);
+    wrap.className = "part"; wrap.appendChild(box);
+    sheet.appendChild(wrap); fitText(box);
     var w = parseFloat(box.style.width), h = parseFloat(box.style.height), inner = sheetWidth() - 2 * 44;
     var sc = Math.min(inner / w, i === 0 ? 2.6 : 2.4);
     box.style.transform = "scale(" + sc + ")";
     wrap.style.width = (w * sc) + "px"; wrap.style.height = (h * sc) + "px";
+    if (part[0] === "Mashq") exercise(wrap, box, part[1]);
     return wrap;
   }
-  function build(){                                    // (re)draw the sheet with parts 0..k
-    stage.innerHTML = "";
-    sheet = document.createElement("div"); sheet.className = "sheet";
-    var sw = sheetWidth(); sheet.style.width = sw + "px"; sheet.style.minHeight = (sw * 1.414) + "px";
-    stage.appendChild(sheet);
-    for (var i = 0; i <= k; i++) addPart(i, false);
+  function build(){                                    // (re)draw the sheet with parts 0..k, keeping what was already made
+    var sw = sheetWidth();
+    if (!sheet || cur.width !== sw) {
+      (cur.parts || []).forEach(function(w){ if (w.cleanup) w.cleanup(); });
+      stage.innerHTML = ""; cur.parts = []; cur.width = sw;
+      sheet = document.createElement("div"); sheet.className = "sheet";
+      sheet.style.width = sw + "px"; sheet.style.minHeight = (sw * 1.414) + "px";
+      stage.appendChild(sheet);
+      cur.layer = cur.layer || document.createElement("div"); cur.layer.className = "flayer"; sheet.appendChild(cur.layer);
+      sheet.addEventListener("click", freeWrite);
+    }
+    for (var i = 0; i < cur.parts.length; i++) cur.parts[i].style.display = i <= k ? "" : "none";
+    for (var j = cur.parts.length; j <= k; j++) cur.parts.push(makePart(j));
+    sheet.appendChild(cur.layer);
     marks();
   }
   function marks(){
@@ -1026,23 +1161,29 @@ const gpJs = `
   }
   function next(){
     if (!cur || k >= cur.g.part.length - 1) return;
-    k++;
-    var el = addPart(k, true);
-    marks();
-    var top = el.getBoundingClientRect().top - stage.getBoundingClientRect().top + stage.scrollTop;
-    var bottom = top + el.offsetHeight;
+    k++; build();
+    var el = cur.parts[k]; el.classList.remove("fresh"); void el.offsetWidth; el.classList.add("fresh");
+    var top = el.getBoundingClientRect().top - stage.getBoundingClientRect().top + stage.scrollTop, bottom = top + el.offsetHeight;
     if (bottom > stage.scrollTop + stage.clientHeight - 20) stage.scrollTo({ top: Math.max(0, bottom - stage.clientHeight + 40), behavior: "smooth" });
   }
-  function prev(){
-    if (!cur || k === 0) return;
-    k--;
-    var last = sheet.lastElementChild; if (last) last.remove();
-    marks();
+  function prev(){ if (!cur || k === 0) return; k--; build(); }
+  // anywhere on the sheet: click an empty spot and write there
+  function freeWrite(e){
+    if (e.target.closest(".fw,.gx,.mq,input")) return;
+    var r = sheet.getBoundingClientRect(), d = document.createElement("div");
+    d.className = "fw"; d.contentEditable = "true"; d.spellcheck = false;
+    var fs = Math.round(r.width / 34);                    // about the size of the book text on the sheet
+    d.style.fontSize = fs + "px";
+    d.style.left = (e.clientX - r.left) + "px"; d.style.top = (e.clientY - r.top - fs * 0.7) + "px";
+    keepKeys(d);
+    d.addEventListener("keydown", function(ev){ if (ev.key === "Enter" && !ev.shiftKey) { ev.preventDefault(); d.blur(); } });
+    d.addEventListener("blur", function(){ if (!d.textContent.trim()) d.remove(); });
+    cur.layer.appendChild(d); d.focus();
   }
-  function open(pageKey, col, from){
+  function open(pageKey, col){
     var g = GRAM[pageKey] && GRAM[pageKey][col], page = document.querySelector('.page[data-key="' + pageKey + '"]');
     if (!g || !page) return false;
-    cur = { g: g, page: page, key: pageKey }; k = 0;
+    cur = { g: g, page: page, key: pageKey }; k = 0; sheet = null;
     lbl.innerHTML = ""; lbl.textContent = g.title;
     var sm = document.createElement("small"); sm.textContent = "grammatika"; lbl.appendChild(sm);
     steps.innerHTML = "";
@@ -1052,13 +1193,18 @@ const gpJs = `
     gp.classList.add("on"); build(); stage.scrollTop = 0; nextB.focus();
     return true;
   }
-  function close(){ gp.classList.remove("on"); stage.innerHTML = ""; cur = null; sheet = null; }
+  function close(){
+    if (cur) (cur.parts || []).forEach(function(w){ if (w.cleanup) w.cleanup(); });
+    gp.classList.remove("on"); stage.innerHTML = ""; cur = null; sheet = null;
+  }
   nextB.addEventListener("click", next);
   prevB.addEventListener("click", prev);
   gp.querySelector(".x").addEventListener("click", close);
   pgB.addEventListener("click", function(){ var key = cur.key; close(); if (window.gpJump) window.gpJump(key); });
   document.addEventListener("keydown", function(e){
     if (!cur) return;
+    var t = e.target;
+    if (t && (t.isContentEditable || t.tagName === "INPUT")) return;       // typing: leave the keys alone
     e.stopPropagation();
     if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { e.preventDefault(); nextB.click(); }
     if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); prevB.click(); }

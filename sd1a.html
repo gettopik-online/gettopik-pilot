@@ -864,6 +864,34 @@ tspan.gg { text-decoration-color:#0E9F6E; }
   #gp .sheet{margin:0 auto;background:#fff;box-sizing:border-box;padding:44px 44px 60px;box-shadow:0 2px 14px rgba(60,40,20,.12);
     display:flex;flex-direction:column;align-items:center;gap:18px}
   #gp .part{position:relative;flex:none}
+  #gp .sheet{position:relative;cursor:text}
+  #gp .flayer{position:absolute;inset:0;pointer-events:none}
+  #gp .fw{position:absolute;pointer-events:auto;min-width:14px;padding:0 3px;border-radius:4px;outline:none;white-space:pre;
+    font:400 18px/1.35 "Malgun Gothic","맑은 고딕","Noto Sans KR",sans-serif;color:#2C6FB7}
+  #gp .fw:hover{background:rgba(44,111,183,.06)}
+  #gp .fw:focus{background:rgba(44,111,183,.08);box-shadow:0 0 0 1px rgba(44,111,183,.45)}
+  #gp .gx{position:absolute;z-index:2;white-space:nowrap;padding:0 2px;border-radius:3px;outline:none;cursor:text;line-height:1.05;
+    font-family:"Malgun Gothic","맑은 고딕","Noto Sans KR",sans-serif;color:#2C6FB7;animation:gpFade .3s ease-out}
+  #gp .gx[hidden]{display:none}
+  #gp .gx:focus{background:rgba(44,111,183,.10);box-shadow:0 0 0 1px rgba(44,111,183,.45)}
+  @keyframes gpFade{from{opacity:0}to{opacity:1}}
+  #gp .mq{position:absolute;right:0;top:4px;z-index:3;display:flex;align-items:center;gap:6px;cursor:default}
+  #gp .mq button{height:32px;border-radius:16px;font:700 14px/1 "Malgun Gothic",sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+  #gp .mq button svg{width:16px;height:16px}
+  #gp .mt{padding:0 13px 0 10px;border:1px solid #F3CDB6;background:#FFFBF7;color:#C8561E;font-variant-numeric:tabular-nums}
+  #gp .mt.run{background:#F26B2A;border-color:#F26B2A;color:#fff}
+  #gp .mt.hold{background:#8A94A6;border-color:#8A94A6;color:#fff}
+  #gp .mt.end{background:#E8264A;border-color:#E8264A;color:#fff}
+  #gp .mt input{width:58px;height:22px;border:0;border-radius:6px;padding:0 4px;text-align:center;font:700 14px/1 "Malgun Gothic",sans-serif;
+    color:#3A2A20;outline:1.5px solid #F26B2A;background:#fff}
+  #gp .mt input::placeholder{color:#C9A48E}
+  #gp .mx{width:32px;justify-content:center;border:1px solid #E1DDD8;background:#fff;color:#9A8577;font-size:18px}
+  #gp .mx[hidden],#gp .ma[hidden]{display:none}
+  #gp .ma{padding:0 13px 0 10px;border:1px solid #E1DDD8;background:#F7F5F2;color:#B7AFA6}
+  #gp .ma[disabled]{cursor:not-allowed}
+  #gp .ma:not([disabled]){border-color:#F3CDB6;background:#FFF6EF;color:#C8561E;animation:gpReady .5s cubic-bezier(.3,1.6,.5,1)}
+  #gp .ma.on{background:#F26B2A;border-color:#F26B2A;color:#fff}
+  @keyframes gpReady{0%{transform:scale(.85)}60%{transform:scale(1.08)}100%{transform:none}}
   #gp .part.fresh{animation:gpDrop .45s cubic-bezier(.2,.8,.3,1)}
   @keyframes gpDrop{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
   @media (prefers-reduced-motion:reduce){#gp .part.fresh{animation:none}}
@@ -2452,19 +2480,21 @@ tspan.gg { text-decoration-color:#0E9F6E; }
   });
 })();
 </script>
-<script>window.GRAM = {"p81":{"L":{"title":"은/는","part":[["Grammatika",[32,77.9,292,111.5]],["Rasmli misol",[32,113.5,292,191.3]],["Qoida",[32,192.3,292,227.5]],["Misollar",[32,280.8,292,345.7]],["Jadval",[32,230.5,292,280.8]],["Mashq",[32,350.7,292,796]]]},"R":{"title":"이에요/예요","part":[["Grammatika",[307,77.9,567,111.5]],["Rasmli misol",[307,113.5,567,191.3]],["Qoida",[307,192.3,567,227.5]],["Misollar",[307,280.8,567,345.7]],["Jadval",[307,230.5,567,280.8]],["Mashq",[307,350.7,567,796]]]}},"p82":{"L":{"title":"이에요/예요?","part":[["Grammatika",[32,77.9,292,111.5]],["Rasmli misol",[32,113.5,292,191.3]],["Qoida",[32,192.3,292,242.5]],["Misollar",[32,295.8,292,389.2]],["Jadval",[32,245.5,292,295.8]],["Mashq",[32,394.2,292,796]]]},"R":{"title":"이/가 아니에요","part":[["Grammatika",[307,77.9,567,111.5]],["Rasmli misol",[307,113.5,567,191.3]],["Qoida",[307,192.3,567,242.5]],["Misollar",[307,323.5,567,402.7]],["Jadval",[307,245.5,567,323.5]],["Mashq",[307,407.7,567,796]]]}},"p83":{"L":{"title":"이거/그거/저거는 ~이에요/예요","part":[["Grammatika",[32,76.5,292,108.8]],["Rasmli misol",[32,110.8,292,168.8]],["Qoida",[32,169.8,292,199]],["Misollar",[32,260.5,292,317.3]],["Jadval",[32,202,292,260.5]],["TIPS",[32,324.3,292,390.2]],["Mashq",[32,397.2,292,796]]]},"R":{"title":"(의) 명","part":[["Grammatika",[307,77.9,567,111.5]],["Rasmli misol",[307,113.5,567,191.3]],["Qoida",[307,192.3,567,227.5]],["Misollar",[307,280.8,567,345.7]],["Jadval",[307,230.5,567,280.8]],["Mashq",[307,350.7,567,796]]]}},"p84":{"L":{"title":"이/그/저 + 명","part":[["Grammatika",[32,77.9,292,111.5]],["Rasmli misol",[32,113.5,292,191.3]],["Qoida",[32,192.3,292,227.5]],["Misollar",[32,316.8,292,381.7]],["Jadval",[32,230.5,292,316.8]],["Mashq",[32,386.7,292,796]]]},"R":{"title":"이/가 있어요/없어요","part":[["Grammatika",[307,77.9,567,111.5]],["Rasmli misol",[307,113.5,567,191.3]],["Qoida",[307,192.3,567,227.5]],["Misollar",[307,280.8,567,348.8]],["Jadval",[307,230.5,567,280.8]],["TIPS",[307,355.8,567,397.7]],["Mashq",[307,404.7,567,796]]]}},"p85":{"L":{"title":"하고","part":[["Grammatika",[32,76.5,292,108]],["Rasmli misol",[32,110,292,168.8]],["Qoida",[32,169.8,292,199]],["Misollar",[32,284.5,292,327.8]],["Jadval",[32,202,292,284.5]],["TIPS",[32,334.8,292,400.7]],["Mashq",[32,407.7,292,796]]]},"R":{"title":"주세요","part":[["Grammatika",[307,77.9,567,110.4]],["Rasmli misol",[307,112.4,567,191.3]],["Qoida",[307,192.3,567,212.5]],["Misollar",[307,280,567,333.8]],["Jadval",[307,215.5,567,280]],["TIPS",[307,340.8,567,401.4]],["Mashq",[307,408.4,567,796]]]}},"p86":{"L":{"title":"에 있어요/없어요","part":[["Grammatika",[32,77.9,292,111.5]],["Rasmli misol",[32,113.5,292,191.3]],["Qoida",[32,192.3,292,212.5]],["Misollar",[32,288.3,292,356.3]],["Jadval",[32,215.5,292,288.3]],["TIPS",[32,363.3,292,417.2]],["Mashq",[32,424.2,292,796]]]},"R":{"title":"앞/뒤/옆/위/아래","part":[["Grammatika",[307,76.5,567,108.8]],["Rasmli misol",[307,110.8,567,168.8]],["Qoida",[307,169.8,567,199]],["Misollar",[307,278.5,567,321.8]],["Jadval",[307,202,567,278.5]],["TIPS",[307,328.8,567,383.4]],["Mashq",[307,390.4,567,796]]]}},"p87":{"L":{"title":"-아요/어요","part":[["Grammatika",[32,76.5,292,108.8]],["Rasmli misol",[32,110.8,292,168.8]],["Qoida",[32,169.8,292,211.7]],["Misollar",[32,297.3,292,367.4]],["Jadval",[32,214.7,292,297.3]],["Mashq",[32,372.4,292,796]]]},"R":{"title":"을/를","part":[["Grammatika",[307,77.9,567,111.5]],["Rasmli misol",[307,113.5,567,191.3]],["Qoida",[307,192.3,567,212.5]],["Misollar",[307,265.8,567,320.3]],["Jadval",[307,215.5,567,265.8]],["TIPS",[307,327.3,567,368.4]],["Mashq",[307,375.4,567,796]]]}},"p88":{"L":{"title":"에 가다/오다","part":[["Grammatika",[32,77.9,292,111.5]],["Rasmli misol",[32,113.5,292,191.3]],["Qoida",[32,192.3,292,212.5]],["Misollar",[32,265.8,292,334.5]],["Jadval",[32,215.5,292,265.8]],["TIPS",[32,341.5,292,382.7]],["Mashq",[32,389.7,292,796]]]},"R":{"title":"에서","part":[["Grammatika",[307,77.9,567,110.4]],["Rasmli misol",[307,112.4,567,191.3]],["Qoida",[307,192.3,567,212.5]],["Misollar",[307,244,567,297.8]],["Jadval",[307,215.5,567,244]],["TIPS",[307,304.8,567,346.7]],["Mashq",[307,353.7,567,796]]]}},"p89":{"L":{"title":"이/가 + 형-아요/어요","part":[["Grammatika",[32,76.5,292,108.8]],["Rasmli misol",[32,110.8,292,168.8]],["Qoida",[32,169.8,292,224.5]],["Misollar",[32,345.3,292,402.7]],["Jadval",[32,227.5,292,345.3]],["Mashq",[32,407.7,292,796]]]},"R":{"title":"안","part":[["Grammatika",[307,77.9,567,110.4]],["Rasmli misol",[307,112.4,567,191.3]],["Qoida",[307,192.3,567,212.5]],["Misollar",[307,280,567,333.8]],["Jadval",[307,215.5,567,280]],["TIPS",[307,340.8,567,401.4]],["Mashq",[307,408.4,567,796]]]}},"p90":{"L":{"title":"개/병/잔/그릇","part":[["Grammatika",[32,76.5,292,108.8]],["Rasmli misol",[32,110.8,292,168.8]],["Qoida",[32,169.8,292,199]],["Misollar",[32,307.8,292,351]],["Jadval",[32,202,292,307.8]],["TIPS",[32,358,292,396.2]],["Mashq",[32,403.2,292,796]]]},"R":{"title":"가격","part":[["Grammatika",[307,76.5,567,108]],["Rasmli misol",[307,110,567,168.8]],["Qoida",[307,169.8,567,187]],["Misollar",[307,289.8,567,346.5]],["Jadval",[307,190,567,289.8]],["TIPS",[307,353.5,567,419.4]],["Mashq",[307,426.4,567,796]]]}},"p91":{"L":{"title":"에 (시간)","part":[["Grammatika",[32,77.9,292,111.5]],["Rasmli misol",[32,113.5,292,191.3]],["Qoida",[32,192.3,292,212.5]],["Misollar",[32,294.3,292,362.3]],["Jadval",[32,215.5,292,294.3]],["TIPS",[32,369.3,292,411.2]],["Mashq",[32,418.2,292,796]]]},"R":{"title":"도","part":[["Grammatika",[307,77.9,567,110.4]],["Rasmli misol",[307,112.4,567,191.3]],["Qoida",[307,192.3,567,227.5]],["Misollar",[307,308.5,567,373.4]],["Jadval",[307,230.5,567,308.5]],["Mashq",[307,378.4,567,796]]]}},"p92":{"L":{"title":"-(으)ㄹ 거예요","part":[["Grammatika",[32,77.9,292,111.5]],["Rasmli misol",[32,113.5,292,191.3]],["Qoida",[32,192.3,292,212.5]],["Misollar",[32,288.3,292,356.3]],["Jadval",[32,215.5,292,288.3]],["TIPS",[32,363.3,292,405.2]],["Mashq",[32,412.2,292,796]]]},"R":{"title":"만","part":[["Grammatika",[307,77.9,567,110.4]],["Rasmli misol",[307,112.4,567,191.3]],["Qoida",[307,192.3,567,242.5]],["Misollar",[307,323.5,567,388.4]],["Jadval",[307,245.5,567,323.5]],["Mashq",[307,393.4,567,796]]]}},"p93":{"L":{"title":"시간","part":[["Grammatika",[32,76.5,292,108]],["Rasmli misol",[32,110,292,168.8]],["Qoida",[32,169.8,292,199]],["Misollar",[32,284.5,292,341.3]],["Jadval",[32,202,292,284.5]],["TIPS",[32,348.3,292,413.4]],["Mashq",[32,420.4,292,796]]]},"R":{"title":"부터 ~ 까지","part":[["Grammatika",[307,77.9,567,111.5]],["Rasmli misol",[307,113.5,567,191.3]],["Qoida",[307,192.3,567,212.5]],["Misollar",[307,302.5,567,356.3]],["Jadval",[307,215.5,567,302.5]],["TIPS",[307,363.3,567,405.2]],["Mashq",[307,412.2,567,796]]]}},"p94":{"L":{"title":"-고","part":[["Grammatika",[32,76.5,292,108.8]],["Rasmli misol",[32,110.8,292,168.8]],["Qoida",[32,169.8,292,211.7]],["Misollar",[32,279.3,292,323.3]],["Jadval",[32,214.7,292,279.3]],["TIPS",[32,330.3,292,384.9]],["Mashq",[32,391.9,292,796]]]},"R":{"title":"-았어요/었어요","part":[["Grammatika",[307,76.5,567,108.8]],["Rasmli misol",[307,110.8,567,168.8]],["Qoida",[307,169.8,567,199]],["Misollar",[307,319.8,567,363]],["Jadval",[307,202,567,319.8]],["TIPS",[307,370,567,396.9]],["Mashq",[307,403.9,567,796]]]}},"p95":{"L":{"title":"(같이) -아요/어요","part":[["Grammatika",[32,77.9,292,111.5]],["Rasmli misol",[32,113.5,292,191.3]],["Qoida",[32,192.3,292,227.5]],["Misollar",[32,259,292,327]],["Jadval",[32,230.5,292,259]],["TIPS",[32,334,292,375.9]],["Mashq",[32,382.9,292,796]]]},"R":{"title":"-(으)ㄹ까요?","part":[["Grammatika",[307,77.9,567,111.5]],["Rasmli misol",[307,113.5,567,191.3]],["Qoida",[307,192.3,567,227.5]],["Misollar",[307,303.3,567,371.3]],["Jadval",[307,230.5,567,303.3]],["TIPS",[307,378.3,567,420.2]],["Mashq",[307,427.2,567,796]]]}},"p96":{"L":{"title":"'ㅂ' 불규칙","part":[["Grammatika",[32,76.5,292,108.8]],["Rasmli misol",[32,110.8,292,168.8]],["Qoida",[32,169.8,292,199]],["Misollar",[32,331.8,292,388.4]],["Jadval",[32,202,292,331.8]],["Mashq",[32,393.4,292,796]]]},"R":{"title":"못","part":[["Grammatika",[307,77.9,567,110.4]],["Rasmli misol",[307,112.4,567,191.3]],["Qoida",[307,192.3,567,227.5]],["Misollar",[307,280.8,567,334.5]],["Jadval",[307,230.5,567,280.8]],["TIPS",[307,341.5,567,402.2]],["Mashq",[307,409.2,567,796]]]}}};</script>
+<script>window.GRAM = {"p81":{"L":{"title":"은/는","part":[["Grammatika",[32,77.9,292,111.5]],["Rasmli misol",[32,113.5,292,191.3]],["Qoida",[32,192.3,292,227.5]],["Misollar",[32,280.8,292,345.7]],["Jadval",[32,230.5,292,280.8]],["Mashq",[32,350.7,292,796]]],"ans":{"label":"정답","marks":[{"text":[65,468.4,"민수 씨는 한국 사람이에요.",10.4,"start"]},{"text":[65,558.4,"선생님은 중국 사람이에요.",10.4,"start"]},{"text":[65,648.4,"제 이름은 보부르예요.",10.4,"start"]},{"text":[65,737.6,"딜노자 씨는 우즈베키스탄 사람이에요.",10.4,"start"]}]}},"R":{"title":"이에요/예요","part":[["Grammatika",[307,77.9,567,111.5]],["Rasmli misol",[307,113.5,567,191.3]],["Qoida",[307,192.3,567,227.5]],["Misollar",[307,280.8,567,345.7]],["Jadval",[307,230.5,567,280.8]],["Mashq",[307,350.7,567,796]]],"ans":{"label":"정답","marks":[{"text":[341,468.4,"민수 씨는 회사원이에요.",10.4,"start"]},{"text":[341,558.4,"말리카 씨는 선생님이에요.",10.4,"start"]},{"text":[341,648.4,"저는 요리사예요.",10.4,"start"]},{"text":[341,737.6,"아지즈 씨는 우즈베키스탄 사람이에요.",10.4,"start"]}]}}},"p82":{"L":{"title":"이에요/예요?","part":[["Grammatika",[32,77.9,292,111.5]],["Rasmli misol",[32,113.5,292,191.3]],["Qoida",[32,192.3,292,242.5]],["Misollar",[32,295.8,292,389.2]],["Jadval",[32,245.5,292,295.8]],["Mashq",[32,394.2,292,796]]],"ans":{"label":"정답","marks":[{"text":[82,524.6,"가수예요?",10.4,"start"]},{"text":[82,552.4,"네, 가수예요.",10.4,"start"]},{"text":[82,599.6,"일본 사람이에요?",10.4,"start"]},{"text":[82,626.6,"네, 일본 사람이에요.",10.4,"start"]},{"text":[82,673.9,"기자예요?",10.4,"start"]},{"text":[82,700.9,"네, 기자예요.",10.4,"start"]},{"text":[82,748.2,"회사원이에요?",10.4,"start"]},{"text":[82,775.9,"네, 회사원이에요.",10.4,"start"]}]}},"R":{"title":"이/가 아니에요","part":[["Grammatika",[307,77.9,567,111.5]],["Rasmli misol",[307,113.5,567,191.3]],["Qoida",[307,192.3,567,242.5]],["Misollar",[307,323.5,567,402.7]],["Jadval",[307,245.5,567,323.5]],["Mashq",[307,407.7,567,796]]],"ans":{"label":"정답","marks":[{"text":[341,538.2,"아니요, 학생이 아니에요. 회사원이에요.",10.4,"start"]},{"text":[341,610.2,"아니요, 중국 사람이 아니에요. 일본 사람이에요.",10.4,"start"]},{"text":[341,682.9,"아니요, 의사가 아니에요. 간호사예요.",10.4,"start"]},{"text":[341,755.6,"아니요, 요리사가 아니에요. 경찰이에요.",10.4,"start"]}]}}},"p83":{"L":{"title":"이거/그거/저거는 ~이에요/예요","part":[["Grammatika",[32,76.5,292,108.8]],["Rasmli misol",[32,110.8,292,168.8]],["Qoida",[32,169.8,292,199]],["Misollar",[32,260.5,292,317.3]],["Jadval",[32,202,292,260.5]],["TIPS",[32,324.3,292,390.2]],["Mashq",[32,397.2,292,796]]],"ans":null},"R":{"title":"(의) 명","part":[["Grammatika",[307,77.9,567,111.5]],["Rasmli misol",[307,113.5,567,191.3]],["Qoida",[307,192.3,567,227.5]],["Misollar",[307,280.8,567,345.7]],["Jadval",[307,230.5,567,280.8]],["Mashq",[307,350.7,567,796]]],"ans":null}},"p84":{"L":{"title":"이/그/저 + 명","part":[["Grammatika",[32,77.9,292,111.5]],["Rasmli misol",[32,113.5,292,191.3]],["Qoida",[32,192.3,292,227.5]],["Misollar",[32,316.8,292,381.7]],["Jadval",[32,230.5,292,316.8]],["Mashq",[32,386.7,292,796]]],"ans":null},"R":{"title":"이/가 있어요/없어요","part":[["Grammatika",[307,77.9,567,111.5]],["Rasmli misol",[307,113.5,567,191.3]],["Qoida",[307,192.3,567,227.5]],["Misollar",[307,280.8,567,348.8]],["Jadval",[307,230.5,567,280.8]],["TIPS",[307,355.8,567,397.7]],["Mashq",[307,404.7,567,796]]],"ans":null}},"p85":{"L":{"title":"하고","part":[["Grammatika",[32,76.5,292,108]],["Rasmli misol",[32,110,292,168.8]],["Qoida",[32,169.8,292,199]],["Misollar",[32,284.5,292,327.8]],["Jadval",[32,202,292,284.5]],["TIPS",[32,334.8,292,400.7]],["Mashq",[32,407.7,292,796]]],"ans":null},"R":{"title":"주세요","part":[["Grammatika",[307,77.9,567,110.4]],["Rasmli misol",[307,112.4,567,191.3]],["Qoida",[307,192.3,567,212.5]],["Misollar",[307,280,567,333.8]],["Jadval",[307,215.5,567,280]],["TIPS",[307,340.8,567,401.4]],["Mashq",[307,408.4,567,796]]],"ans":null}},"p86":{"L":{"title":"에 있어요/없어요","part":[["Grammatika",[32,77.9,292,111.5]],["Rasmli misol",[32,113.5,292,191.3]],["Qoida",[32,192.3,292,212.5]],["Misollar",[32,288.3,292,356.3]],["Jadval",[32,215.5,292,288.3]],["TIPS",[32,363.3,292,417.2]],["Mashq",[32,424.2,292,796]]],"ans":null},"R":{"title":"앞/뒤/옆/위/아래","part":[["Grammatika",[307,76.5,567,108.8]],["Rasmli misol",[307,110.8,567,168.8]],["Qoida",[307,169.8,567,199]],["Misollar",[307,278.5,567,321.8]],["Jadval",[307,202,567,278.5]],["TIPS",[307,328.8,567,383.4]],["Mashq",[307,390.4,567,796]]],"ans":null}},"p87":{"L":{"title":"-아요/어요","part":[["Grammatika",[32,76.5,292,108.8]],["Rasmli misol",[32,110.8,292,168.8]],["Qoida",[32,169.8,292,211.7]],["Misollar",[32,297.3,292,367.4]],["Jadval",[32,214.7,292,297.3]],["Mashq",[32,372.4,292,796]]],"ans":null},"R":{"title":"을/를","part":[["Grammatika",[307,77.9,567,111.5]],["Rasmli misol",[307,113.5,567,191.3]],["Qoida",[307,192.3,567,212.5]],["Misollar",[307,265.8,567,320.3]],["Jadval",[307,215.5,567,265.8]],["TIPS",[307,327.3,567,368.4]],["Mashq",[307,375.4,567,796]]],"ans":null}},"p88":{"L":{"title":"에 가다/오다","part":[["Grammatika",[32,77.9,292,111.5]],["Rasmli misol",[32,113.5,292,191.3]],["Qoida",[32,192.3,292,212.5]],["Misollar",[32,265.8,292,334.5]],["Jadval",[32,215.5,292,265.8]],["TIPS",[32,341.5,292,382.7]],["Mashq",[32,389.7,292,796]]],"ans":null},"R":{"title":"에서","part":[["Grammatika",[307,77.9,567,110.4]],["Rasmli misol",[307,112.4,567,191.3]],["Qoida",[307,192.3,567,212.5]],["Misollar",[307,244,567,297.8]],["Jadval",[307,215.5,567,244]],["TIPS",[307,304.8,567,346.7]],["Mashq",[307,353.7,567,796]]],"ans":null}},"p89":{"L":{"title":"이/가 + 형-아요/어요","part":[["Grammatika",[32,76.5,292,108.8]],["Rasmli misol",[32,110.8,292,168.8]],["Qoida",[32,169.8,292,224.5]],["Misollar",[32,345.3,292,402.7]],["Jadval",[32,227.5,292,345.3]],["Mashq",[32,407.7,292,796]]],"ans":null},"R":{"title":"안","part":[["Grammatika",[307,77.9,567,110.4]],["Rasmli misol",[307,112.4,567,191.3]],["Qoida",[307,192.3,567,212.5]],["Misollar",[307,280,567,333.8]],["Jadval",[307,215.5,567,280]],["TIPS",[307,340.8,567,401.4]],["Mashq",[307,408.4,567,796]]],"ans":null}},"p90":{"L":{"title":"개/병/잔/그릇","part":[["Grammatika",[32,76.5,292,108.8]],["Rasmli misol",[32,110.8,292,168.8]],["Qoida",[32,169.8,292,199]],["Misollar",[32,307.8,292,351]],["Jadval",[32,202,292,307.8]],["TIPS",[32,358,292,396.2]],["Mashq",[32,403.2,292,796]]],"ans":null},"R":{"title":"가격","part":[["Grammatika",[307,76.5,567,108]],["Rasmli misol",[307,110,567,168.8]],["Qoida",[307,169.8,567,187]],["Misollar",[307,289.8,567,346.5]],["Jadval",[307,190,567,289.8]],["TIPS",[307,353.5,567,419.4]],["Mashq",[307,426.4,567,796]]],"ans":null}},"p91":{"L":{"title":"에 (시간)","part":[["Grammatika",[32,77.9,292,111.5]],["Rasmli misol",[32,113.5,292,191.3]],["Qoida",[32,192.3,292,212.5]],["Misollar",[32,294.3,292,362.3]],["Jadval",[32,215.5,292,294.3]],["TIPS",[32,369.3,292,411.2]],["Mashq",[32,418.2,292,796]]],"ans":null},"R":{"title":"도","part":[["Grammatika",[307,77.9,567,110.4]],["Rasmli misol",[307,112.4,567,191.3]],["Qoida",[307,192.3,567,227.5]],["Misollar",[307,308.5,567,373.4]],["Jadval",[307,230.5,567,308.5]],["Mashq",[307,378.4,567,796]]],"ans":null}},"p92":{"L":{"title":"-(으)ㄹ 거예요","part":[["Grammatika",[32,77.9,292,111.5]],["Rasmli misol",[32,113.5,292,191.3]],["Qoida",[32,192.3,292,212.5]],["Misollar",[32,288.3,292,356.3]],["Jadval",[32,215.5,292,288.3]],["TIPS",[32,363.3,292,405.2]],["Mashq",[32,412.2,292,796]]],"ans":null},"R":{"title":"만","part":[["Grammatika",[307,77.9,567,110.4]],["Rasmli misol",[307,112.4,567,191.3]],["Qoida",[307,192.3,567,242.5]],["Misollar",[307,323.5,567,388.4]],["Jadval",[307,245.5,567,323.5]],["Mashq",[307,393.4,567,796]]],"ans":null}},"p93":{"L":{"title":"시간","part":[["Grammatika",[32,76.5,292,108]],["Rasmli misol",[32,110,292,168.8]],["Qoida",[32,169.8,292,199]],["Misollar",[32,284.5,292,341.3]],["Jadval",[32,202,292,284.5]],["TIPS",[32,348.3,292,413.4]],["Mashq",[32,420.4,292,796]]],"ans":null},"R":{"title":"부터 ~ 까지","part":[["Grammatika",[307,77.9,567,111.5]],["Rasmli misol",[307,113.5,567,191.3]],["Qoida",[307,192.3,567,212.5]],["Misollar",[307,302.5,567,356.3]],["Jadval",[307,215.5,567,302.5]],["TIPS",[307,363.3,567,405.2]],["Mashq",[307,412.2,567,796]]],"ans":null}},"p94":{"L":{"title":"-고","part":[["Grammatika",[32,76.5,292,108.8]],["Rasmli misol",[32,110.8,292,168.8]],["Qoida",[32,169.8,292,211.7]],["Misollar",[32,279.3,292,323.3]],["Jadval",[32,214.7,292,279.3]],["TIPS",[32,330.3,292,384.9]],["Mashq",[32,391.9,292,796]]],"ans":null},"R":{"title":"-았어요/었어요","part":[["Grammatika",[307,76.5,567,108.8]],["Rasmli misol",[307,110.8,567,168.8]],["Qoida",[307,169.8,567,199]],["Misollar",[307,319.8,567,363]],["Jadval",[307,202,567,319.8]],["TIPS",[307,370,567,396.9]],["Mashq",[307,403.9,567,796]]],"ans":null}},"p95":{"L":{"title":"(같이) -아요/어요","part":[["Grammatika",[32,77.9,292,111.5]],["Rasmli misol",[32,113.5,292,191.3]],["Qoida",[32,192.3,292,227.5]],["Misollar",[32,259,292,327]],["Jadval",[32,230.5,292,259]],["TIPS",[32,334,292,375.9]],["Mashq",[32,382.9,292,796]]],"ans":null},"R":{"title":"-(으)ㄹ까요?","part":[["Grammatika",[307,77.9,567,111.5]],["Rasmli misol",[307,113.5,567,191.3]],["Qoida",[307,192.3,567,227.5]],["Misollar",[307,303.3,567,371.3]],["Jadval",[307,230.5,567,303.3]],["TIPS",[307,378.3,567,420.2]],["Mashq",[307,427.2,567,796]]],"ans":null}},"p96":{"L":{"title":"'ㅂ' 불규칙","part":[["Grammatika",[32,76.5,292,108.8]],["Rasmli misol",[32,110.8,292,168.8]],["Qoida",[32,169.8,292,199]],["Misollar",[32,331.8,292,388.4]],["Jadval",[32,202,292,331.8]],["Mashq",[32,393.4,292,796]]],"ans":null},"R":{"title":"못","part":[["Grammatika",[307,77.9,567,110.4]],["Rasmli misol",[307,112.4,567,191.3]],["Qoida",[307,192.3,567,227.5]],["Misollar",[307,280.8,567,334.5]],["Jadval",[307,230.5,567,280.8]],["TIPS",[307,341.5,567,402.2]],["Mashq",[307,409.2,567,796]]],"ans":null}}};</script>
 <div id="gp" role="dialog" aria-modal="true" aria-label="Grammatika">
   <div class="bar"><span class="lbl"></span><span class="steps"></span>
     <button type="button" class="pg" title="Kitobdagi betni ochish"></button><button type="button" class="x" title="Yopish (Esc)" aria-label="Yopish">×</button></div>
   <div class="stage"></div>
   <div class="nav"><button type="button" class="prev">◀ Oldingi</button><button type="button" class="next">Keyingi ▶</button></div>
 </div>
-<script id="gp-v2">
+<script id="gp-v4">
 (function(){
   var GRAM = window.GRAM || {}, PT = 96 / 72;
   var gp = document.getElementById("gp"), stage = gp.querySelector(".stage"), steps = gp.querySelector(".steps"),
       lbl = gp.querySelector(".lbl"), nextB = gp.querySelector(".next"), prevB = gp.querySelector(".prev"), pgB = gp.querySelector(".pg");
-  var cur = null, k = 0;
+  var cur = null, k = 0, sheet = null, ac = null;
+  var CLOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="13" r="8.5"/><path d="M12 8.5V13l3 2M9.5 2.5h5"/></svg>';
+  var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
   function cut(page, b){                               // a piece of the book page, rebuilt from its picture and its text
     var x0 = b[0] * PT, y0 = b[1] * PT, w = (b[2] - b[0]) * PT, h = (b[3] - b[1]) * PT;
     var box = document.createElement("div"); box.className = "cut"; box.style.width = w + "px"; box.style.height = h + "px";
@@ -2487,25 +2517,130 @@ tspan.gg { text-decoration-color:#0E9F6E; }
       els[i].style.transform = (rot ? "rotate(" + rot + ") " : "") + (Math.abs(sx - 1) > 0.01 ? "scaleX(" + sx.toFixed(4) + ")" : "");
     }
   }
+  function keepKeys(el){                               // typing stays in the field
+    el.addEventListener("keydown", function(e){ e.stopPropagation(); if (e.key === "Escape") el.blur(); });
+    el.addEventListener("pointerdown", function(e){ e.stopPropagation(); });
+    el.addEventListener("click", function(e){ e.stopPropagation(); });
+  }
+  function beep(hi){
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      if (ac.state === "suspended") ac.resume();
+      var o = ac.createOscillator(), g = ac.createGain(), len = hi ? 0.5 : 0.08;
+      o.type = "sine"; o.frequency.value = hi ? 660 : 990;
+      g.gain.setValueAtTime(0.18, ac.currentTime); g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + len);
+      o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime + len);
+    } catch (e) {}
+  }
+  function fmt(t){ t = Math.max(0, Math.ceil(t)); return ("0" + Math.floor(t / 60)).slice(-2) + ":" + ("0" + t % 60).slice(-2); }
+  function parse(v){
+    v = String(v).trim();
+    var m = v.match(/^([0-9]{0,2}) *: *([0-9]{1,2})$/);
+    if (m) return (+m[1] || 0) * 60 + +m[2];
+    if (/^[0-9]{3,4}$/.test(v)) return +v.slice(0, -2) * 60 + +v.slice(-2);
+    if (/^[0-9]{1,2}$/.test(v)) return +v * 60;
+    return null;
+  }
+
+  // the exercises: a timer and 정답 beside them; 정답 opens when the time is up, the answers can be rewritten
+  function exercise(wrap, box, b){
+    var bar = document.createElement("div"); bar.className = "mq";
+    bar.innerHTML = '<button type="button" class="mt" title="Taymer: bosing va vaqtni yozing">' + CLOCK + '<span class="tm">__:__</span></button>' +
+      '<button type="button" class="mx" title="Taymerni tozalash" aria-label="Taymerni tozalash" hidden>×</button>' +
+      '<button type="button" class="ma" disabled title="정답 (taymer tugagach ochiladi)">' + CHECK + '<span>정답</span></button>';
+    wrap.appendChild(bar);
+    var mt = bar.querySelector(".mt"), tm = bar.querySelector(".tm"), mx = bar.querySelector(".mx"), ma = bar.querySelector(".ma");
+    var total = 0, left = 0, running = false, last = 0, raf = 0, lastSec = null, typing = false;
+    var lines = [], orig = [];
+    ((cur.g.ans && cur.g.ans.marks) || []).forEach(function(m){
+      if (!m.text) return;
+      var d = document.createElement("div"); d.className = "gx"; d.contentEditable = "true"; d.spellcheck = false; d.hidden = true;
+      d.textContent = m.text[2]; orig.push(m.text[2]);
+      var fs = (m.text[3] || 10.4) * PT;
+      d.style.left = ((m.text[0] - b[0]) * PT) + "px"; d.style.top = ((m.text[1] - (m.text[3] || 10.4) * 0.86 - b[1]) * PT) + "px";
+      d.style.fontSize = fs + "px";
+      keepKeys(d); box.appendChild(d); lines.push(d);
+    });
+    if (!lines.length) ma.hidden = true;
+    function paint(){
+      var set = total > 0;
+      if (!typing) tm.textContent = set ? fmt(left) : "__:__";
+      mt.classList.toggle("run", running && left > 0);
+      mt.classList.toggle("hold", set && !running && left > 0 && left < total);
+      mt.classList.toggle("end", set && left <= 0);
+      mx.hidden = !set;
+    }
+    function tick(now){
+      if (!running) return;
+      left = Math.max(0, left - (now - last) / 1000); last = now;
+      var sec = Math.ceil(left);
+      if (sec !== lastSec) { if (sec <= 10 && sec > 0 && lastSec !== null) beep(false); lastSec = sec; }
+      if (left <= 0) { running = false; beep(true); ma.disabled = false; ma.title = "정답"; }
+      paint();
+      if (running) raf = requestAnimationFrame(tick);
+    }
+    function go(){ if (total <= 0) { ask(); return; } if (left <= 0) left = total; running = true; last = performance.now(); lastSec = null; raf = requestAnimationFrame(tick); paint(); }
+    function hold(){ running = false; cancelAnimationFrame(raf); paint(); }
+    function show(on){ lines.forEach(function(d){ d.hidden = !on; }); ma.classList.toggle("on", on); }
+    function reset(){
+      hold(); total = 0; left = 0; show(false);
+      lines.forEach(function(d, i){ d.textContent = orig[i]; });
+      ma.disabled = true; ma.title = "정답 (taymer tugagach ochiladi)"; paint();
+    }
+    function ask(){
+      if (typing) return;
+      typing = true;
+      var inp = document.createElement("input"); inp.type = "text"; inp.inputMode = "numeric"; inp.placeholder = "__:__"; inp.maxLength = 5;
+      inp.value = total > 0 ? fmt(left) : "";
+      tm.textContent = ""; tm.appendChild(inp); setTimeout(function(){ inp.focus(); inp.select(); }, 0);
+      var done = false;
+      function finish(apply){
+        if (done) return; done = true; typing = false;
+        var sec = apply ? parse(inp.value) : null;
+        if (sec && sec >= 5 && sec <= 3600) { total = sec; left = sec; lastSec = null; if (!running) { paint(); go(); return; } last = performance.now(); }
+        paint();
+      }
+      inp.addEventListener("input", function(){ var d = inp.value.replace(/[^0-9]/g, "").slice(0, 4); inp.value = d.length > 2 ? d.slice(0, -2) + ":" + d.slice(-2) : d; });
+      inp.addEventListener("keydown", function(e){ e.stopPropagation(); if (e.key === "Enter") finish(true); if (e.key === "Escape") finish(false); });
+      inp.addEventListener("blur", function(){ finish(true); });
+      inp.addEventListener("click", function(e){ e.stopPropagation(); });
+    }
+    mt.addEventListener("click", function(e){ e.stopPropagation(); if (total <= 0 || typing) { ask(); return; } if (running) hold(); else go(); });
+    tm.addEventListener("dblclick", function(e){ e.stopPropagation(); ask(); });
+    mx.addEventListener("click", function(e){ e.stopPropagation(); reset(); });
+    ma.addEventListener("click", function(e){ e.stopPropagation(); if (!ma.disabled) show(!ma.classList.contains("on")); });
+    bar.addEventListener("pointerdown", function(e){ e.stopPropagation(); });
+    wrap.cleanup = hold;
+    paint();
+  }
+
   // one clean A4 sheet; parts 0..k stand on it one under another, the newest slides in at the bottom
-  var sheet = null;
   function sheetWidth(){ return Math.min(stage.clientWidth - 60, 860); }
-  function addPart(i, animate){
+  function makePart(i){
     var part = cur.g.part[i], box = cut(cur.page, part[1]), wrap = document.createElement("div");
-    wrap.className = "part" + (animate ? " fresh" : "");
-    wrap.appendChild(box); sheet.appendChild(wrap); fitText(box);
+    wrap.className = "part"; wrap.appendChild(box);
+    sheet.appendChild(wrap); fitText(box);
     var w = parseFloat(box.style.width), h = parseFloat(box.style.height), inner = sheetWidth() - 2 * 44;
     var sc = Math.min(inner / w, i === 0 ? 2.6 : 2.4);
     box.style.transform = "scale(" + sc + ")";
     wrap.style.width = (w * sc) + "px"; wrap.style.height = (h * sc) + "px";
+    if (part[0] === "Mashq") exercise(wrap, box, part[1]);
     return wrap;
   }
-  function build(){                                    // (re)draw the sheet with parts 0..k
-    stage.innerHTML = "";
-    sheet = document.createElement("div"); sheet.className = "sheet";
-    var sw = sheetWidth(); sheet.style.width = sw + "px"; sheet.style.minHeight = (sw * 1.414) + "px";
-    stage.appendChild(sheet);
-    for (var i = 0; i <= k; i++) addPart(i, false);
+  function build(){                                    // (re)draw the sheet with parts 0..k, keeping what was already made
+    var sw = sheetWidth();
+    if (!sheet || cur.width !== sw) {
+      (cur.parts || []).forEach(function(w){ if (w.cleanup) w.cleanup(); });
+      stage.innerHTML = ""; cur.parts = []; cur.width = sw;
+      sheet = document.createElement("div"); sheet.className = "sheet";
+      sheet.style.width = sw + "px"; sheet.style.minHeight = (sw * 1.414) + "px";
+      stage.appendChild(sheet);
+      cur.layer = cur.layer || document.createElement("div"); cur.layer.className = "flayer"; sheet.appendChild(cur.layer);
+      sheet.addEventListener("click", freeWrite);
+    }
+    for (var i = 0; i < cur.parts.length; i++) cur.parts[i].style.display = i <= k ? "" : "none";
+    for (var j = cur.parts.length; j <= k; j++) cur.parts.push(makePart(j));
+    sheet.appendChild(cur.layer);
     marks();
   }
   function marks(){
@@ -2515,23 +2650,29 @@ tspan.gg { text-decoration-color:#0E9F6E; }
   }
   function next(){
     if (!cur || k >= cur.g.part.length - 1) return;
-    k++;
-    var el = addPart(k, true);
-    marks();
-    var top = el.getBoundingClientRect().top - stage.getBoundingClientRect().top + stage.scrollTop;
-    var bottom = top + el.offsetHeight;
+    k++; build();
+    var el = cur.parts[k]; el.classList.remove("fresh"); void el.offsetWidth; el.classList.add("fresh");
+    var top = el.getBoundingClientRect().top - stage.getBoundingClientRect().top + stage.scrollTop, bottom = top + el.offsetHeight;
     if (bottom > stage.scrollTop + stage.clientHeight - 20) stage.scrollTo({ top: Math.max(0, bottom - stage.clientHeight + 40), behavior: "smooth" });
   }
-  function prev(){
-    if (!cur || k === 0) return;
-    k--;
-    var last = sheet.lastElementChild; if (last) last.remove();
-    marks();
+  function prev(){ if (!cur || k === 0) return; k--; build(); }
+  // anywhere on the sheet: click an empty spot and write there
+  function freeWrite(e){
+    if (e.target.closest(".fw,.gx,.mq,input")) return;
+    var r = sheet.getBoundingClientRect(), d = document.createElement("div");
+    d.className = "fw"; d.contentEditable = "true"; d.spellcheck = false;
+    var fs = Math.round(r.width / 34);                    // about the size of the book text on the sheet
+    d.style.fontSize = fs + "px";
+    d.style.left = (e.clientX - r.left) + "px"; d.style.top = (e.clientY - r.top - fs * 0.7) + "px";
+    keepKeys(d);
+    d.addEventListener("keydown", function(ev){ if (ev.key === "Enter" && !ev.shiftKey) { ev.preventDefault(); d.blur(); } });
+    d.addEventListener("blur", function(){ if (!d.textContent.trim()) d.remove(); });
+    cur.layer.appendChild(d); d.focus();
   }
-  function open(pageKey, col, from){
+  function open(pageKey, col){
     var g = GRAM[pageKey] && GRAM[pageKey][col], page = document.querySelector('.page[data-key="' + pageKey + '"]');
     if (!g || !page) return false;
-    cur = { g: g, page: page, key: pageKey }; k = 0;
+    cur = { g: g, page: page, key: pageKey }; k = 0; sheet = null;
     lbl.innerHTML = ""; lbl.textContent = g.title;
     var sm = document.createElement("small"); sm.textContent = "grammatika"; lbl.appendChild(sm);
     steps.innerHTML = "";
@@ -2541,13 +2682,18 @@ tspan.gg { text-decoration-color:#0E9F6E; }
     gp.classList.add("on"); build(); stage.scrollTop = 0; nextB.focus();
     return true;
   }
-  function close(){ gp.classList.remove("on"); stage.innerHTML = ""; cur = null; sheet = null; }
+  function close(){
+    if (cur) (cur.parts || []).forEach(function(w){ if (w.cleanup) w.cleanup(); });
+    gp.classList.remove("on"); stage.innerHTML = ""; cur = null; sheet = null;
+  }
   nextB.addEventListener("click", next);
   prevB.addEventListener("click", prev);
   gp.querySelector(".x").addEventListener("click", close);
   pgB.addEventListener("click", function(){ var key = cur.key; close(); if (window.gpJump) window.gpJump(key); });
   document.addEventListener("keydown", function(e){
     if (!cur) return;
+    var t = e.target;
+    if (t && (t.isContentEditable || t.tagName === "INPUT")) return;       // typing: leave the keys alone
     e.stopPropagation();
     if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { e.preventDefault(); nextB.click(); }
     if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); prevB.click(); }
