@@ -125,7 +125,17 @@ const pageHtml = pages.map((p, i) => {
       : `<div class="ws${o.wrap ? " wrap" : ""}" contenteditable="true" spellcheck="false" title="Bosib yozing" ` +
         `style="${box};--fs:${((o.fs || 9) * PT).toFixed(2)}px${o.wrap ? "" : ";line-height:" + px(y1 - y0)}"></div>`;
   }).join("");
-  return `<div class="page hpage" data-key="p${i + 1}" style="height:${px(p.h)}"><img class="pbg" src="${dir}/${p.bg}" loading="lazy" decoding="async" alt="">${runs}${qa}${tools}${timers}${slots}</div>`;
+  const grefs = p.runs.filter((r) => /^\s*\d{2,3}\s*쪽\s*$/.test(r.t)).map((r) => {
+    const n = parseInt(r.t, 10), target = pages.findIndex((q) => q.n === n);
+    if (target < 0) return "";
+    const near = p.runs.filter((q) => Math.abs(q.y - r.y) < 16 && q.x > r.x - 170 && q.x < r.x + 30 && q.s < 8.6);
+    const lab = near.find((q) => q.t.trim() === "문법과");
+    const x0 = lab ? lab.x - 9 : Math.min(...near.map((q) => q.x)) - 34, x1 = Math.max(...near.map((q) => q.x + q.w)) + 6;
+    const y0 = Math.min(...near.map((q) => q.y)) - 5, y1 = Math.max(...near.map((q) => q.y + q.h)) + 5;
+    return `<a class="gref" href="#${target + 1}" data-go="p${target + 1}" data-n="${n}" title="${n}-bet: grammatika izohi" ` +
+      `style="left:${px(x0)};top:${px(y0)};width:${px(x1 - x0)};height:${px(y1 - y0)}"></a>`;
+  }).join("");
+  return `<div class="page hpage" data-key="p${i + 1}" style="height:${px(p.h)}"><img class="pbg" src="${dir}/${p.bg}" loading="lazy" decoding="async" alt="">${runs}${qa}${tools}${timers}${slots}${grefs}</div>`;
 });
 
 const css = `
@@ -193,6 +203,16 @@ const css = `
   .page.hpage .rt-an:focus-visible{outline:2px solid #1968D8;outline-offset:2px}
   @keyframes rtAn{from{opacity:0;transform:translateX(-50%) scale(.4)}to{opacity:1;transform:translateX(-50%)}}
   @media (prefers-reduced-motion:reduce){.page.hpage .rt-an{animation:none}}
+  /* 문법과 표현 box: a link to its grammar page */
+  .page.hpage .gref{position:absolute;z-index:3;border-radius:10px;cursor:pointer;transition:box-shadow .15s,background .15s}
+  .page.hpage .gref:hover{box-shadow:0 0 0 2px rgba(242,107,42,.55);background:rgba(242,107,42,.05)}
+  .page.hpage .gref:focus-visible{outline:2px solid #1968D8;outline-offset:2px}
+  #gref-back{position:fixed;left:16px;bottom:56px;z-index:600;display:none;align-items:center;gap:6px;height:32px;padding:0 14px 0 10px;
+    border:0;border-radius:16px;background:#F26B2A;color:#fff;font:700 13px/1 "Malgun Gothic",sans-serif;cursor:pointer;
+    box-shadow:0 4px 14px rgba(200,86,30,.35)}
+  #gref-back.on{display:inline-flex}
+  #gref-back:hover{background:#DD5A1C}
+  #gref-back svg{width:15px;height:15px}
   /* writing spots: invisible until pointed at; the teacher types in the book's face, in blue */
   .page.hpage .ws{position:absolute;z-index:3;box-sizing:border-box;padding:0 2px;text-align:center;white-space:nowrap;overflow:hidden;
     font-family:"Malgun Gothic","맑은 고딕","Noto Sans KR","Apple SD Gothic Neo",sans-serif;font-size:var(--fs);color:#2C6FB7;
@@ -875,6 +895,33 @@ const wsJs = `
 </script>
 `;
 
+// grammar links: jump to the page, and a button brings the teacher back to the exact spot of the lesson
+const grefJs = `
+<button type="button" id="gref-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+  stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg><span></span></button>
+<script id="gref-v1">
+(function(){
+  var so = document.getElementById("stage-outer"), back = document.getElementById("gref-back"), from = null;
+  function top(el){ return so.scrollTop + el.getBoundingClientRect().top - so.getBoundingClientRect().top; }
+  document.addEventListener("click", function(e){
+    var a = e.target.closest && e.target.closest(".gref");
+    if (!a) return;
+    e.preventDefault(); e.stopPropagation();
+    var page = a.closest(".page"), n = page.dataset.key.slice(1), to = document.querySelector('.page[data-key="' + a.dataset.go + '"]');
+    if (!to) return;
+    from = so.scrollTop;
+    back.querySelector("span").textContent = n + "-betga qaytish";
+    back.classList.add("on");
+    so.scrollTop = top(to);
+  });
+  back.addEventListener("click", function(){
+    if (from !== null) so.scrollTop = from;
+    from = null; back.classList.remove("on");
+  });
+})();
+</script>
+`;
+
 const tpl = fs.readFileSync("yozish.html", "utf8");
 const lines = tpl.split("\n");
 const coverLine = lines.findIndex((l) => l.includes('data-key="cover"'));
@@ -884,7 +931,7 @@ if (coverLine < 0 || firstImg < 0) throw new Error("template markers not found")
 
 let out = [...lines.slice(0, coverLine), ...pageHtml, ...lines.slice(lastImg + 1)].join("\n");
 out = out.replace("</style>", css + "</style>");
-out = out.replace("</body>", fitJs + (qrs.length ? `<script>window.QA_LISTEN = ${JSON.stringify(LISTEN)};</script>` + qaJs : "") + (out.includes('class="rt') ? rtJs : "") + (out.includes('class="ws') || out.includes('class="wck') ? wsJs : "") + "</body>");
+out = out.replace("</body>", fitJs + (qrs.length ? `<script>window.QA_LISTEN = ${JSON.stringify(LISTEN)};</script>` + qaJs : "") + (out.includes('class="rt') ? rtJs : "") + (out.includes('class="ws') || out.includes('class="wck') ? wsJs : "") + (out.includes('class="gref"') ? grefJs : "") + "</body>");
 // no tap-to-translate on these books: skip the dictionary pass over book pages
 out = out.replace("    var root = pagesEls[key];", "    var root = pagesEls[key];\n    if (root.classList.contains(\"hpage\")) return;");
 const order = pages.map((_, i) => "p" + (i + 1));
