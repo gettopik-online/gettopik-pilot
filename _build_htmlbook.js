@@ -47,6 +47,7 @@ function handLine([x1, y1, x2, y2]) {
 // reading time per section (minutes); a book can override it in html_books/<key>/<key>.timers.json {"읽기 1": 3, ...}
 const tmFile = `${dir}/${key}.timers.json`;
 const TIMER = Object.assign({ "읽기 1": 3, "읽기 2": 5 }, fs.existsSync(tmFile) ? JSON.parse(fs.readFileSync(tmFile, "utf8")) : {});
+delete TIMER._;
 const ALLQR = fs.existsSync(qrFile) ? JSON.parse(fs.readFileSync(qrFile, "utf8")) : [];
 // 정답 for 읽기 sections, keyed "<page>:<section>" (html_books/<key>/<key>.answers.json)
 const anFile = `${dir}/${key}.answers.json`;
@@ -76,7 +77,7 @@ const pageHtml = pages.map((p, i) => {
       (marks ? `<svg class="qa-marks" data-yt="${q.yt}" viewBox="0 0 ${p.w} ${p.h}" preserveAspectRatio="none" aria-hidden="true">${marks}</svg>` : "");
   }).join("");
   const timers = p.runs.filter((r) => /^\s*읽기\s*[12]\s*$/.test(r.t)).map((r) => {
-    const sec = r.t.replace(/\s+/g, " ").trim(), min = TIMER[sec];
+    const sec = r.t.replace(/\s+/g, " ").trim(), min = TIMER[`${i + 1}:${sec}`] || TIMER[sec];
     if (!min) return "";
     const code = ALLQR.find((q) => q.page === i + 1 && new RegExp(sec.replace(" ", "\\s*") + "(\\s|$)").test(q.title || ""));
     const id = `${i + 1}:${sec}`, A = ANSWERS[id];
@@ -84,7 +85,9 @@ const pageHtml = pages.map((p, i) => {
     const answer = !A ? "" :
       `<button type="button" class="rt-an" data-id="${id}" hidden title="정답 — to'g'ri javob" style="left:${px(cx + 15 / PT * 1.3)};top:${px(cy)}">정답</button>` +
       `<svg class="qa-marks" data-id="${id}" viewBox="0 0 ${p.w} ${p.h}" preserveAspectRatio="none" aria-hidden="true">` +
-      (A.marks || []).map((m, k) => m.circle ? `<path pathLength="1" d="${handCircle(m.circle, i * 5 + k + 11)}"/>` : `<path pathLength="1" d="${handLine(m.line)}"/>`).join("") + `</svg>`;
+      (A.marks || []).map((m, k) => m.circle ? `<path pathLength="1" d="${handCircle(m.circle, i * 5 + k + 11)}"/>`
+        : m.text ? `<text x="${m.text[0]}" y="${m.text[1]}" font-size="${m.text[3] || 11}" style="animation-delay:${(0.15 + k * 0.25).toFixed(2)}s">${esc(m.text[2])}</text>`
+        : `<path pathLength="1" d="${handLine(m.line)}"/>`).join("") + `</svg>`;
     return code
       ? answer + `<button type="button" class="rt c" data-id="${id}" data-min="${min}" title="${sec}: ${min} daqiqa — bosing, taymer boshlanadi" aria-label="${sec} taymeri, ${min} daqiqa" style="left:${px(code.x + code.w / 2)};top:${px(code.y + code.h + 4)}">${CLOCK}</button>`
       : answer + `<button type="button" class="rt" data-id="${id}" data-min="${min}" title="${sec}: ${min} daqiqa — bosing, taymer boshlanadi" aria-label="${sec} taymeri, ${min} daqiqa" style="left:${px(r.x - 1)};top:${px(r.y + r.h + 3)}">${CLOCK}</button>`;
@@ -189,11 +192,15 @@ const css = `
   .page.hpage .qa-marks.show{display:block}
   .page.hpage .qa-marks path{fill:none;stroke:#E8264A;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;
     stroke-dasharray:1;stroke-dashoffset:1;animation:qaInk .55s ease-out forwards}
+  .page.hpage .qa-marks text{fill:#E8264A;font-family:"Gaegu","Malgun Gothic",sans-serif;font-weight:700;text-anchor:middle;
+    opacity:0;animation:qaWrite .35s ease-out forwards}
+  @keyframes qaWrite{from{opacity:0;transform:translateY(-2px)}to{opacity:1;transform:none}}
   .page.hpage .qa-marks path:nth-child(2){animation-delay:.25s}
   .page.hpage .qa-marks path:nth-child(3){animation-delay:.5s}
   .page.hpage .qa-marks path:nth-child(4){animation-delay:.75s}
   @keyframes qaInk{to{stroke-dashoffset:0}}
-  @media (prefers-reduced-motion:reduce){.page.hpage .qa-marks path{animation:none;stroke-dashoffset:0}}
+  .page.hpage .qa-marks path:nth-child(5){animation-delay:1s}
+  @media (prefers-reduced-motion:reduce){.page.hpage .qa-marks path{animation:none;stroke-dashoffset:0}.page.hpage .qa-marks text{animation:none;opacity:1}}
   /* 대본: a speech bubble coming out of the badge, the dialogue inside as chat bubbles */
   .page.hpage .qa-sc{position:absolute;z-index:6;width:318px;padding:9px 10px 11px;border-radius:18px;background:#FFFBF7;
     border:1.5px solid #F3CDB6;box-shadow:0 10px 30px rgba(90,45,15,.18);font-family:"Malgun Gothic",sans-serif;

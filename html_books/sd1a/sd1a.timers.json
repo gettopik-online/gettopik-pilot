@@ -1,0 +1,11 @@
+{
+  "_": "Reading time (minutes) per 읽기 section, keyed \"<teacher-book page>:<section>\" — from the reading-load analysis (syllables to read at 55→85 per minute through the book, plus time per answer).",
+  "13:읽기 1": 2, "13:읽기 2": 2.5,
+  "22:읽기 1": 3, "22:읽기 2": 1.5,
+  "31:읽기 1": 2.5, "31:읽기 2": 1.5,
+  "40:읽기 1": 2.5, "40:읽기 2": 2.5,
+  "49:읽기 1": 1.5, "49:읽기 2": 3,
+  "58:읽기 1": 2, "58:읽기 2": 3.5,
+  "67:읽기 1": 2, "67:읽기 2": 4,
+  "76:읽기 1": 2, "76:읽기 2": 5
+}

@@ -1,5 +1,34 @@
 {
-  "_": "정답 for 읽기 sections, keyed \"<teacher-book page>:<section>\". Answers from the Student's Book 모범 답안 (p.158-159); marks in PDF points on the teacher-book page: circle = [cx, cy, rx, ry], line = [x1, y1, x2, y2]. The 정답 badge opens only after that section's timer has run out.",
+  "_": "정답 for 읽기 sections, keyed \"<teacher-book page>:<section>\". Answers from the Student's Book 모범 답안 (p.158-159); marks in PDF points on the teacher-book page: circle = [cx, cy, rx, ry], line = [x1, y1, x2, y2], text = [x (centre), baseline, \"text\", size]. The 정답 badge opens only after that section's timer has run out.",
   "13:읽기 1": { "answer": "②", "marks": [ { "circle": [150.0, 413.6, 53.0, 9.8] } ] },
-  "13:읽기 2": { "answer": "③", "marks": [ { "circle": [393.6, 410.1, 68.5, 9.8] } ] }
+  "13:읽기 2": { "answer": "③", "marks": [ { "circle": [393.6, 410.1, 68.5, 9.8] } ] },
+  "22:읽기 1": { "answer": "1 ② · 2 1) × 2) ○", "marks": [
+    { "circle": [131.0, 459.0, 57.0, 9.5] },
+    { "text": [479.5, 447.8, "×", 13] }, { "text": [479.5, 463.8, "○", 12] } ] },
+  "22:읽기 2": { "answer": "1) ① 아야나 · 2) ② 크리스", "marks": [
+    { "line": [214.6, 681.4, 235.4, 681.4] }, { "circle": [260.5, 681.4, 22.0, 9.2] },
+    { "line": [214.6, 710.7, 235.4, 710.7] }, { "circle": [260.5, 710.7, 22.0, 9.2] } ] },
+  "31:읽기 1": { "answer": "1 ② · 2 1) ○ 2) ×", "marks": [
+    { "circle": [158.5, 632.6, 7.5, 7.5] },
+    { "text": [283.0, 685.6, "○", 12] }, { "text": [283.0, 703.2, "×", 13] } ] },
+  "31:읽기 2": { "answer": "①", "marks": [ { "circle": [335.7, 361.5, 7.5, 7.5] } ] },
+  "40:읽기 1": { "answer": "1) ○ 2) ×", "marks": [
+    { "text": [285.5, 405.9, "○", 12] }, { "text": [285.5, 422.7, "×", 13] } ] },
+  "40:읽기 2": { "answer": "③", "marks": [ { "circle": [438.0, 613.5, 52.0, 15.5] } ] },
+  "49:읽기 1": { "answer": "②", "marks": [ { "circle": [127.0, 386.4, 67.0, 9.6] } ] },
+  "49:읽기 2": { "answer": "1 ② · 2 ③", "marks": [
+    { "circle": [395.9, 401.9, 7.5, 7.5] }, { "circle": [390.0, 503.6, 61.0, 9.6] } ] },
+  "58:읽기 1": { "answer": "③", "marks": [ { "circle": [449.0, 284.5, 81.0, 9.6] } ] },
+  "58:읽기 2": { "answer": "1 ②, ③ · 2 ②", "marks": [
+    { "circle": [142.0, 461.9, 7.5, 7.5] }, { "circle": [217.1, 461.9, 7.5, 7.5] },
+    { "circle": [390.0, 480.5, 87.0, 9.6] } ] },
+  "67:읽기 1": { "answer": "①", "marks": [ { "circle": [150.5, 270.0, 74.0, 9.6] } ] },
+  "67:읽기 2": { "answer": "1 한복 가게 → 경복궁 → 인사동 → 집 · 2 ③", "marks": [
+    { "text": [99.6, 533.0, "한복 가게", 10] }, { "text": [158.3, 533.0, "경복궁", 10] }, { "text": [216.7, 533.0, "인사동", 10] },
+    { "circle": [436.5, 555.9, 90.0, 9.6] } ] },
+  "76:읽기 1": { "answer": "②", "marks": [ { "circle": [446.0, 265.0, 74.0, 9.6] } ] },
+  "76:읽기 2": { "answer": "1 ① 맑음 ② 비 ③ 눈·바람 · 2 ③", "marks": [
+    { "line": [110.0, 611.8, 205.4, 628.3] }, { "line": [205.4, 611.8, 88.3, 628.3] },
+    { "line": [300.7, 611.8, 146.8, 628.3] }, { "line": [300.7, 611.8, 322.4, 628.3] },
+    { "circle": [447.5, 638.2, 84.0, 9.6] } ] }
 }
