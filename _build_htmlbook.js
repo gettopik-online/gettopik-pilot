@@ -153,6 +153,8 @@ const css = `
   .page.hpage .qa-sc .ln.r .bb{border-radius:14px 14px 4px 14px;background:#FFF3EA}
   .page.hpage .qa-sc .ln:hover .bb{border-color:#F3B38F}
   .page.hpage .qa-sc .ln.now .bb{background:#FFE3D0;border-color:#F26B2A;box-shadow:0 0 0 3px rgba(242,107,42,.16)}
+  .page.hpage .qa-sc .ln.now.paused .bb{background:#FFF6EF;border-style:dashed;box-shadow:none}
+  .page.hpage .qa-sc .ln.now.paused .nm::after{content:" · pauza";color:#C8561E}
   .page.hpage .qa-bar .grip{flex:none;width:12px;height:18px;color:#C9A48E}
   .page.hpage .qa-bar.moving{cursor:grabbing;box-shadow:0 8px 24px rgba(30,20,10,.28)}
 `;
@@ -186,14 +188,14 @@ const fitJs = `
 `;
 
 const qaJs = `
-<script id="qa-v12">
+<script id="qa-v13">
 (function(){
   // one recording at a time. Clicking a code plays it; a bar above the code shows play/pause, a line that can be
   // dragged or clicked to jump anywhere in the recording, and the time left. Clicking the code again pauses/resumes;
   // starting another code stops the first.
   var PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12.5-7.5z"/></svg>',
       PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="5.5" y="4.5" width="4.5" height="15" rx="1"/><rect x="14" y="4.5" width="4.5" height="15" rx="1"/></svg>';
-  var W = 276, H = 34, cur = null, sync = function(){};                  // { btn, audio, bar, pp, range, tm, seeking }
+  var W = 276, H = 34, cur = null, sync = function(){}, one = null;   // one = a single 대본 line being played                  // { btn, audio, bar, pp, range, tm, seeking }
   function fmt(t){ t = Math.max(0, Math.ceil(t || 0)); return Math.floor(t / 60) + ":" + ("0" + t % 60).slice(-2); }
   function draw(){
     if (!cur) return;
@@ -211,6 +213,7 @@ const qaJs = `
       cur.range.style.setProperty("--p", (100 * cur.range.value / d) + "%");
       cur.tm.textContent = fmt(d - cur.range.value);
     } else cur.tm.textContent = "…";
+    if (one && one.audio === a && !a.paused && a.currentTime >= one.end) { a.pause(); a.currentTime = one.end; }
     sync();
   }
   // recordings are fetched ahead: when a page comes near the screen, its codes' audio starts loading, so a
@@ -241,10 +244,10 @@ const qaJs = `
   function stop(){
     if (!cur) return;
     cur.audio.pause(); try { cur.audio.currentTime = 0; } catch (e) {}
-    cur.bar.remove(); cur.btn.classList.remove("on"); cur = null; sync();
+    cur.bar.remove(); cur.btn.classList.remove("on"); cur = null; one = null; sync();
   }
   function start(btn){
-    stop();
+    stop(); one = null;
     var page = btn.parentNode, audio = get(btn.dataset.src), bar = document.createElement("div");
     try { audio.currentTime = 0; } catch (e) {}
     bar.className = "qa-bar";
@@ -275,7 +278,7 @@ const qaJs = `
     }
     r.addEventListener("pointerdown", function(e){
       e.preventDefault(); e.stopPropagation();
-      c.seeking = true; try { r.setPointerCapture(e.pointerId); } catch (err) {}
+      c.seeking = true; one = null; try { r.setPointerCapture(e.pointerId); } catch (err) {}
       seekTo(e);
     });
     r.addEventListener("pointermove", function(e){ if (c.seeking) seekTo(e); });
@@ -316,23 +319,26 @@ const qaJs = `
   sync = function(){
     Object.keys(open).forEach(function(yt){
       var box = open[yt], lines = LISTEN[yt].lines, now = -1;
-      if (cur && cur.btn === codeFor(yt, box.parentNode)) {
+      var mine = cur && cur.btn === codeFor(yt, box.parentNode);
+      if (mine && one && one.yt === yt) now = one.k;
+      else if (mine) {
         var t = cur.audio.currentTime;
         for (var k = 0; k < lines.length; k++) if (lines[k].t <= t + 0.15) now = k;
       }
-      box.querySelectorAll(".ln").forEach(function(el, k){ el.classList.toggle("now", k === now); });
+      var paused = mine && cur.audio.paused;
+      box.querySelectorAll(".ln").forEach(function(el, k){ el.classList.toggle("now", k === now); el.classList.toggle("paused", k === now && paused); });
     });
   };
   function openScript(tools){
     var yt = tools.dataset.yt, page = tools.parentNode, L = LISTEN[yt], btn = tools.querySelector(".qt-sc");
     if (open[yt]) { open[yt].remove(); delete open[yt]; btn.classList.remove("on"); return; }
     var sides = {}, order = 0;
-    var html = '<div class="hd"><span>대본 · ' + esc(L.title || "") + '<small>Gapni bossangiz, audio o‘sha joydan eshittiriladi</small></span>' +
+    var html = '<div class="hd"><span>대본 · ' + esc(L.title || "") + '<small>Gapga bosing: faqat o‘sha gap eshittiriladi</small></span>' +
       '<button type="button" class="x" title="Yopish" aria-label="Yopish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
       'stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>';
     L.lines.forEach(function(l, k){
       if (!(l.n in sides)) sides[l.n] = order++ % 2 ? "r" : "";
-      html += '<div class="ln ' + sides[l.n] + '" data-k="' + k + '" title="Shu joydan tinglash"><span class="av ' + (l.g || "") + '">' +
+      html += '<div class="ln ' + sides[l.n] + '" data-k="' + k + '" title="Bosing: shu gapni tinglash · yana bosing: to‘xtatish / davom ettirish"><span class="av ' + (l.g || "") + '">' +
         esc(l.n.charAt(0)) + '</span><span class="col"><span class="nm">' + esc(l.n) + '</span><span class="bb">' + esc(l.x) + '</span></span></div>';
     });
     var box = document.createElement("div");
@@ -369,15 +375,29 @@ const qaJs = `
       e.stopPropagation();
       var ln = e.target.closest(".ln");
       if (!ln) return;
-      var t = L.lines[+ln.dataset.k].t, code = codeFor(yt, page);
+      var k = +ln.dataset.k, code = codeFor(yt, page), a;
       if (!code) return;
+      if (one && one.yt === yt && one.k === k && cur && cur.btn === code) {     // same line: pause / resume
+        a = cur.audio;
+        if (!a.paused) a.pause();
+        else { if (a.currentTime >= one.end - 0.05) a.currentTime = one.from; a.play(); watch(); }
+        draw(); return;
+      }
       if (!(cur && cur.btn === code)) start(code);
-      var a = cur.audio;
-      if (a.readyState >= 1) a.currentTime = t;
-      else a.addEventListener("loadedmetadata", function h(){ a.removeEventListener("loadedmetadata", h); a.currentTime = t; });
-      a.play(); draw();
+      a = cur.audio;
+      var from = L.lines[k].t, end = k + 1 < L.lines.length ? L.lines[k + 1].t - 0.12 : Infinity;
+      one = { yt: yt, k: k, from: from, end: end, audio: a };
+      if (a.readyState >= 1) a.currentTime = from;
+      else a.addEventListener("loadedmetadata", function h(){ a.removeEventListener("loadedmetadata", h); a.currentTime = from; });
+      a.play(); watch(); draw();
     });
     sync();
+  }
+  function watch(){
+    if (!one || !cur || cur.audio !== one.audio) return;
+    var a = one.audio;
+    if (!a.paused && a.currentTime >= one.end) { a.pause(); a.currentTime = one.end; draw(); return; }
+    if (!a.paused) requestAnimationFrame(watch);
   }
   function toggleAnswer(tools){
     var svg = tools.parentNode.querySelector('.qa-marks[data-yt="' + tools.dataset.yt + '"]'), btn = tools.querySelector(".qt-an");
