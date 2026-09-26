@@ -85,7 +85,7 @@ const pageHtml = pages.map((p, i) => {
     const lines = !model ? "" : `<div class="wx-set" data-id="${id}" hidden>` + (A.marks || []).map((m, k) => !m.text ? "" :
       `<div class="wx${m.text[4] === "start" ? "" : " mid"}" data-k="${k}" contenteditable="true" spellcheck="false" ` +
       `style="left:${px(m.text[0])};top:${px(m.text[1] - (m.text[3] || 11) * 0.86)};--fs:${((m.text[3] || 11) * PT).toFixed(2)}px">${esc(m.text[2])}</div>`).join("") +
-      `<span class="wx-tools"><button type="button" class="wx-rs" title="Asl namunani qaytarish" aria-label="Asl namunani qaytarish">↺</button></span></div>`;
+      `</div>`;
     const marks = !A ? "" :
       `<svg class="qa-marks${model ? " ink" : ""}" data-id="${id}" viewBox="0 0 ${p.w} ${p.h}" preserveAspectRatio="none" aria-hidden="true">` +
       (A.marks || []).filter((m) => !(model && m.text)).map((m, k) => m.circle ? `<path pathLength="1" d="${handCircle(m.circle, i * 5 + k + 11)}"/>`
@@ -570,7 +570,7 @@ const qaJs = `
 // 읽기 timers (see .rt / .rt-bar above). Clicking the badge starts; clicking it or ⏸ pauses and resumes; the line
 // can be dragged to give more or less time; × resets. The last ten seconds tick, the end rings.
 const rtJs = `
-<script id="rt-v11">
+<script id="rt-v12">
 (function(){
   var PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12.5-7.5z"/></svg>',
       PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="5.5" y="4.5" width="4.5" height="15" rx="1"/><rect x="14" y="4.5" width="4.5" height="15" rx="1"/></svg>',
@@ -643,7 +643,7 @@ const rtJs = `
     function hold(){ running = false; cancelAnimationFrame(raf); paint(); }
     function reset(){
       hold(); total = 0; left = 0; if (bar) { bar.el.remove(); bar = null; }
-      badge.classList.remove("ans"); showAnswer(false); paint();
+      badge.classList.remove("ans"); showAnswer(false); if (lines && lines.restore) lines.restore(); paint();
     }
     // typed time: 4 = 4 min, 3:30 = 3 min 30 s, 2.5 / 2,5 = 2 min 30 s, 90s = 90 s
     function parse(v){
@@ -750,17 +750,11 @@ const rtJs = `
     paint();
   }
   // 쓰기 예시 lines: the teacher can rewrite any part; size and text are kept in this browser, ↺ restores the model
+  // 쓰기 예시 lines: the teacher can rewrite any part for this lesson; × on the timer (or a reload) brings the model back
   function Writing(set){
-    var KEY = "gt-wx:" + BOOK + ":" + set.dataset.id, st = { s: 1, t: {} };
     var items = Array.prototype.slice.call(set.querySelectorAll(".wx")), orig = items.map(function(el){ return el.textContent; });
-    try { st = Object.assign(st, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) {}
-    function save(){ try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
-    function apply(){
-      items.forEach(function(el, i){ var k = el.dataset.k; el.textContent = (st.t[k] != null) ? st.t[k] : orig[i]; });
-    }
-    apply();
+    set.restore = function(){ items.forEach(function(el, i){ el.textContent = orig[i]; }); };
     items.forEach(function(el){
-      el.addEventListener("input", function(){ st.t[el.dataset.k] = el.textContent; save(); });
       el.addEventListener("keydown", function(e){ e.stopPropagation(); if (e.key === "Enter") { e.preventDefault(); el.blur(); } });
       el.addEventListener("pointerdown", function(e){ e.stopPropagation(); });
       el.addEventListener("click", function(e){ e.stopPropagation(); });
@@ -770,27 +764,6 @@ const rtJs = `
         document.execCommand("insertText", false, t);
       });
     });
-    set.querySelector(".wx-rs").addEventListener("click", function(e){ e.stopPropagation(); st = { s: 1, t: {} }; save(); apply(); });
-    var tools = set.querySelector(".wx-tools"), hideT = 0;
-    tools.addEventListener("pointerdown", function(e){ e.stopPropagation(); });
-    function near(el){
-      var page = set.parentNode, pr = page.getBoundingClientRect(), r = el.getBoundingClientRect(), k = pr.width / page.offsetWidth || 1;
-      var left = (r.right - pr.left) / k + 6, top = (r.top - pr.top) / k - 3;
-      tools.style.left = Math.min(left, page.offsetWidth - tools.offsetWidth - 4) + "px"; tools.style.top = top + "px";
-      clearTimeout(hideT); tools.classList.add("on");
-    }
-    function later(){
-      clearTimeout(hideT);
-      hideT = setTimeout(function(){ if (!set.contains(document.activeElement) && !tools.matches(":hover")) tools.classList.remove("on"); }, 1200);
-    }
-    items.forEach(function(el){
-      el.addEventListener("mouseenter", function(){ near(el); });
-      el.addEventListener("focus", function(){ near(el); });
-      el.addEventListener("mouseleave", later);
-      el.addEventListener("blur", later);
-    });
-    tools.addEventListener("mouseenter", function(){ clearTimeout(hideT); });
-    tools.addEventListener("mouseleave", later);
   }
   document.querySelectorAll(".page.hpage .rt").forEach(Timer);
 
