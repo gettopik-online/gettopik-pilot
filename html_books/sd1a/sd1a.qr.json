@@ -5,8 +5,9 @@
 "y": 102.2,
 "w": 28.6,
 "h": 28.6,
-"url": "http://m.site.naver.com/10MOf",
-"yt": "2wu2IhcoGGw"
+"yt": "2wu2IhcoGGw",
+"title": "1A SB 1단원 말하기 1",
+"how": "qr"
 },
 {
 "page": 10,
@@ -14,8 +15,9 @@
 "y": 342.2,
 "w": 28.6,
 "h": 27.9,
-"url": "http://m.site.naver.com/10Pqx",
-"yt": "dEtY5IokhNc"
+"yt": "dEtY5IokhNc",
+"title": "1A SB 1단원 말하기 2",
+"how": "qr"
 },
 {
 "page": 10,
@@ -23,8 +25,9 @@
 "y": 498.4,
 "w": 28.6,
 "h": 28.6,
-"url": "http://m.site.naver.com/10PqF",
-"yt": "ZMBblzN35Ks"
+"yt": "ZMBblzN35Ks",
+"title": "1A SB 1단원 말하기 3",
+"how": "qr"
 },
 {
 "page": 11,
@@ -32,8 +35,9 @@
 "y": 266.8,
 "w": 29.3,
 "h": 29.3,
-"url": "http://m.site.naver.com/10MOb",
-"yt": "0bL8A1_A5_k"
+"yt": "0bL8A1_A5_k",
+"title": "1A SB 1단원 듣기 1",
+"how": "qr"
 },
 {
 "page": 11,
@@ -41,8 +45,9 @@
 "y": 332.4,
 "w": 28.6,
 "h": 27.2,
-"url": "http://m.site.naver.com/10MOe",
-"yt": "PerMcAhTWdY"
+"yt": "PerMcAhTWdY",
+"title": "1A SB 1단원 듣기 2",
+"how": "qr"
 },
 {
 "page": 13,
@@ -50,8 +55,9 @@
 "y": 150.4,
 "w": 28.6,
 "h": 29.3,
-"url": "http://m.site.naver.com/10PqM",
-"yt": "cBL5dsdFmjs"
+"yt": "cBL5dsdFmjs",
+"title": "1A SB 1단원 읽기 1",
+"how": "qr"
 },
 {
 "page": 13,
@@ -59,8 +65,19 @@
 "y": 102.2,
 "w": 28.6,
 "h": 29.3,
-"url": "http://m.site.naver.com/10PqQ",
-"yt": "S18BMB12ZuQ"
+"yt": "S18BMB12ZuQ",
+"title": "1A SB 1단원 읽기 2",
+"how": "qr"
+},
+{
+"page": 15,
+"x": 306.1,
+"y": 658.1,
+"w": 29.3,
+"h": 28.6,
+"yt": "yCBebMaexCc",
+"title": "1A SB 1단원 발음",
+"how": "nom"
 },
 {
 "page": 19,
@@ -68,8 +85,19 @@
 "y": 102.2,
 "w": 28.6,
 "h": 29.3,
-"url": "http://m.site.naver.com/10Pra",
-"yt": "nIiGa3omwFY"
+"yt": "nIiGa3omwFY",
+"title": "1A SB 2단원 말하기 1",
+"how": "qr"
+},
+{
+"page": 19,
+"x": 504.2,
+"y": 305.2,
+"w": 28.6,
+"h": 27.9,
+"yt": "rJqnP35CyK8",
+"title": "1A SB 2단원 말하기 2",
+"how": "nom"
 },
 {
 "page": 19,
@@ -77,8 +105,9 @@
 "y": 532.6,
 "w": 28.6,
 "h": 29.3,
-"url": "http://m.site.naver.com/10Prk",
-"yt": "li7DR7FhgLI"
+"yt": "li7DR7FhgLI",
+"title": "1A SB 2단원 말하기 3",
+"how": "qr"
 },
 {
 "page": 20,
@@ -86,8 +115,49 @@
 "y": 335.9,
 "w": 29.3,
 "h": 28.6,
-"url": "http://m.site.naver.com/10PqY",
-"yt": "5sKG9ctq9ec"
+"yt": "5sKG9ctq9ec",
+"title": "1A SB 2단원 듣기 1",
+"how": "qr"
+},
+{
+"page": 20,
+"x": 504.2,
+"y": 284.3,
+"w": 28.6,
+"h": 28.6,
+"yt": "g8f7Eso3TS8",
+"title": "1A SB 2단원 듣기 2",
+"how": "nom"
+},
+{
+"page": 22,
+"x": 252.4,
+"y": 522.8,
+"w": 28.6,
+"h": 29.3,
+"yt": "4EtQPPF3Bog",
+"title": "1A SB 2단원 읽기 2",
+"how": "nom"
+},
+{
+"page": 24,
+"x": 301.2,
+"y": 570.3,
+"w": 34.2,
+"h": 32.8,
+"yt": "U0i6h8NJ5iY",
+"title": "1A SB 2단원 발음",
+"how": "nom"
+},
+{
+"page": 28,
+"x": 504.2,
+"y": 102.2,
+"w": 28.6,
+"h": 28.6,
+"yt": "tBiaG5L4M9k",
+"title": "1A SB 3단원 말하기 1",
+"how": "nom"
 },
 {
 "page": 28,
@@ -95,8 +165,59 @@
 "y": 319.2,
 "w": 28.6,
 "h": 28.6,
-"url": "http://m.site.naver.com/10PrW",
-"yt": "Th1JrjAEw6g"
+"yt": "Th1JrjAEw6g",
+"title": "1A SB 3단원 말하기 2",
+"how": "qr"
+},
+{
+"page": 28,
+"x": 504.2,
+"y": 504.0,
+"w": 28.6,
+"h": 27.9,
+"yt": "PGEDPp-GIn4",
+"title": "1A SB 3단원 말하기 3",
+"how": "nom"
+},
+{
+"page": 29,
+"x": 266.4,
+"y": 370.8,
+"w": 29.3,
+"h": 28.6,
+"yt": "bB_ymR5RMMI",
+"title": "1A SB 3단원 듣기 1",
+"how": "nom"
+},
+{
+"page": 29,
+"x": 504.2,
+"y": 319.2,
+"w": 28.6,
+"h": 28.6,
+"yt": "PLr669v5pnw",
+"title": "1A SB 3단원 듣기 2",
+"how": "nom"
+},
+{
+"page": 31,
+"x": 266.4,
+"y": 326.8,
+"w": 29.3,
+"h": 30.0,
+"yt": "4F5nPgIdh8M",
+"title": "1A SB 3단원 읽기 1",
+"how": "nom"
+},
+{
+"page": 31,
+"x": 504.2,
+"y": 130.1,
+"w": 28.6,
+"h": 29.3,
+"yt": "rwMVxJ45hEY",
+"title": "1A SB 3단원 읽기 2",
+"how": "nom"
 },
 {
 "page": 33,
@@ -104,8 +225,19 @@
 "y": 708.4,
 "w": 29.3,
 "h": 28.6,
-"url": "http://m.site.naver.com/10Ps3",
-"yt": "IVh-GN5i_4c"
+"yt": "IVh-GN5i_4c",
+"title": "1A SB 3단원 발음",
+"how": "qr"
+},
+{
+"page": 37,
+"x": 504.2,
+"y": 102.2,
+"w": 28.6,
+"h": 27.9,
+"yt": "psLSbcdH0_c",
+"title": "1A SB 4단원 말하기 1",
+"how": "nom"
 },
 {
 "page": 37,
@@ -113,8 +245,19 @@
 "y": 272.4,
 "w": 28.6,
 "h": 27.9,
-"url": "http://m.site.naver.com/10Psw",
-"yt": "xni5HiwpEjU"
+"yt": "xni5HiwpEjU",
+"title": "1A SB 4단원 말하기 2",
+"how": "qr"
+},
+{
+"page": 37,
+"x": 504.2,
+"y": 497.0,
+"w": 28.6,
+"h": 28.6,
+"yt": "zRNHNybbQGM",
+"title": "1A SB 4단원 말하기 3",
+"how": "nom"
 },
 {
 "page": 38,
@@ -122,8 +265,9 @@
 "y": 376.4,
 "w": 29.3,
 "h": 27.9,
-"url": "http://m.site.naver.com/10Psj",
-"yt": "ieYDHezSKes"
+"yt": "ieYDHezSKes",
+"title": "1A SB 4단원 듣기 1",
+"how": "qr"
 },
 {
 "page": 38,
@@ -131,8 +275,19 @@
 "y": 285.7,
 "w": 28.6,
 "h": 28.6,
-"url": "http://m.site.naver.com/10Psm",
-"yt": "EJyXfL_XXz8"
+"yt": "EJyXfL_XXz8",
+"title": "1A SB 4단원 듣기 2",
+"how": "qr"
+},
+{
+"page": 40,
+"x": 504.2,
+"y": 250.1,
+"w": 28.6,
+"h": 28.6,
+"yt": "juk2YN4qXWw",
+"title": "1A SB 4단원 읽기 1",
+"how": "nom"
 },
 {
 "page": 40,
@@ -140,8 +295,9 @@
 "y": 474.7,
 "w": 28.6,
 "h": 27.9,
-"url": "http://m.site.naver.com/10Pt0",
-"yt": "_A5vY-j7jVc"
+"yt": "_A5vY-j7jVc",
+"title": "1A SB 4단원 읽기 2",
+"how": "qr"
 },
 {
 "page": 42,
@@ -149,8 +305,9 @@
 "y": 680.5,
 "w": 23.7,
 "h": 23.7,
-"url": "http://m.site.naver.com/10PsL",
-"yt": "0dJYF15uINc"
+"yt": "0dJYF15uINc",
+"title": "1A SB 4단원 발음",
+"how": "qr"
 },
 {
 "page": 46,
@@ -158,8 +315,9 @@
 "y": 102.2,
 "w": 28.6,
 "h": 28.6,
-"url": "http://m.site.naver.com/10Ptg",
-"yt": "XIbcQFDarzQ"
+"yt": "XIbcQFDarzQ",
+"title": "1A SB 5단원 말하기 1",
+"how": "qr"
 },
 {
 "page": 46,
@@ -167,8 +325,9 @@
 "y": 298.2,
 "w": 28.6,
 "h": 28.6,
-"url": "http://m.site.naver.com/10Pti",
-"yt": "9r-RmiS0vLM"
+"yt": "9r-RmiS0vLM",
+"title": "1A SB 5단원 말하기 2",
+"how": "qr"
 },
 {
 "page": 46,
@@ -176,8 +335,9 @@
 "y": 522.8,
 "w": 28.6,
 "h": 27.9,
-"url": "http://m.site.naver.com/10Pto",
-"yt": "nGjOxSMmQ_E"
+"yt": "nGjOxSMmQ_E",
+"title": "1A SB 5단원 말하기 3",
+"how": "qr"
 },
 {
 "page": 47,
@@ -185,8 +345,9 @@
 "y": 360.3,
 "w": 29.3,
 "h": 29.3,
-"url": "http://m.site.naver.com/10Pt6",
-"yt": "Cga9huP2uEg"
+"yt": "Cga9huP2uEg",
+"title": "1A SB 5단원 듣기 1",
+"how": "qr"
 },
 {
 "page": 47,
@@ -194,8 +355,9 @@
 "y": 303.1,
 "w": 28.6,
 "h": 28.6,
-"url": "http://m.site.naver.com/10Pta",
-"yt": "Yw5cPTSe4yA"
+"yt": "Yw5cPTSe4yA",
+"title": "1A SB 5단원 듣기 2",
+"how": "qr"
 },
 {
 "page": 49,
@@ -203,8 +365,9 @@
 "y": 102.2,
 "w": 28.6,
 "h": 29.3,
-"url": "http://m.site.naver.com/10Pty",
-"yt": "KAQ__EV0pks"
+"yt": "KAQ__EV0pks",
+"title": "1A SB 5단원 읽기 2",
+"how": "qr"
 },
 {
 "page": 51,
@@ -212,8 +375,9 @@
 "y": 681.2,
 "w": 29.3,
 "h": 27.2,
-"url": "http://m.site.naver.com/10Ptt",
-"yt": "QJRzCpxLmRA"
+"yt": "QJRzCpxLmRA",
+"title": "1A SB 5단원 발음",
+"how": "qr"
 },
 {
 "page": 55,
@@ -221,8 +385,9 @@
 "y": 119.7,
 "w": 28.6,
 "h": 29.3,
-"url": "http://m.site.naver.com/10PtM",
-"yt": "uevWUxr0ARk"
+"yt": "uevWUxr0ARk",
+"title": "1A SB 6단원 말하기 1",
+"how": "qr"
 },
 {
 "page": 55,
@@ -230,8 +395,9 @@
 "y": 389.6,
 "w": 28.6,
 "h": 28.6,
-"url": "http://m.site.naver.com/10PtT",
-"yt": "BzNVWSHLYFQ"
+"yt": "BzNVWSHLYFQ",
+"title": "1A SB 6단원 말하기 2",
+"how": "qr"
 },
 {
 "page": 55,
@@ -239,8 +405,9 @@
 "y": 111.3,
 "w": 28.6,
 "h": 28.6,
-"url": "http://m.site.naver.com/10Pu3",
-"yt": "SnFcbKadluQ"
+"yt": "SnFcbKadluQ",
+"title": "1A SB 6단원 말하기 3",
+"how": "qr"
 },
 {
 "page": 56,
@@ -248,8 +415,9 @@
 "y": 287.1,
 "w": 28.6,
 "h": 28.6,
-"url": "http://m.site.naver.com/10PtD",
-"yt": "7KgI0TET9CU"
+"yt": "7KgI0TET9CU",
+"title": "1A SB 6단원 듣기 1",
+"how": "qr"
 },
 {
 "page": 56,
@@ -257,8 +425,9 @@
 "y": 176.9,
 "w": 28.6,
 "h": 28.6,
-"url": "http://m.site.naver.com/10PtI",
-"yt": "M91qdE8SVo8"
+"yt": "M91qdE8SVo8",
+"title": "1A SB 6단원 듣기 2",
+"how": "qr"
 },
 {
 "page": 58,
@@ -266,8 +435,9 @@
 "y": 151.8,
 "w": 28.6,
 "h": 28.6,
-"url": "http://m.site.naver.com/10Pui",
-"yt": "y7-5lPnJ5Ws"
+"yt": "y7-5lPnJ5Ws",
+"title": "1A SB 6단원 읽기 1",
+"how": "qr"
 },
 {
 "page": 58,
@@ -275,8 +445,9 @@
 "y": 314.3,
 "w": 28.6,
 "h": 28.6,
-"url": "http://m.site.naver.com/10Pum",
-"yt": "JqZ6RR5HY2A"
+"yt": "JqZ6RR5HY2A",
+"title": "1A SB 6단원 읽기 2",
+"how": "qr"
 },
 {
 "page": 60,
@@ -284,8 +455,9 @@
 "y": 709.8,
 "w": 28.6,
 "h": 28.6,
-"url": "http://m.site.naver.com/10Pub",
-"yt": "peUYJ6u4aWo"
+"yt": "peUYJ6u4aWo",
+"title": "1A SB 6단원 발음",
+"how": "qr"
 },
 {
 "page": 64,
@@ -293,8 +465,9 @@
 "y": 102.2,
 "w": 28.6,
 "h": 28.6,
-"url": "http://m.site.naver.com/10Puz",
-"yt": "wNT-E2uTYZc"
+"yt": "wNT-E2uTYZc",
+"title": "1A SB 7단원 말하기 1",
+"how": "qr"
 },
 {
 "page": 64,
@@ -302,8 +475,9 @@
 "y": 310.1,
 "w": 28.6,
 "h": 29.3,
-"url": "http://m.site.naver.com/10PuG",
-"yt": "N8MQFj9MGnw"
+"yt": "N8MQFj9MGnw",
+"title": "1A SB 7단원 말하기 2",
+"how": "qr"
 },
 {
 "page": 64,
@@ -311,8 +485,9 @@
 "y": 531.9,
 "w": 28.6,
 "h": 27.9,
-"url": "http://m.site.naver.com/10PuJ",
-"yt": "8AGpTdPEliw"
+"yt": "8AGpTdPEliw",
+"title": "1A SB 7단원 말하기 3",
+"how": "qr"
 },
 {
 "page": 65,
@@ -320,8 +495,9 @@
 "y": 255.0,
 "w": 29.3,
 "h": 27.9,
-"url": "http://m.site.naver.com/10Puq",
-"yt": "Dx30Q7G5cjA"
+"yt": "Dx30Q7G5cjA",
+"title": "1A SB 7단원 듣기 1",
+"how": "qr"
 },
 {
 "page": 65,
@@ -329,8 +505,39 @@
 "y": 283.6,
 "w": 28.6,
 "h": 27.9,
-"url": "http://m.site.naver.com/10Pux",
-"yt": "UuGQMe-JyG0"
+"yt": "UuGQMe-JyG0",
+"title": "1A SB 7단원 듣기 2",
+"how": "qr"
+},
+{
+"page": 67,
+"x": 504.2,
+"y": 160.8,
+"w": 28.6,
+"h": 29.3,
+"yt": "i_N1DQLM_44",
+"title": "1A SB 7단원 읽기 1",
+"how": "nom"
+},
+{
+"page": 67,
+"x": 504.2,
+"y": 342.2,
+"w": 28.6,
+"h": 29.3,
+"yt": "gYyYDMix0Ik",
+"title": "1A SB 7단원 읽기 2",
+"how": "nom"
+},
+{
+"page": 69,
+"x": 76.6,
+"y": 697.2,
+"w": 23.7,
+"h": 23.0,
+"yt": "XEMl-NwJVAg",
+"title": "1A SB 7단원 발음",
+"how": "nom"
 },
 {
 "page": 73,
@@ -338,8 +545,9 @@
 "y": 102.2,
 "w": 28.6,
 "h": 27.9,
-"url": "http://m.site.naver.com/10Pvh",
-"yt": "99ZdPwvIBEo"
+"yt": "99ZdPwvIBEo",
+"title": "1A SB 8단원 말하기 1",
+"how": "qr"
 },
 {
 "page": 73,
@@ -347,8 +555,9 @@
 "y": 270.3,
 "w": 28.6,
 "h": 27.9,
-"url": "http://m.site.naver.com/10Pvn",
-"yt": "vm6ksn6eTq0"
+"yt": "vm6ksn6eTq0",
+"title": "1A SB 8단원 말하기 2",
+"how": "qr"
 },
 {
 "page": 73,
@@ -356,8 +565,49 @@
 "y": 488.0,
 "w": 28.6,
 "h": 27.9,
-"url": "http://m.site.naver.com/10Pvs",
-"yt": "0G8qx9cwODA"
+"yt": "0G8qx9cwODA",
+"title": "1A SB 8단원 말하기 3 수정",
+"how": "qr"
+},
+{
+"page": 74,
+"x": 229.4,
+"y": 259.9,
+"w": 29.3,
+"h": 28.6,
+"yt": "NiiMpK0DndU",
+"title": "1A SB 8단원 듣기 1",
+"how": "nom"
+},
+{
+"page": 74,
+"x": 504.2,
+"y": 255.0,
+"w": 28.6,
+"h": 28.6,
+"yt": "ZNzWAapm6rw",
+"title": "1A SB 8단원 듣기 2",
+"how": "nom"
+},
+{
+"page": 76,
+"x": 504.2,
+"y": 155.2,
+"w": 28.6,
+"h": 28.6,
+"yt": "u013nZ2c83o",
+"title": "1A SB 8단원 읽기 1",
+"how": "nom"
+},
+{
+"page": 76,
+"x": 504.2,
+"y": 365.2,
+"w": 28.6,
+"h": 28.6,
+"yt": "lqbfJ2IqPMw",
+"title": "1A SB 8단원 읽기 2",
+"how": "nom"
 },
 {
 "page": 78,
@@ -365,7 +615,8 @@
 "y": 681.2,
 "w": 26.5,
 "h": 25.8,
-"url": "http://m.site.naver.com/10Pvw",
-"yt": "Bc_QBJQD7bU"
+"yt": "Bc_QBJQD7bU",
+"title": "1A SB 8단원 발음",
+"how": "qr"
 }
 ]
