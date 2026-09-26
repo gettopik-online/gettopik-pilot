@@ -48,8 +48,8 @@ function handLine([x1, y1, x2, y2]) {
 const tmFile = `${dir}/${key}.timers.json`;
 const TIMER = Object.assign({ "읽기 1": 3, "읽기 2": 5 }, fs.existsSync(tmFile) ? JSON.parse(fs.readFileSync(tmFile, "utf8")) : {});
 const ALLQR = fs.existsSync(qrFile) ? JSON.parse(fs.readFileSync(qrFile, "utf8")) : [];
-const CLOCK = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#0F4CA3" stroke-width="2"/>' +
-  '<path d="M12 7v5l3.5 2" stroke="#0F4CA3" stroke-width="2" stroke-linecap="round"/></svg>';
+const CLOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">' +
+  '<circle cx="12" cy="13" r="8.5"/><path d="M12 8.5V13l3 2M9.5 2.5h5"/></svg>';
 
 const pageHtml = pages.map((p, i) => {
   const runs = p.runs.map((r) => {
@@ -77,8 +77,8 @@ const pageHtml = pages.map((p, i) => {
     if (!min) return "";
     const code = ALLQR.find((q) => q.page === i + 1 && new RegExp(sec.replace(" ", "\\s*") + "(\\s|$)").test(q.title || ""));
     return code
-      ? `<span class="time sdtime" title="${sec}: ${min} daqiqa" style="left:${px(code.x + code.w / 2)};top:${px(code.y + code.h + 5)};transform:translateX(-50%)">${CLOCK}${min}분</span>`
-      : `<span class="time sdtime" title="${sec}: ${min} daqiqa" style="left:${px(r.x - 1)};top:${px(r.y + r.h + 3)}">${CLOCK}${min}분</span>`;
+      ? `<button type="button" class="rt c" data-min="${min}" title="${sec}: ${min} daqiqa — bosing, taymer boshlanadi" style="left:${px(code.x + code.w / 2)};top:${px(code.y + code.h + 4)}">${CLOCK}<span>${min}분</span></button>`
+      : `<button type="button" class="rt" data-min="${min}" title="${sec}: ${min} daqiqa — bosing, taymer boshlanadi" style="left:${px(r.x - 1)};top:${px(r.y + r.h + 3)}">${CLOCK}<span>${min}분</span></button>`;
   }).join("");
   return `<div class="page hpage" data-key="p${i + 1}" style="height:${px(p.h)}"><img class="pbg" src="${dir}/${p.bg}" loading="lazy" decoding="async" alt="">${runs}${qa}${tools}${timers}</div>`;
 });
@@ -118,9 +118,43 @@ const css = `
   .page.hpage .qa-bar .cl:hover{background:#F6E6DC;color:#3A2A20}
   .page.hpage .qa-bar .cl:focus-visible{outline:2px solid #1968D8;outline-offset:1px}
   .page.hpage .qa-bar .cl svg{width:12px;height:12px}
-  .page.hpage .time.sdtime{position:absolute;z-index:4;margin:0;font-size:11px;padding:4px 10px 4px 8px;gap:4px;
-    box-shadow:0 1px 4px rgba(15,76,163,.14);white-space:nowrap}
-  .page.hpage .time.sdtime svg{width:13px;height:13px}
+  /* 읽기 timer: badge like 대본/정답, bar like the audio bar */
+  .page.hpage .rt{position:absolute;z-index:4;display:flex;align-items:center;gap:4px;height:29px;padding:0 11px 0 8px;border-radius:15px;
+    border:1.2px solid #F3CDB6;background:#FFFBF7;color:#C8561E;font:700 11px/1 "Malgun Gothic",sans-serif;cursor:pointer;white-space:nowrap;
+    box-shadow:0 1px 4px rgba(120,60,20,.12);font-variant-numeric:tabular-nums;transition:background .15s,color .15s,transform .12s}
+  .page.hpage .rt.c{transform:translateX(-50%)}
+  .page.hpage .rt svg{width:14px;height:14px}
+  .page.hpage .rt:hover{background:#FFEBDD}
+  .page.hpage .rt.on{background:#F26B2A;border-color:#F26B2A;color:#fff}
+  .page.hpage .rt.hold{background:#8A94A6;border-color:#8A94A6;color:#fff}
+  .page.hpage .rt.end{background:#E8264A;border-color:#E8264A;color:#fff}
+  .page.hpage .rt:focus-visible{outline:2px solid #1968D8;outline-offset:2px}
+  .page.hpage .rt-bar{position:absolute;z-index:5;display:flex;align-items:center;gap:7px;width:276px;height:34px;padding:0 4px 0 3px;
+    border-radius:17px;background:#fff;border:1px solid #F3CDB6;box-shadow:0 3px 12px rgba(30,20,10,.16);cursor:grab;touch-action:none;
+    font:700 12.5px/1 "Malgun Gothic",sans-serif;color:#3A2A20;user-select:none}
+  .page.hpage .rt-bar.moving{cursor:grabbing;box-shadow:0 8px 24px rgba(30,20,10,.28)}
+  .page.hpage .rt-bar .grip{flex:none;width:12px;height:18px;color:#C9A48E}
+  .page.hpage .rt-bar .pp{flex:none;width:26px;height:26px;border:0;border-radius:50%;background:#F26B2A;color:#fff;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;padding:0}
+  .page.hpage .rt-bar .pp svg{width:11px;height:11px}
+  .page.hpage .rt-bar.hold .pp{background:#8A94A6}
+  .page.hpage .rt-bar .ln{flex:1;min-width:0;height:28px;display:flex;align-items:center;cursor:pointer;touch-action:none}
+  .page.hpage .rt-bar .tr{position:relative;flex:1;height:5px;border-radius:3px;background:#F3DDD0}
+  .page.hpage .rt-bar .fl{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:#F26B2A}
+  .page.hpage .rt-bar .kn{position:absolute;top:50%;width:15px;height:15px;margin:-7.5px 0 0 -7.5px;border-radius:50%;background:#fff;
+    border:2.5px solid #F26B2A;box-sizing:border-box}
+  .page.hpage .rt-bar .tm{flex:none;min-width:40px;text-align:right;font-size:14px;font-variant-numeric:tabular-nums}
+  .page.hpage .rt-bar.last .tm{color:#E8264A}
+  .page.hpage .rt-bar.end{border-color:#E8264A;animation:rtEnd .9s ease-in-out 3}
+  .page.hpage .rt-bar.end .fl{background:#E8264A}
+  .page.hpage .rt-bar.end .tm{color:#E8264A}
+  @keyframes rtEnd{50%{box-shadow:0 0 0 6px rgba(232,38,74,.25)}}
+  @media (prefers-reduced-motion:reduce){.page.hpage .rt-bar.end{animation:none}}
+  .page.hpage .rt-bar .cl{flex:none;width:24px;height:24px;border:0;border-radius:50%;background:transparent;color:#9A8577;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;padding:0}
+  .page.hpage .rt-bar .cl:hover{background:#F6E6DC;color:#3A2A20}
+  .page.hpage .rt-bar .cl svg{width:12px;height:12px}
+  .page.hpage .rt-bar .pp:focus-visible,.page.hpage .rt-bar .cl:focus-visible{outline:2px solid #1968D8;outline-offset:2px}
   /* 대본 / 정답: two small round badges hanging under the code */
   .page.hpage .qa-tools{position:absolute;z-index:4;display:flex;gap:4px;transform:translateX(-50%)}
   .page.hpage .qa-tools button{width:29px;height:29px;padding:0;border-radius:50%;border:1.2px solid #F3CDB6;background:#FFFBF7;
@@ -465,6 +499,117 @@ const qaJs = `
 </script>
 `;
 
+// 읽기 timers (see .rt / .rt-bar above). Clicking the badge starts; clicking it or ⏸ pauses and resumes; the line
+// can be dragged to give more or less time; × resets. The last ten seconds tick, the end rings.
+const rtJs = `
+<script id="rt-v1">
+(function(){
+  var PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12.5-7.5z"/></svg>',
+      PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="5.5" y="4.5" width="4.5" height="15" rx="1"/><rect x="14" y="4.5" width="4.5" height="15" rx="1"/></svg>',
+      GRIP = '<svg class="grip" viewBox="0 0 12 18" fill="currentColor"><circle cx="3" cy="3" r="1.6"/><circle cx="9" cy="3" r="1.6"/>' +
+        '<circle cx="3" cy="9" r="1.6"/><circle cx="9" cy="9" r="1.6"/><circle cx="3" cy="15" r="1.6"/><circle cx="9" cy="15" r="1.6"/></svg>',
+      X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+  var W = 276, H = 34, ac = null;
+  function beep(hi){
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      if (ac.state === "suspended") ac.resume();
+      var o = ac.createOscillator(), g = ac.createGain(), len = hi ? 0.5 : 0.08;
+      o.type = "sine"; o.frequency.value = hi ? 660 : 990;
+      g.gain.setValueAtTime(0.18, ac.currentTime); g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + len);
+      o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime + len);
+    } catch (e) {}
+  }
+  function fmt(t){ t = Math.max(0, Math.ceil(t)); return ("0" + Math.floor(t / 60)).slice(-2) + ":" + ("0" + t % 60).slice(-2); }
+  function Timer(badge){
+    var total = +badge.dataset.min * 60, left = total, running = false, last = 0, raf = 0, bar = null, lastSec = null;
+    var label = badge.querySelector("span"), idle = label.textContent;
+    function paint(){
+      var sec = Math.ceil(left);
+      label.textContent = running || left < total ? fmt(left) : idle;
+      badge.classList.toggle("on", running && left > 0);
+      badge.classList.toggle("hold", !running && left > 0 && left < total);
+      badge.classList.toggle("end", left <= 0);
+      if (!bar) return;
+      var f = 1 - left / total;
+      bar.fl.style.width = (f * 100) + "%"; bar.kn.style.left = (f * 100) + "%";
+      bar.tm.textContent = fmt(left);
+      bar.el.classList.toggle("hold", !running && left > 0);
+      bar.el.classList.toggle("last", left > 0 && left <= 10);
+      bar.el.classList.toggle("end", left <= 0);
+      if (bar.shown !== running) { bar.shown = running; bar.pp.innerHTML = running ? PAUSE : PLAY; bar.pp.title = running ? "Pauza" : "Davom ettirish"; }
+      if (running && sec !== lastSec) {
+        if (sec <= 10 && sec > 0 && lastSec !== null) beep(false);
+        lastSec = sec;
+      }
+    }
+    function tick(now){
+      if (!running) return;
+      left = Math.max(0, left - (now - last) / 1000); last = now;
+      if (left <= 0) { running = false; beep(true); }
+      paint();
+      if (running) raf = requestAnimationFrame(tick);
+    }
+    function go(){ if (left <= 0) left = total; running = true; last = performance.now(); lastSec = null; raf = requestAnimationFrame(tick); paint(); }
+    function hold(){ running = false; cancelAnimationFrame(raf); paint(); }
+    function reset(){ hold(); left = total; if (bar) { bar.el.remove(); bar = null; } paint(); }
+    function makeBar(){
+      var page = badge.parentNode, el = document.createElement("div");
+      el.className = "rt-bar"; el.title = "Ushlab boshqa joyga surish mumkin";
+      el.innerHTML = GRIP + '<button type="button" class="pp"></button><span class="ln"><span class="tr"><span class="fl"></span>' +
+        '<span class="kn"></span></span></span><span class="tm"></span><button type="button" class="cl" title="Yopish" aria-label="Yopish">' + X + '</button>';
+      var cx = badge.offsetLeft + (badge.classList.contains("c") ? 0 : badge.offsetWidth / 2);
+      el.style.left = Math.max(6, Math.min(cx - W / 2, page.offsetWidth - W - 6)) + "px";
+      el.style.top = (badge.offsetTop + badge.offsetHeight + 8) + "px";
+      page.appendChild(el);
+      bar = { el: el, pp: el.querySelector(".pp"), fl: el.querySelector(".fl"), kn: el.querySelector(".kn"), tm: el.querySelector(".tm"),
+              ln: el.querySelector(".ln"), shown: null };
+      bar.pp.addEventListener("click", function(e){ e.stopPropagation(); if (running) hold(); else go(); });
+      el.querySelector(".cl").addEventListener("click", function(e){ e.stopPropagation(); reset(); });
+      el.addEventListener("click", function(e){ e.stopPropagation(); });
+      // the line: drag or click to set how much of the time has gone
+      var seeking = false;
+      function seek(e){
+        var r = bar.ln.querySelector(".tr").getBoundingClientRect();
+        left = total * (1 - Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)));
+        lastSec = null; paint();
+      }
+      bar.ln.addEventListener("pointerdown", function(e){ e.preventDefault(); e.stopPropagation(); seeking = true;
+        try { bar.ln.setPointerCapture(e.pointerId); } catch (err) {} seek(e); });
+      bar.ln.addEventListener("pointermove", function(e){ if (seeking) seek(e); });
+      bar.ln.addEventListener("pointerup", function(e){ if (seeking) { seek(e); seeking = false; last = performance.now(); } });
+      bar.ln.addEventListener("pointercancel", function(){ seeking = false; });
+      // move the whole bar
+      var mv = null;
+      el.addEventListener("pointerdown", function(e){
+        if (e.target.closest(".pp") || e.target.closest(".cl") || e.target.closest(".ln")) return;
+        e.preventDefault(); e.stopPropagation();
+        var k = page.getBoundingClientRect().width / page.offsetWidth || 1;
+        mv = { x: e.clientX, y: e.clientY, l: el.offsetLeft, t: el.offsetTop, k: k };
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        el.classList.add("moving");
+      });
+      el.addEventListener("pointermove", function(e){
+        if (!mv) return;
+        el.style.left = Math.max(0, Math.min(mv.l + (e.clientX - mv.x) / mv.k, page.offsetWidth - el.offsetWidth)) + "px";
+        el.style.top = Math.max(0, Math.min(mv.t + (e.clientY - mv.y) / mv.k, page.offsetHeight - el.offsetHeight)) + "px";
+      });
+      function drop(){ mv = null; el.classList.remove("moving"); }
+      el.addEventListener("pointerup", drop); el.addEventListener("pointercancel", drop);
+    }
+    badge.addEventListener("click", function(e){
+      e.preventDefault(); e.stopPropagation();
+      if (!bar) makeBar();
+      if (running) hold(); else go();
+    });
+    paint();
+  }
+  document.querySelectorAll(".page.hpage .rt").forEach(Timer);
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") document.querySelectorAll(".rt-bar .cl").forEach(function(b){ b.click(); }); });
+})();
+</script>
+`;
+
 const tpl = fs.readFileSync("yozish.html", "utf8");
 const lines = tpl.split("\n");
 const coverLine = lines.findIndex((l) => l.includes('data-key="cover"'));
@@ -474,7 +619,7 @@ if (coverLine < 0 || firstImg < 0) throw new Error("template markers not found")
 
 let out = [...lines.slice(0, coverLine), ...pageHtml, ...lines.slice(lastImg + 1)].join("\n");
 out = out.replace("</style>", css + "</style>");
-out = out.replace("</body>", fitJs + (qrs.length ? `<script>window.QA_LISTEN = ${JSON.stringify(LISTEN)};</script>` + qaJs : "") + "</body>");
+out = out.replace("</body>", fitJs + (qrs.length ? `<script>window.QA_LISTEN = ${JSON.stringify(LISTEN)};</script>` + qaJs : "") + (out.includes('class="rt') ? rtJs : "") + "</body>");
 // no tap-to-translate on these books: skip the dictionary pass over book pages
 out = out.replace("    var root = pagesEls[key];", "    var root = pagesEls[key];\n    if (root.classList.contains(\"hpage\")) return;");
 const order = pages.map((_, i) => "p" + (i + 1));
