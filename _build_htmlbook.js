@@ -129,6 +129,10 @@ const css = `
   .page.hpage .qa-sc::before{content:"";position:absolute;top:-8px;left:var(--tail,270px);width:14px;height:14px;background:#FFFBF7;
     border-left:1.5px solid #F3CDB6;border-top:1.5px solid #F3CDB6;transform:rotate(45deg);border-top-left-radius:3px}
   .page.hpage .qa-sc .hd{display:flex;align-items:center;gap:6px;margin:0 0 4px 4px;font-size:11.5px;font-weight:700;color:#C8561E}
+  .page.hpage .qa-sc{cursor:grab;touch-action:none}
+  .page.hpage .qa-sc .ln{cursor:pointer}
+  .page.hpage .qa-sc.moving{cursor:grabbing;box-shadow:0 16px 40px rgba(90,45,15,.28)}
+  .page.hpage .qa-sc.moved::before{display:none}
   .page.hpage .qa-sc .hd span{flex:1}
   .page.hpage .qa-sc .hd small{display:block;font-weight:400;color:#9A8577;font-size:9.5px;margin-top:2px}
   .page.hpage .qa-sc .x{width:24px;height:24px;border:0;border-radius:50%;background:transparent;color:#9A8577;cursor:pointer;
@@ -182,7 +186,7 @@ const fitJs = `
 `;
 
 const qaJs = `
-<script id="qa-v11">
+<script id="qa-v12">
 (function(){
   // one recording at a time. Clicking a code plays it; a bar above the code shows play/pause, a line that can be
   // dragged or clicked to jump anywhere in the recording, and the time left. Clicking the code again pauses/resumes;
@@ -341,7 +345,26 @@ const qaJs = `
     box.style.setProperty("--tail", Math.max(14, Math.min(W - 28, tail)) + "px");
     open[yt] = box; btn.classList.add("on");
     box.querySelector(".x").addEventListener("click", function(e){ e.stopPropagation(); box.remove(); delete open[yt]; btn.classList.remove("on"); });
-    box.addEventListener("pointerdown", function(e){ e.stopPropagation(); });
+    // the bubble can be picked up by its title or any empty spot and put elsewhere; the lines stay clickable
+    var mv = null;
+    box.addEventListener("pointerdown", function(e){
+      e.stopPropagation();
+      if (e.target.closest(".ln") || e.target.closest(".x")) return;
+      e.preventDefault();
+      var k = page.getBoundingClientRect().width / page.offsetWidth || 1;     // the page is drawn scaled
+      mv = { x: e.clientX, y: e.clientY, l: box.offsetLeft, t: box.offsetTop, k: k };
+      try { box.setPointerCapture(e.pointerId); } catch (err) {}
+      box.classList.add("moving");
+    });
+    box.addEventListener("pointermove", function(e){
+      if (!mv) return;
+      var l = mv.l + (e.clientX - mv.x) / mv.k, t = mv.t + (e.clientY - mv.y) / mv.k;
+      box.style.left = Math.max(0, Math.min(l, page.offsetWidth - box.offsetWidth)) + "px";
+      box.style.top = Math.max(0, Math.min(t, page.offsetHeight - box.offsetHeight)) + "px";
+      box.classList.add("moved");                                          // no longer points at its badge
+    });
+    function drop(){ mv = null; box.classList.remove("moving"); }
+    box.addEventListener("pointerup", drop); box.addEventListener("pointercancel", drop);
     box.addEventListener("click", function(e){
       e.stopPropagation();
       var ln = e.target.closest(".ln");
