@@ -686,7 +686,7 @@ tspan.gg { text-decoration-color:#0E9F6E; }
   @keyframes rtAn{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}
   @media (prefers-reduced-motion:reduce){.page.hpage .rt-an{animation:none}}
   /* its bar: a compact pill that can be moved anywhere on the page */
-  .page.hpage .rt-bar{position:absolute;z-index:5;display:flex;align-items:center;gap:5px;width:168px;height:28px;padding:0 3px;
+  .page.hpage .rt-bar{position:absolute;z-index:5;display:flex;align-items:center;gap:5px;width:212px;height:28px;padding:0 3px;
     border-radius:14px;background:#fff;border:1px solid #F3CDB6;box-shadow:0 2px 10px rgba(30,20,10,.14);cursor:grab;touch-action:none;
     font:700 12px/1 "Malgun Gothic",sans-serif;color:#3A2A20;user-select:none}
   .page.hpage .rt-bar.moving{cursor:grabbing;box-shadow:0 6px 18px rgba(30,20,10,.24)}
@@ -695,6 +695,11 @@ tspan.gg { text-decoration-color:#0E9F6E; }
   .page.hpage .rt-bar .pp svg{width:9px;height:9px}
   .page.hpage .rt-bar.hold .pp{background:#8A94A6}
   .page.hpage .rt-bar .tm{flex:none;min-width:34px;font-variant-numeric:tabular-nums}
+  .page.hpage .rt-bar .adj{flex:none;display:flex;gap:2px}
+  .page.hpage .rt-bar .adj button{width:19px;height:19px;padding:0;border:1px solid #F3CDB6;border-radius:50%;background:#FFFBF7;color:#C8561E;
+    font:700 13px/1 "Malgun Gothic",sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .page.hpage .rt-bar .adj button:hover{background:#FFEBDD}
+  .page.hpage .rt-bar .adj button:focus-visible{outline:2px solid #1968D8;outline-offset:1px}
   .page.hpage .rt-bar .ln{flex:1;min-width:0;height:22px;display:flex;align-items:center;cursor:pointer;touch-action:none}
   .page.hpage .rt-bar .tr{position:relative;flex:1;height:3px;border-radius:2px;background:#F3DDD0}
   .page.hpage .rt-bar .fl{position:absolute;left:0;top:0;bottom:0;border-radius:2px;background:#F26B2A}
@@ -2015,14 +2020,14 @@ tspan.gg { text-decoration-color:#0E9F6E; }
 })();
 </script>
 
-<script id="rt-v3">
+<script id="rt-v4">
 (function(){
   var PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12.5-7.5z"/></svg>',
       PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="5.5" y="4.5" width="4.5" height="15" rx="1"/><rect x="14" y="4.5" width="4.5" height="15" rx="1"/></svg>',
       GRIP = '<svg class="grip" viewBox="0 0 12 18" fill="currentColor"><circle cx="3" cy="3" r="1.6"/><circle cx="9" cy="3" r="1.6"/>' +
         '<circle cx="3" cy="9" r="1.6"/><circle cx="9" cy="9" r="1.6"/><circle cx="3" cy="15" r="1.6"/><circle cx="9" cy="15" r="1.6"/></svg>',
       X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
-  var W = 168, ac = null,
+  var W = 212, ac = null, BOOK = location.pathname.split("/").pop().replace(/.html$/, ""),
       RING = '<svg class="ring" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" pathLength="100" stroke="transparent"/></svg>';
   function beep(hi){
     try {
@@ -2036,7 +2041,12 @@ tspan.gg { text-decoration-color:#0E9F6E; }
   }
   function fmt(t){ t = Math.max(0, Math.ceil(t)); return ("0" + Math.floor(t / 60)).slice(-2) + ":" + ("0" + t % 60).slice(-2); }
   function Timer(badge){
-    var total = +badge.dataset.min * 60, left = total, running = false, last = 0, raf = 0, bar = null, lastSec = null;
+    // a length the teacher set earlier for this section (kept in this browser) replaces the suggested one
+    var store = "rt:" + BOOK + ":" + badge.dataset.id, saved = null;
+    try { saved = +localStorage.getItem(store) || null; } catch (e) {}
+    var total = saved || +badge.dataset.min * 60, left = total, running = false, last = 0, raf = 0, bar = null, lastSec = null;
+    function minutes(sec){ var m = Math.floor(sec / 60), r = sec % 60; return r ? m + ":" + ("0" + r).slice(-2) : m + " daqiqa"; }
+    badge.title = badge.title.replace(/: [^—]*—/, ": " + minutes(total) + " —");
     badge.insertAdjacentHTML("beforeend", RING);
     var ring = badge.querySelector(".ring circle"), tip = badge.title;
     function paint(){
@@ -2078,7 +2088,10 @@ tspan.gg { text-decoration-color:#0E9F6E; }
     function makeBar(){
       var page = badge.parentNode, el = document.createElement("div");
       el.className = "rt-bar"; el.title = "Ushlab boshqa joyga surish mumkin";
-      el.innerHTML = '<button type="button" class="pp"></button><span class="tm"></span><span class="ln"><span class="tr"><span class="fl"></span>' +
+      el.innerHTML = '<button type="button" class="pp"></button><span class="tm"></span>' +
+        '<span class="adj"><button type="button" class="mn" title="30 soniya kamaytirish" aria-label="30 soniya kamaytirish">−</button>' +
+        '<button type="button" class="pl" title="30 soniya qo‘shish" aria-label="30 soniya qo‘shish">+</button></span>' +
+        '<span class="ln"><span class="tr"><span class="fl"></span>' +
         '<span class="kn"></span></span></span><button type="button" class="cl" title="Yopish" aria-label="Yopish">' + X + '</button>';
       var cx = badge.offsetLeft + (badge.classList.contains("c") ? 0 : badge.offsetWidth / 2);
       el.style.left = Math.max(6, Math.min(cx - W / 2, page.offsetWidth - W - 6)) + "px";
@@ -2087,6 +2100,18 @@ tspan.gg { text-decoration-color:#0E9F6E; }
       bar = { el: el, pp: el.querySelector(".pp"), fl: el.querySelector(".fl"), kn: el.querySelector(".kn"), tm: el.querySelector(".tm"),
               ln: el.querySelector(".ln"), shown: null };
       bar.pp.addEventListener("click", function(e){ e.stopPropagation(); if (running) hold(); else go(); });
+      // − / +: the teacher decides how long this class gets; the new length is kept for next time
+      function adjust(d){
+        var was = left;
+        total = Math.max(30, total + d);
+        left = d > 0 ? Math.min(total, left + d) : Math.max(Math.min(total, 1), Math.min(total, left + d));
+        if (was <= 0 && left > 0) { lastSec = null; bar.el.classList.remove("end"); }
+        try { localStorage.setItem(store, total); } catch (e) {}
+        tip = tip.replace(/: [^—]*—/, ": " + minutes(total) + " —");
+        paint();
+      }
+      el.querySelector(".mn").addEventListener("click", function(e){ e.stopPropagation(); adjust(-30); });
+      el.querySelector(".pl").addEventListener("click", function(e){ e.stopPropagation(); adjust(30); });
       el.querySelector(".cl").addEventListener("click", function(e){ e.stopPropagation(); reset(); });
       el.addEventListener("click", function(e){ e.stopPropagation(); });
       // the line: drag or click to set how much of the time has gone
@@ -2105,7 +2130,7 @@ tspan.gg { text-decoration-color:#0E9F6E; }
       // move the whole bar
       var mv = null;
       el.addEventListener("pointerdown", function(e){
-        if (e.target.closest(".pp") || e.target.closest(".cl") || e.target.closest(".ln")) return;
+        if (e.target.closest(".pp") || e.target.closest(".cl") || e.target.closest(".ln") || e.target.closest(".adj")) return;
         e.preventDefault(); e.stopPropagation();
         var k = page.getBoundingClientRect().width / page.offsetWidth || 1;
         mv = { x: e.clientX, y: e.clientY, l: el.offsetLeft, t: el.offsetTop, k: k };
