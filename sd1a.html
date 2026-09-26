@@ -1640,7 +1640,7 @@ tspan.gg { text-decoration-color:#0E9F6E; }
 })();
 </script>
 
-<script id="qa-v9">
+<script id="qa-v10">
 (function(){
   // one recording at a time. Clicking a code plays it; a bar above the code shows play/pause, a line that can be
   // dragged or clicked to jump anywhere in the recording, and the time left. Clicking the code again pauses/resumes;
@@ -1666,14 +1666,40 @@ tspan.gg { text-decoration-color:#0E9F6E; }
       cur.tm.textContent = fmt(d - cur.range.value);
     } else cur.tm.textContent = "…";
   }
+  // recordings are fetched ahead: when a page comes near the screen, its codes' audio starts loading, so a
+  // click plays at once instead of waiting for the download
+  var cache = {};
+  function get(src){
+    var a = cache[src];
+    if (a && !a.error) return a;
+    a = cache[src] = new Audio();
+    a.preload = "auto"; a.src = src;
+    ["play", "pause", "timeupdate", "loadedmetadata", "durationchange"].forEach(function(ev){
+      a.addEventListener(ev, function(){ if (cur && cur.audio === a) draw(); });
+    });
+    a.addEventListener("ended", function(){ if (cur && cur.audio === a) stop(); });
+    a.addEventListener("error", function(){ if (cur && cur.audio === a) { cur.tm.textContent = "xato"; cur.btn.classList.remove("on"); } });
+    return a;
+  }
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (!e.isIntersecting) return;
+        io.unobserve(e.target);
+        e.target.querySelectorAll(".qa").forEach(function(b){ get(b.dataset.src); });
+      });
+    }, { root: document.getElementById("stage-outer"), rootMargin: "1500px 0px" });
+    document.querySelectorAll(".page.hpage").forEach(function(pg){ if (pg.querySelector(".qa")) io.observe(pg); });
+  }
   function stop(){
     if (!cur) return;
-    cur.audio.pause(); cur.audio.removeAttribute("src"); cur.audio.load();
+    cur.audio.pause(); try { cur.audio.currentTime = 0; } catch (e) {}
     cur.bar.remove(); cur.btn.classList.remove("on"); cur = null;
   }
   function start(btn){
     stop();
-    var page = btn.parentNode, audio = new Audio(btn.dataset.src), bar = document.createElement("div");
+    var page = btn.parentNode, audio = get(btn.dataset.src), bar = document.createElement("div");
+    try { audio.currentTime = 0; } catch (e) {}
     bar.className = "qa-bar";
     bar.title = "Ushlab boshqa joyga surish mumkin";
     bar.innerHTML = '<svg class="grip" viewBox="0 0 12 18" fill="currentColor"><circle cx="3" cy="3" r="1.6"/><circle cx="9" cy="3" r="1.6"/>' +
@@ -1691,9 +1717,6 @@ tspan.gg { text-decoration-color:#0E9F6E; }
     cur = { btn: btn, audio: audio, bar: bar, pp: bar.querySelector(".pp"), range: bar.querySelector("input"),
             tm: bar.querySelector(".tm"), seeking: false, shown: null };
     var c = cur;
-    ["play", "pause", "timeupdate", "loadedmetadata", "durationchange"].forEach(function(ev){ audio.addEventListener(ev, draw); });
-    audio.addEventListener("ended", stop);
-    audio.addEventListener("error", function(){ if (cur === c) { c.tm.textContent = "xato"; btn.classList.remove("on"); } });
     // the line follows the pointer itself (mouse, finger or pen) so a drag is never taken for page scrolling
     var r = c.range;
     function seekTo(e){
