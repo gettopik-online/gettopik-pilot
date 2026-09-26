@@ -77,8 +77,8 @@ const pageHtml = pages.map((p, i) => {
     if (!min) return "";
     const code = ALLQR.find((q) => q.page === i + 1 && new RegExp(sec.replace(" ", "\\s*") + "(\\s|$)").test(q.title || ""));
     return code
-      ? `<button type="button" class="rt c" data-min="${min}" title="${sec}: ${min} daqiqa — bosing, taymer boshlanadi" style="left:${px(code.x + code.w / 2)};top:${px(code.y + code.h + 4)}">${CLOCK}<span>${min}분</span></button>`
-      : `<button type="button" class="rt" data-min="${min}" title="${sec}: ${min} daqiqa — bosing, taymer boshlanadi" style="left:${px(r.x - 1)};top:${px(r.y + r.h + 3)}">${CLOCK}<span>${min}분</span></button>`;
+      ? `<button type="button" class="rt c" data-min="${min}" title="${sec}: ${min} daqiqa — bosing, taymer boshlanadi" aria-label="${sec} taymeri, ${min} daqiqa" style="left:${px(code.x + code.w / 2)};top:${px(code.y + code.h + 4)}">${CLOCK}</button>`
+      : `<button type="button" class="rt" data-min="${min}" title="${sec}: ${min} daqiqa — bosing, taymer boshlanadi" aria-label="${sec} taymeri, ${min} daqiqa" style="left:${px(r.x - 1)};top:${px(r.y + r.h + 3)}">${CLOCK}</button>`;
   }).join("");
   return `<div class="page hpage" data-key="p${i + 1}" style="height:${px(p.h)}"><img class="pbg" src="${dir}/${p.bg}" loading="lazy" decoding="async" alt="">${runs}${qa}${tools}${timers}</div>`;
 });
@@ -118,42 +118,44 @@ const css = `
   .page.hpage .qa-bar .cl:hover{background:#F6E6DC;color:#3A2A20}
   .page.hpage .qa-bar .cl:focus-visible{outline:2px solid #1968D8;outline-offset:1px}
   .page.hpage .qa-bar .cl svg{width:12px;height:12px}
-  /* 읽기 timer: badge like 대본/정답, bar like the audio bar */
-  .page.hpage .rt{position:absolute;z-index:4;display:flex;align-items:center;gap:4px;height:29px;padding:0 11px 0 8px;border-radius:15px;
-    border:1.2px solid #F3CDB6;background:#FFFBF7;color:#C8561E;font:700 11px/1 "Malgun Gothic",sans-serif;cursor:pointer;white-space:nowrap;
-    box-shadow:0 1px 4px rgba(120,60,20,.12);font-variant-numeric:tabular-nums;transition:background .15s,color .15s,transform .12s}
+  /* 읽기 timer: a small, quiet clock under the code; a ring around it shows the time running down */
+  .page.hpage .rt{position:absolute;z-index:4;width:24px;height:24px;padding:0;border-radius:50%;border:1px solid rgba(243,205,182,.8);
+    background:rgba(255,251,247,.85);color:#D29A74;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:.72;
+    transition:opacity .15s,color .15s,background .15s,transform .12s}
   .page.hpage .rt.c{transform:translateX(-50%)}
-  .page.hpage .rt svg{width:14px;height:14px}
-  .page.hpage .rt:hover{background:#FFEBDD}
-  .page.hpage .rt.on{background:#F26B2A;border-color:#F26B2A;color:#fff}
-  .page.hpage .rt.hold{background:#8A94A6;border-color:#8A94A6;color:#fff}
-  .page.hpage .rt.end{background:#E8264A;border-color:#E8264A;color:#fff}
-  .page.hpage .rt:focus-visible{outline:2px solid #1968D8;outline-offset:2px}
-  .page.hpage .rt-bar{position:absolute;z-index:5;display:flex;align-items:center;gap:7px;width:276px;height:34px;padding:0 4px 0 3px;
-    border-radius:17px;background:#fff;border:1px solid #F3CDB6;box-shadow:0 3px 12px rgba(30,20,10,.16);cursor:grab;touch-action:none;
-    font:700 12.5px/1 "Malgun Gothic",sans-serif;color:#3A2A20;user-select:none}
-  .page.hpage .rt-bar.moving{cursor:grabbing;box-shadow:0 8px 24px rgba(30,20,10,.28)}
-  .page.hpage .rt-bar .grip{flex:none;width:12px;height:18px;color:#C9A48E}
-  .page.hpage .rt-bar .pp{flex:none;width:26px;height:26px;border:0;border-radius:50%;background:#F26B2A;color:#fff;cursor:pointer;
+  .page.hpage .rt:hover{opacity:1;color:#C8561E;background:#FFF3EA}
+  .page.hpage .rt > svg{width:13px;height:13px}
+  .page.hpage .rt .ring{position:absolute;inset:-3px;width:30px;height:30px;transform:rotate(-90deg);pointer-events:none}
+  .page.hpage .rt .ring circle{fill:none;stroke-width:2.4;stroke-linecap:round}
+  .page.hpage .rt.on,.page.hpage .rt.hold,.page.hpage .rt.end{opacity:1;color:#F26B2A;background:#fff;border-color:transparent}
+  .page.hpage .rt.hold{color:#8A94A6}
+  .page.hpage .rt.end{color:#fff;background:#E8264A}
+  .page.hpage .rt:focus-visible{outline:2px solid #1968D8;outline-offset:3px}
+  /* its bar: a compact pill that can be moved anywhere on the page */
+  .page.hpage .rt-bar{position:absolute;z-index:5;display:flex;align-items:center;gap:5px;width:168px;height:28px;padding:0 3px;
+    border-radius:14px;background:#fff;border:1px solid #F3CDB6;box-shadow:0 2px 10px rgba(30,20,10,.14);cursor:grab;touch-action:none;
+    font:700 12px/1 "Malgun Gothic",sans-serif;color:#3A2A20;user-select:none}
+  .page.hpage .rt-bar.moving{cursor:grabbing;box-shadow:0 6px 18px rgba(30,20,10,.24)}
+  .page.hpage .rt-bar .pp{flex:none;width:21px;height:21px;border:0;border-radius:50%;background:#F26B2A;color:#fff;cursor:pointer;
     display:flex;align-items:center;justify-content:center;padding:0}
-  .page.hpage .rt-bar .pp svg{width:11px;height:11px}
+  .page.hpage .rt-bar .pp svg{width:9px;height:9px}
   .page.hpage .rt-bar.hold .pp{background:#8A94A6}
-  .page.hpage .rt-bar .ln{flex:1;min-width:0;height:28px;display:flex;align-items:center;cursor:pointer;touch-action:none}
-  .page.hpage .rt-bar .tr{position:relative;flex:1;height:5px;border-radius:3px;background:#F3DDD0}
-  .page.hpage .rt-bar .fl{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:#F26B2A}
-  .page.hpage .rt-bar .kn{position:absolute;top:50%;width:15px;height:15px;margin:-7.5px 0 0 -7.5px;border-radius:50%;background:#fff;
-    border:2.5px solid #F26B2A;box-sizing:border-box}
-  .page.hpage .rt-bar .tm{flex:none;min-width:40px;text-align:right;font-size:14px;font-variant-numeric:tabular-nums}
-  .page.hpage .rt-bar.last .tm{color:#E8264A}
+  .page.hpage .rt-bar .tm{flex:none;min-width:34px;font-variant-numeric:tabular-nums}
+  .page.hpage .rt-bar .ln{flex:1;min-width:0;height:22px;display:flex;align-items:center;cursor:pointer;touch-action:none}
+  .page.hpage .rt-bar .tr{position:relative;flex:1;height:3px;border-radius:2px;background:#F3DDD0}
+  .page.hpage .rt-bar .fl{position:absolute;left:0;top:0;bottom:0;border-radius:2px;background:#F26B2A}
+  .page.hpage .rt-bar .kn{position:absolute;top:50%;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:#fff;
+    border:2px solid #F26B2A;box-sizing:border-box}
+  .page.hpage .rt-bar.last .tm,.page.hpage .rt-bar.end .tm{color:#E8264A}
   .page.hpage .rt-bar.end{border-color:#E8264A;animation:rtEnd .9s ease-in-out 3}
   .page.hpage .rt-bar.end .fl{background:#E8264A}
-  .page.hpage .rt-bar.end .tm{color:#E8264A}
-  @keyframes rtEnd{50%{box-shadow:0 0 0 6px rgba(232,38,74,.25)}}
+  .page.hpage .rt-bar.end .kn{border-color:#E8264A}
+  @keyframes rtEnd{50%{box-shadow:0 0 0 5px rgba(232,38,74,.22)}}
   @media (prefers-reduced-motion:reduce){.page.hpage .rt-bar.end{animation:none}}
-  .page.hpage .rt-bar .cl{flex:none;width:24px;height:24px;border:0;border-radius:50%;background:transparent;color:#9A8577;cursor:pointer;
+  .page.hpage .rt-bar .cl{flex:none;width:20px;height:20px;border:0;border-radius:50%;background:transparent;color:#9A8577;cursor:pointer;
     display:flex;align-items:center;justify-content:center;padding:0}
   .page.hpage .rt-bar .cl:hover{background:#F6E6DC;color:#3A2A20}
-  .page.hpage .rt-bar .cl svg{width:12px;height:12px}
+  .page.hpage .rt-bar .cl svg{width:10px;height:10px}
   .page.hpage .rt-bar .pp:focus-visible,.page.hpage .rt-bar .cl:focus-visible{outline:2px solid #1968D8;outline-offset:2px}
   /* 대본 / 정답: two small round badges hanging under the code */
   .page.hpage .qa-tools{position:absolute;z-index:4;display:flex;gap:4px;transform:translateX(-50%)}
@@ -502,14 +504,15 @@ const qaJs = `
 // 읽기 timers (see .rt / .rt-bar above). Clicking the badge starts; clicking it or ⏸ pauses and resumes; the line
 // can be dragged to give more or less time; × resets. The last ten seconds tick, the end rings.
 const rtJs = `
-<script id="rt-v1">
+<script id="rt-v2">
 (function(){
   var PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12.5-7.5z"/></svg>',
       PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="5.5" y="4.5" width="4.5" height="15" rx="1"/><rect x="14" y="4.5" width="4.5" height="15" rx="1"/></svg>',
       GRIP = '<svg class="grip" viewBox="0 0 12 18" fill="currentColor"><circle cx="3" cy="3" r="1.6"/><circle cx="9" cy="3" r="1.6"/>' +
         '<circle cx="3" cy="9" r="1.6"/><circle cx="9" cy="9" r="1.6"/><circle cx="3" cy="15" r="1.6"/><circle cx="9" cy="15" r="1.6"/></svg>',
       X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
-  var W = 276, H = 34, ac = null;
+  var W = 168, ac = null,
+      RING = '<svg class="ring" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" pathLength="100" stroke="transparent"/></svg>';
   function beep(hi){
     try {
       ac = ac || new (window.AudioContext || window.webkitAudioContext)();
@@ -523,10 +526,14 @@ const rtJs = `
   function fmt(t){ t = Math.max(0, Math.ceil(t)); return ("0" + Math.floor(t / 60)).slice(-2) + ":" + ("0" + t % 60).slice(-2); }
   function Timer(badge){
     var total = +badge.dataset.min * 60, left = total, running = false, last = 0, raf = 0, bar = null, lastSec = null;
-    var label = badge.querySelector("span"), idle = label.textContent;
+    badge.insertAdjacentHTML("beforeend", RING);
+    var ring = badge.querySelector(".ring circle"), tip = badge.title;
     function paint(){
       var sec = Math.ceil(left);
-      label.textContent = running || left < total ? fmt(left) : idle;
+      var busy = running || left < total;
+      ring.style.stroke = !busy ? "transparent" : left <= 0 ? "#E8264A" : running ? "#F26B2A" : "#8A94A6";
+      ring.style.strokeDasharray = (left / total * 100) + " 100";
+      badge.title = busy ? fmt(left) + " qoldi" : tip;
       badge.classList.toggle("on", running && left > 0);
       badge.classList.toggle("hold", !running && left > 0 && left < total);
       badge.classList.toggle("end", left <= 0);
@@ -556,11 +563,11 @@ const rtJs = `
     function makeBar(){
       var page = badge.parentNode, el = document.createElement("div");
       el.className = "rt-bar"; el.title = "Ushlab boshqa joyga surish mumkin";
-      el.innerHTML = GRIP + '<button type="button" class="pp"></button><span class="ln"><span class="tr"><span class="fl"></span>' +
-        '<span class="kn"></span></span></span><span class="tm"></span><button type="button" class="cl" title="Yopish" aria-label="Yopish">' + X + '</button>';
+      el.innerHTML = '<button type="button" class="pp"></button><span class="tm"></span><span class="ln"><span class="tr"><span class="fl"></span>' +
+        '<span class="kn"></span></span></span><button type="button" class="cl" title="Yopish" aria-label="Yopish">' + X + '</button>';
       var cx = badge.offsetLeft + (badge.classList.contains("c") ? 0 : badge.offsetWidth / 2);
       el.style.left = Math.max(6, Math.min(cx - W / 2, page.offsetWidth - W - 6)) + "px";
-      el.style.top = (badge.offsetTop + badge.offsetHeight + 8) + "px";
+      el.style.top = (badge.offsetTop + badge.offsetHeight + 7) + "px";
       page.appendChild(el);
       bar = { el: el, pp: el.querySelector(".pp"), fl: el.querySelector(".fl"), kn: el.querySelector(".kn"), tm: el.querySelector(".tm"),
               ln: el.querySelector(".ln"), shown: null };
