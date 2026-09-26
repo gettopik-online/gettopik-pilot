@@ -92,7 +92,7 @@ const fitJs = `
 `;
 
 const qaJs = `
-<script id="qa-v5">
+<script id="qa-v6">
 (function(){
   // one recording at a time. Clicking a code plays it; a bar above the code shows play/pause, a line that can be
   // dragged or clicked to jump anywhere in the recording, and the time left. Clicking the code again pauses/resumes;
@@ -104,8 +104,11 @@ const qaJs = `
   function draw(){
     if (!cur) return;
     var a = cur.audio, d = a.duration || 0;
-    cur.pp.innerHTML = a.paused ? PLAY : PAUSE;
-    cur.pp.title = cur.pp.ariaLabel = a.paused ? "Davom ettirish" : "Pauza";
+    if (cur.shown !== a.paused) {                  // redraw the icon only when the state flips, so a click in progress lands
+      cur.shown = a.paused;
+      cur.pp.innerHTML = a.paused ? PLAY : PAUSE;
+      cur.pp.title = cur.pp.ariaLabel = a.paused ? "Davom ettirish" : "Pauza";
+    }
     cur.bar.classList.toggle("paused", a.paused);
     cur.btn.classList.toggle("on", !a.paused);
     if (d) {
@@ -133,7 +136,7 @@ const qaJs = `
     bar.style.top = top + "px";
     page.appendChild(bar);
     cur = { btn: btn, audio: audio, bar: bar, pp: bar.querySelector(".pp"), range: bar.querySelector("input"),
-            tm: bar.querySelector(".tm"), seeking: false };
+            tm: bar.querySelector(".tm"), seeking: false, shown: null };
     var c = cur;
     ["play", "pause", "timeupdate", "loadedmetadata", "durationchange"].forEach(function(ev){ audio.addEventListener(ev, draw); });
     audio.addEventListener("ended", stop);
