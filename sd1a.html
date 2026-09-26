@@ -656,6 +656,15 @@ tspan.gg { text-decoration-color:#0E9F6E; }
   #qa-player .hd button svg{width:15px;height:15px}
   #qa-player .fr{position:relative;width:100%;height:200px;background:#000}
   #qa-player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  /* docked: the book narrows and the player sits in its own column, covering nothing */
+  #qa-col{display:none;position:fixed;top:0;right:0;bottom:44px;width:380px;z-index:690;background:#F2F4F8;border-left:1px solid #E1E5EC}
+  #qa-col .note{position:absolute;left:24px;right:24px;top:270px;font:12.5px/1.5 "Malgun Gothic",sans-serif;color:#5B6474}
+  body.qa-dock #qa-col{display:block}
+  body.qa-dock #stage-outer{right:380px}
+  body.qa-dock #draw-toolbar{right:396px}
+  body.qa-dock #qa-player{left:auto!important;right:12px!important;top:12px!important;bottom:auto!important;box-shadow:0 4px 16px rgba(10,16,30,.18)}
+  body.qa-dock #qa-player .hd{cursor:default}
+  body.qa-dock #qa-player .grip, body.qa-dock #qa-player .mv{display:none}
 </style>
 <style id="perf-v1">
 /* off-screen pages are skipped entirely until they come near the viewport */
@@ -1632,21 +1641,25 @@ tspan.gg { text-decoration-color:#0E9F6E; }
 })();
 </script>
 
+<div id="qa-col" aria-hidden="true"><div class="note">Audio tinglanmoqda. Pleyerni kitob ustida erkin joylashtirish uchun sarlavhadagi ⧉ tugmasini bosing.</div></div>
 <div id="qa-player" role="region" aria-label="Audio">
-  <div class="hd" title="Sudrab boshqa joyga qo'yish mumkin">
+  <div class="hd">
     <svg class="grip" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.7"/><circle cx="15" cy="6" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="18" r="1.7"/><circle cx="15" cy="18" r="1.7"/></svg>
     <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14v-2a9 9 0 0 1 18 0v2"/><rect x="2.5" y="14" width="5" height="7" rx="1.5"/><rect x="16.5" y="14" width="5" height="7" rx="1.5"/></svg>
     <span class="ttl"></span>
     <button type="button" class="mv" title="Boshqa burchakka o'tkazish" aria-label="Boshqa burchakka o'tkazish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 15v5h-5M4 4l6 6M20 20l-6-6"/></svg></button>
+    <button type="button" class="dk" title="" aria-label=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
     <button type="button" class="x" title="Yopish" aria-label="Yopish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   </div>
   <div class="fr"></div>
 </div>
-<script id="qa-v2">
+<script id="qa-v3">
 (function(){
   var box = document.getElementById("qa-player"), hd = box.querySelector(".hd"), frame = box.querySelector(".fr"),
-      ttl = box.querySelector(".ttl"), cur = null, M = innerWidth < 400 ? 8 : 12, BAR = 44, pos = null, corner = 0;
-  try { pos = JSON.parse(localStorage.getItem("qaPos") || "null"); } catch (e) {}
+      ttl = box.querySelector(".ttl"), dk = box.querySelector(".dk"), so = document.getElementById("stage-outer"),
+      cur = null, M = innerWidth < 400 ? 8 : 12, BAR = 44, pos = null, corner = 0, mode = "dock";
+  try { pos = JSON.parse(localStorage.getItem("qaPos") || "null"); mode = localStorage.getItem("qaMode") || "dock"; } catch (e) {}
+  function canDock(){ return innerWidth >= 900; }
   function clamp(x, y){
     var w = box.offsetWidth, h = box.offsetHeight;
     return [Math.max(M, Math.min(x, innerWidth - w - M)), Math.max(M, Math.min(y, innerHeight - BAR - h - M))];
@@ -1660,9 +1673,25 @@ tspan.gg { text-decoration-color:#0E9F6E; }
     var right = i === 0 || i === 3, bottom = i < 2;
     place(right ? innerWidth : 0, bottom ? innerHeight : 0, true);
   }
+  // narrowing or widening the book keeps the reader on the same spot of the same page
+  function setDock(on){
+    if (document.body.classList.contains("qa-dock") === on) return;
+    var ratio = so.scrollHeight ? so.scrollTop / so.scrollHeight : 0;
+    document.body.classList.toggle("qa-dock", on);
+    dispatchEvent(new Event("resize"));
+    so.scrollTop = ratio * so.scrollHeight;
+  }
+  function layout(){
+    var dock = box.classList.contains("open") && mode === "dock" && canDock();
+    setDock(dock);
+    dk.title = dk.ariaLabel = mode === "dock" ? "Kitob ustida erkin joylashtirish" : "Yon ustunga joylashtirish";
+    dk.style.display = canDock() ? "" : "none";
+    if (!dock && box.classList.contains("open")) { if (pos) place(pos.x, pos.y); else toCorner(0); }
+  }
   function stop(){
     frame.innerHTML = ""; box.classList.remove("open");
     if (cur) cur.classList.remove("on"); cur = null;
+    layout();
   }
   function play(btn){
     if (cur === btn) { stop(); return; }
@@ -1672,7 +1701,10 @@ tspan.gg { text-decoration-color:#0E9F6E; }
     frame.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + btn.dataset.yt +
       '?autoplay=1&rel=0&playsinline=1&iv_load_policy=3" allow="autoplay; encrypted-media" allowfullscreen title="Audio"></iframe>';
     box.classList.add("open");
-    if (pos) place(pos.x, pos.y); else toCorner(0);
+    layout();
+    // docking narrows the book: bring the code that was clicked back into view
+    var r = btn.getBoundingClientRect(), o = so.getBoundingClientRect();
+    if (r.top < o.top + 20 || r.bottom > o.bottom - 60) so.scrollTop += r.top - o.top - 120;
   }
   document.addEventListener("click", function(e){
     var b = e.target.closest && e.target.closest(".qa");
@@ -1680,13 +1712,22 @@ tspan.gg { text-decoration-color:#0E9F6E; }
   });
   box.querySelector(".x").addEventListener("click", stop);
   box.querySelector(".mv").addEventListener("click", function(){ corner = (corner + 1) % 4; toCorner(corner); });
+  dk.addEventListener("click", function(){
+    mode = mode === "dock" ? "float" : "dock";
+    try { localStorage.setItem("qaMode", mode); } catch (e) {}
+    layout();
+  });
   document.addEventListener("keydown", function(e){ if (e.key === "Escape" && cur) stop(); });
-  addEventListener("resize", function(){ if (pos && box.classList.contains("open")) place(pos.x, pos.y); });
+  var lastW = innerWidth;
+  addEventListener("resize", function(){
+    if (innerWidth === lastW) return; lastW = innerWidth;       // ignore the resize we dispatch ourselves
+    if (box.classList.contains("open")) layout();
+  });
 
-  // drag by the title bar (mouse, pen or finger); the video itself stays clickable
+  // floating mode: drag by the title bar (mouse, pen or finger); the video itself stays clickable
   var start = null;
   hd.addEventListener("pointerdown", function(e){
-    if (e.target.closest("button")) return;
+    if (e.target.closest("button") || document.body.classList.contains("qa-dock")) return;
     var r = box.getBoundingClientRect();
     start = { dx: e.clientX - r.left, dy: e.clientY - r.top };
     hd.setPointerCapture(e.pointerId); box.classList.add("drag"); frame.style.pointerEvents = "none";
