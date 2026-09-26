@@ -81,16 +81,14 @@ const pageHtml = pages.map((p, i) => {
     if (!min) return "";
     const code = ALLQR.find((q) => q.page === i + 1 && new RegExp(sec.replace(" ", "\\s*") + "(\\s|$)").test(q.title || ""));
     const id = `${i + 1}:${sec}`, A = ANSWERS[id];
-    const cx = code ? code.x + code.w / 2 : r.x - 1 + 12 / PT, cy = code ? code.y + code.h + 4 : r.y + r.h + 3;
-    const answer = !A ? "" :
-      `<button type="button" class="rt-an" data-id="${id}" hidden title="정답 — to'g'ri javob" style="left:${px(cx + 15 / PT * 1.3)};top:${px(cy)}">정답</button>` +
+    const marks = !A ? "" :
       `<svg class="qa-marks" data-id="${id}" viewBox="0 0 ${p.w} ${p.h}" preserveAspectRatio="none" aria-hidden="true">` +
       (A.marks || []).map((m, k) => m.circle ? `<path pathLength="1" d="${handCircle(m.circle, i * 5 + k + 11)}"/>`
         : m.text ? `<text x="${m.text[0]}" y="${m.text[1]}" font-size="${m.text[3] || 11}" style="animation-delay:${(0.15 + k * 0.25).toFixed(2)}s">${esc(m.text[2])}</text>`
         : `<path pathLength="1" d="${handLine(m.line)}"/>`).join("") + `</svg>`;
-    return code
-      ? answer + `<button type="button" class="rt c" data-id="${id}" data-min="${min}" title="${sec} taymeri — bosing va vaqtni belgilang" aria-label="${sec} taymeri" style="left:${px(code.x + code.w / 2)};top:${px(code.y + code.h + 4)}">${CLOCK}</button>`
-      : answer + `<button type="button" class="rt" data-id="${id}" data-min="${min}" title="${sec} taymeri — bosing va vaqtni belgilang" aria-label="${sec} taymeri" style="left:${px(r.x - 1)};top:${px(r.y + r.h + 3)}">${CLOCK}</button>`;
+    // the clock hangs under the section's own "읽기 N" label
+    return marks + `<button type="button" class="rt c" data-id="${id}"${A ? ' data-an="1"' : ""} title="${sec} taymeri — bosing va vaqtni belgilang" ` +
+      `aria-label="${sec} taymeri" style="left:${px(r.x + r.w / 2)};top:${px(r.y + r.h + 4)}">${CLOCK}<span class="an">정답</span></button>`;
   }).join("");
   return `<div class="page hpage" data-key="p${i + 1}" style="height:${px(p.h)}"><img class="pbg" src="${dir}/${p.bg}" loading="lazy" decoding="async" alt="">${runs}${qa}${tools}${timers}</div>`;
 });
@@ -137,6 +135,13 @@ const css = `
   .page.hpage .rt.c{transform:translateX(-50%)}
   .page.hpage .rt:hover{opacity:1;color:#C8561E;background:#FFF3EA}
   .page.hpage .rt > svg{width:13px;height:13px}
+  .page.hpage .rt .an{display:none}
+  .page.hpage .rt.ans{width:auto;height:24px;padding:0 9px;border-radius:12px;opacity:1;border:1px solid #F3CDB6;background:#FFFBF7;
+    color:#C8561E;font:700 9.6px/1 "Malgun Gothic",sans-serif;animation:rtAn .35s cubic-bezier(.3,1.6,.5,1)}
+  .page.hpage .rt.ans > svg{display:none}
+  .page.hpage .rt.ans .an{display:inline}
+  .page.hpage .rt.ans:hover{background:#FFEBDD}
+  .page.hpage .rt.ans.shown{background:#F26B2A;border-color:#F26B2A;color:#fff}
   .page.hpage .rt .ring{position:absolute;inset:-3px;width:30px;height:30px;transform:rotate(-90deg);pointer-events:none}
   .page.hpage .rt .ring circle{fill:none;stroke-width:2.4;stroke-linecap:round}
   .page.hpage .rt.on,.page.hpage .rt.hold,.page.hpage .rt.end{opacity:1;color:#F26B2A;background:#fff;border-color:transparent}
@@ -151,7 +156,7 @@ const css = `
   .page.hpage .rt-an:hover{background:#FFEBDD}
   .page.hpage .rt-an.on{background:#F26B2A;border-color:#F26B2A;color:#fff}
   .page.hpage .rt-an:focus-visible{outline:2px solid #1968D8;outline-offset:2px}
-  @keyframes rtAn{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}
+  @keyframes rtAn{from{opacity:0;transform:translateX(-50%) scale(.4)}to{opacity:1;transform:translateX(-50%)}}
   @media (prefers-reduced-motion:reduce){.page.hpage .rt-an{animation:none}}
   /* its bar: a compact pill that can be moved anywhere on the page */
   .page.hpage .rt-bar{position:absolute;z-index:5;display:flex;align-items:center;gap:5px;width:182px;height:28px;padding:0 3px;
@@ -541,7 +546,7 @@ const qaJs = `
 // 읽기 timers (see .rt / .rt-bar above). Clicking the badge starts; clicking it or ⏸ pauses and resumes; the line
 // can be dragged to give more or less time; × resets. The last ten seconds tick, the end rings.
 const rtJs = `
-<script id="rt-v7">
+<script id="rt-v8">
 (function(){
   var PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12.5-7.5z"/></svg>',
       PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="5.5" y="4.5" width="4.5" height="15" rx="1"/><rect x="14" y="4.5" width="4.5" height="15" rx="1"/></svg>',
@@ -571,7 +576,7 @@ const rtJs = `
       var busy = set && (running || left < total);
       ring.style.stroke = !busy ? "transparent" : left <= 0 ? "#E8264A" : running ? "#F26B2A" : "#8A94A6";
       ring.style.strokeDasharray = (set ? left / total * 100 : 0) + " 100";
-      badge.title = busy ? fmt(left) + " qoldi" : tip;
+      if (!badge.classList.contains("ans")) badge.title = busy ? fmt(left) + " qoldi" : tip;
       badge.classList.toggle("on", running && left > 0);
       badge.classList.toggle("hold", set && !running && left > 0 && left < total);
       badge.classList.toggle("end", set && left <= 0);
@@ -595,9 +600,11 @@ const rtJs = `
       paint();
       if (running) raf = requestAnimationFrame(tick);
     }
-    function unlock(){
-      var an = badge.parentNode.querySelector('.rt-an[data-id="' + badge.dataset.id + '"]');
-      if (an && an.hidden) an.hidden = false;
+    var marks = badge.parentNode.querySelector('.qa-marks[data-id="' + badge.dataset.id + '"]');
+    function unlock(){ if (badge.dataset.an) { badge.classList.add("ans"); badge.title = "정답 — to‘g‘ri javobni ko‘rsatish / yashirish"; } }
+    function showAnswer(on){
+      if (!marks) return;
+      marks.classList.toggle("show", on); badge.classList.toggle("shown", on);
     }
     function go(){
       if (total <= 0) { ask(); return; }                     // nothing to count yet: ask for the time
@@ -605,7 +612,10 @@ const rtJs = `
       running = true; last = performance.now(); lastSec = null; raf = requestAnimationFrame(tick); paint();
     }
     function hold(){ running = false; cancelAnimationFrame(raf); paint(); }
-    function reset(){ hold(); total = 0; left = 0; if (bar) { bar.el.remove(); bar = null; } paint(); }
+    function reset(){
+      hold(); total = 0; left = 0; if (bar) { bar.el.remove(); bar = null; }
+      badge.classList.remove("ans"); showAnswer(false); paint();
+    }
     // typed time: 4 = 4 min, 3:30 = 3 min 30 s, 2.5 / 2,5 = 2 min 30 s, 90s = 90 s
     function parse(v){
       v = String(v).trim().replace(",", ".").toLowerCase();
@@ -704,19 +714,14 @@ const rtJs = `
     }
     badge.addEventListener("click", function(e){
       e.preventDefault(); e.stopPropagation();
+      if (badge.classList.contains("ans")) { showAnswer(!marks.classList.contains("show")); return; }
       if (total <= 0) { ask(); return; }                    // first click: the teacher types the time
       if (running) hold(); else go();
     });
     paint();
   }
   document.querySelectorAll(".page.hpage .rt").forEach(Timer);
-  document.addEventListener("click", function(e){
-    var b = e.target.closest && e.target.closest(".rt-an");
-    if (!b) return;
-    e.preventDefault(); e.stopPropagation();
-    var svg = b.parentNode.querySelector('.qa-marks[data-id="' + b.dataset.id + '"]'), on = !svg.classList.contains("show");
-    svg.classList.toggle("show", on); b.classList.toggle("on", on);
-  });
+
   document.addEventListener("keydown", function(e){ if (e.key === "Escape") document.querySelectorAll(".rt-bar .cl").forEach(function(b){ b.click(); }); });
 })();
 </script>
