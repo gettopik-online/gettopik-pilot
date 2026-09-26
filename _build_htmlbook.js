@@ -85,9 +85,7 @@ const pageHtml = pages.map((p, i) => {
     const lines = !model ? "" : `<div class="wx-set" data-id="${id}" hidden>` + (A.marks || []).map((m, k) => !m.text ? "" :
       `<div class="wx${m.text[4] === "start" ? "" : " mid"}" data-k="${k}" contenteditable="true" spellcheck="false" ` +
       `style="left:${px(m.text[0])};top:${px(m.text[1] - (m.text[3] || 11) * 0.86)};--fs:${((m.text[3] || 11) * PT).toFixed(2)}px">${esc(m.text[2])}</div>`).join("") +
-      `<span class="wx-tools"><button type="button" class="wx-sm" title="Kichikroq yozuv" aria-label="Kichikroq yozuv">A−</button>` +
-      `<button type="button" class="wx-lg" title="Kattaroq yozuv" aria-label="Kattaroq yozuv">A+</button>` +
-      `<button type="button" class="wx-rs" title="Asl namunani qaytarish" aria-label="Asl namunani qaytarish">↺</button></span></div>`;
+      `<span class="wx-tools"><button type="button" class="wx-rs" title="Asl namunani qaytarish" aria-label="Asl namunani qaytarish">↺</button></span></div>`;
     const marks = !A ? "" :
       `<svg class="qa-marks${model ? " ink" : ""}" data-id="${id}" viewBox="0 0 ${p.w} ${p.h}" preserveAspectRatio="none" aria-hidden="true">` +
       (A.marks || []).filter((m) => !(model && m.text)).map((m, k) => m.circle ? `<path pathLength="1" d="${handCircle(m.circle, i * 5 + k + 11)}"/>`
@@ -572,7 +570,7 @@ const qaJs = `
 // 읽기 timers (see .rt / .rt-bar above). Clicking the badge starts; clicking it or ⏸ pauses and resumes; the line
 // can be dragged to give more or less time; × resets. The last ten seconds tick, the end rings.
 const rtJs = `
-<script id="rt-v10">
+<script id="rt-v11">
 (function(){
   var PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12.5-7.5z"/></svg>',
       PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="5.5" y="4.5" width="4.5" height="15" rx="1"/><rect x="14" y="4.5" width="4.5" height="15" rx="1"/></svg>',
@@ -758,7 +756,6 @@ const rtJs = `
     try { st = Object.assign(st, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) {}
     function save(){ try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
     function apply(){
-      set.style.setProperty("--s", st.s);
       items.forEach(function(el, i){ var k = el.dataset.k; el.textContent = (st.t[k] != null) ? st.t[k] : orig[i]; });
     }
     apply();
@@ -773,9 +770,6 @@ const rtJs = `
         document.execCommand("insertText", false, t);
       });
     });
-    function size(d){ st.s = Math.max(0.6, Math.min(1.8, Math.round((st.s + d) * 10) / 10)); save(); apply(); }
-    set.querySelector(".wx-sm").addEventListener("click", function(e){ e.stopPropagation(); size(-0.1); });
-    set.querySelector(".wx-lg").addEventListener("click", function(e){ e.stopPropagation(); size(0.1); });
     set.querySelector(".wx-rs").addEventListener("click", function(e){ e.stopPropagation(); st = { s: 1, t: {} }; save(); apply(); });
     var tools = set.querySelector(".wx-tools"), hideT = 0;
     tools.addEventListener("pointerdown", function(e){ e.stopPropagation(); });
