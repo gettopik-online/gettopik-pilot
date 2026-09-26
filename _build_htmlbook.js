@@ -76,19 +76,19 @@ const pageHtml = pages.map((p, i) => {
       `<button type="button" class="qt-an" title="정답 — to'g'ri javob">정답</button></span>` +
       (marks ? `<svg class="qa-marks" data-yt="${q.yt}" viewBox="0 0 ${p.w} ${p.h}" preserveAspectRatio="none" aria-hidden="true">${marks}</svg>` : "");
   }).join("");
-  const timers = p.runs.filter((r) => /^\s*읽기\s*[12]\s*$/.test(r.t)).map((r) => {
-    const sec = r.t.replace(/\s+/g, " ").trim(), min = TIMER[`${i + 1}:${sec}`] || TIMER[sec];
-    if (!min) return "";
+  const writing = p.runs.some((r) => r.s < 9 && /^\s*쓰기\s*$/.test(r.t));
+  const timers = p.runs.filter((r) => /^\s*읽기\s*[12]\s*$/.test(r.t) || (writing && r.s < 9 && /^\s*(쓰기|준비)\s*$/.test(r.t) && ANSWERS[`${i + 1}:${r.t.trim()}`])).map((r) => {
+    const sec = r.t.replace(/\s+/g, " ").trim(), min = TIMER[`${i + 1}:${sec}`] || TIMER[sec] || 0;
     const code = ALLQR.find((q) => q.page === i + 1 && new RegExp(sec.replace(" ", "\\s*") + "(\\s|$)").test(q.title || ""));
     const id = `${i + 1}:${sec}`, A = ANSWERS[id];
     const marks = !A ? "" :
       `<svg class="qa-marks" data-id="${id}" viewBox="0 0 ${p.w} ${p.h}" preserveAspectRatio="none" aria-hidden="true">` +
       (A.marks || []).map((m, k) => m.circle ? `<path pathLength="1" d="${handCircle(m.circle, i * 5 + k + 11)}"/>`
-        : m.text ? `<text x="${m.text[0]}" y="${m.text[1]}" font-size="${m.text[3] || 11}" style="animation-delay:${(0.15 + k * 0.25).toFixed(2)}s">${esc(m.text[2])}</text>`
+        : m.text ? `<text x="${m.text[0]}" y="${m.text[1]}" font-size="${m.text[3] || 11}" style="animation-delay:${(0.15 + k * 0.2).toFixed(2)}s${m.text[4] ? ";text-anchor:" + m.text[4] : ""}">${esc(m.text[2])}</text>`
         : `<path pathLength="1" d="${handLine(m.line)}"/>`).join("") + `</svg>`;
     // the clock hangs under the section's own "읽기 N" label
     return marks + `<button type="button" class="rt c" data-id="${id}"${A ? ' data-an="1"' : ""} title="${sec} taymeri — bosing va vaqtni belgilang" ` +
-      `aria-label="${sec} taymeri" style="left:${px(r.x + r.w / 2)};top:${px(r.y + r.h + 4)}">${CLOCK}<span class="an">정답</span></button>`;
+      `aria-label="${sec} taymeri" style="left:${px(r.x + r.w / 2)};top:${px(r.y + r.h + 4)}">${CLOCK}<span class="an">${(A && A.label) || "정답"}</span></button>`;
   }).join("");
   return `<div class="page hpage" data-key="p${i + 1}" style="height:${px(p.h)}"><img class="pbg" src="${dir}/${p.bg}" loading="lazy" decoding="async" alt="">${runs}${qa}${tools}${timers}</div>`;
 });
