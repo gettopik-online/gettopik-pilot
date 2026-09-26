@@ -89,8 +89,8 @@ const pageHtml = pages.map((p, i) => {
         : m.text ? `<text x="${m.text[0]}" y="${m.text[1]}" font-size="${m.text[3] || 11}" style="animation-delay:${(0.15 + k * 0.25).toFixed(2)}s">${esc(m.text[2])}</text>`
         : `<path pathLength="1" d="${handLine(m.line)}"/>`).join("") + `</svg>`;
     return code
-      ? answer + `<button type="button" class="rt c" data-id="${id}" data-min="${min}" title="${sec}: ${min} daqiqa — bosing, taymer boshlanadi" aria-label="${sec} taymeri, ${min} daqiqa" style="left:${px(code.x + code.w / 2)};top:${px(code.y + code.h + 4)}">${CLOCK}</button>`
-      : answer + `<button type="button" class="rt" data-id="${id}" data-min="${min}" title="${sec}: ${min} daqiqa — bosing, taymer boshlanadi" aria-label="${sec} taymeri, ${min} daqiqa" style="left:${px(r.x - 1)};top:${px(r.y + r.h + 3)}">${CLOCK}</button>`;
+      ? answer + `<button type="button" class="rt c" data-id="${id}" data-min="${min}" title="${sec} taymeri — bosing va vaqtni belgilang" aria-label="${sec} taymeri" style="left:${px(code.x + code.w / 2)};top:${px(code.y + code.h + 4)}">${CLOCK}</button>`
+      : answer + `<button type="button" class="rt" data-id="${id}" data-min="${min}" title="${sec} taymeri — bosing va vaqtni belgilang" aria-label="${sec} taymeri" style="left:${px(r.x - 1)};top:${px(r.y + r.h + 3)}">${CLOCK}</button>`;
   }).join("");
   return `<div class="page hpage" data-key="p${i + 1}" style="height:${px(p.h)}"><img class="pbg" src="${dir}/${p.bg}" loading="lazy" decoding="async" alt="">${runs}${qa}${tools}${timers}</div>`;
 });
@@ -163,6 +163,10 @@ const css = `
   .page.hpage .rt-bar .pp svg{width:9px;height:9px}
   .page.hpage .rt-bar.hold .pp{background:#8A94A6}
   .page.hpage .rt-bar .tm{flex:none;min-width:34px;font-variant-numeric:tabular-nums}
+  .page.hpage .rt-bar .tm{cursor:text;border-radius:5px;padding:2px 2px}
+  .page.hpage .rt-bar .tm:hover{background:#FFF1E8}
+  .page.hpage .rt-bar .tm input{width:44px;height:20px;padding:0 3px;border:1.5px solid #F26B2A;border-radius:5px;outline:none;
+    font:700 12px/1 "Malgun Gothic",sans-serif;color:#3A2A20;text-align:center;background:#fff}
   .page.hpage .rt-bar .adj{flex:none;display:flex;gap:2px}
   .page.hpage .rt-bar .adj button{width:19px;height:19px;padding:0;border:1px solid #F3CDB6;border-radius:50%;background:#FFFBF7;color:#C8561E;
     font:700 13px/1 "Malgun Gothic",sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center}
@@ -535,7 +539,7 @@ const qaJs = `
 // 읽기 timers (see .rt / .rt-bar above). Clicking the badge starts; clicking it or ⏸ pauses and resumes; the line
 // can be dragged to give more or less time; × resets. The last ten seconds tick, the end rings.
 const rtJs = `
-<script id="rt-v4">
+<script id="rt-v6">
 (function(){
   var PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12.5-7.5z"/></svg>',
       PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="5.5" y="4.5" width="4.5" height="15" rx="1"/><rect x="14" y="4.5" width="4.5" height="15" rx="1"/></svg>',
@@ -556,31 +560,27 @@ const rtJs = `
   }
   function fmt(t){ t = Math.max(0, Math.ceil(t)); return ("0" + Math.floor(t / 60)).slice(-2) + ":" + ("0" + t % 60).slice(-2); }
   function Timer(badge){
-    // a length the teacher set earlier for this section (kept in this browser) replaces the suggested one
-    var store = "rt:" + BOOK + ":" + badge.dataset.id, saved = null;
-    try { saved = +localStorage.getItem(store) || null; } catch (e) {}
-    var total = saved || +badge.dataset.min * 60, left = total, running = false, last = 0, raf = 0, bar = null, lastSec = null;
-    function minutes(sec){ var m = Math.floor(sec / 60), r = sec % 60; return r ? m + ":" + ("0" + r).slice(-2) : m + " daqiqa"; }
-    badge.title = badge.title.replace(/: [^—]*—/, ": " + minutes(total) + " —");
+    // no preset length: the teacher sets the time each time, from the class in front of them
+    var total = 0, left = 0, running = false, last = 0, raf = 0, bar = null, lastSec = null;
     badge.insertAdjacentHTML("beforeend", RING);
     var ring = badge.querySelector(".ring circle"), tip = badge.title;
     function paint(){
-      var sec = Math.ceil(left);
-      var busy = running || left < total;
+      var sec = Math.ceil(left), set = total > 0;
+      var busy = set && (running || left < total);
       ring.style.stroke = !busy ? "transparent" : left <= 0 ? "#E8264A" : running ? "#F26B2A" : "#8A94A6";
-      ring.style.strokeDasharray = (left / total * 100) + " 100";
+      ring.style.strokeDasharray = (set ? left / total * 100 : 0) + " 100";
       badge.title = busy ? fmt(left) + " qoldi" : tip;
       badge.classList.toggle("on", running && left > 0);
-      badge.classList.toggle("hold", !running && left > 0 && left < total);
-      badge.classList.toggle("end", left <= 0);
+      badge.classList.toggle("hold", set && !running && left > 0 && left < total);
+      badge.classList.toggle("end", set && left <= 0);
       if (!bar) return;
-      var f = 1 - left / total;
+      var f = set ? 1 - left / total : 0;
       bar.fl.style.width = (f * 100) + "%"; bar.kn.style.left = (f * 100) + "%";
-      bar.tm.textContent = fmt(left);
+      if (!bar.typing) bar.tm.textContent = set ? fmt(left) : "--:--";
       bar.el.classList.toggle("hold", !running && left > 0);
       bar.el.classList.toggle("last", left > 0 && left <= 10);
-      bar.el.classList.toggle("end", left <= 0);
-      if (bar.shown !== running) { bar.shown = running; bar.pp.innerHTML = running ? PAUSE : PLAY; bar.pp.title = running ? "Pauza" : "Davom ettirish"; }
+      bar.el.classList.toggle("end", set && left <= 0);
+      if (bar.shown !== running) { bar.shown = running; bar.pp.innerHTML = running ? PAUSE : PLAY; bar.pp.title = running ? "Pauza" : "Boshlash"; }
       if (running && sec !== lastSec) {
         if (sec <= 10 && sec > 0 && lastSec !== null) beep(false);
         lastSec = sec;
@@ -597,9 +597,53 @@ const rtJs = `
       var an = badge.parentNode.querySelector('.rt-an[data-id="' + badge.dataset.id + '"]');
       if (an && an.hidden) an.hidden = false;
     }
-    function go(){ if (left <= 0) left = total; running = true; last = performance.now(); lastSec = null; raf = requestAnimationFrame(tick); paint(); }
+    function go(){
+      if (total <= 0) { ask(); return; }                     // nothing to count yet: ask for the time
+      if (left <= 0) left = total;
+      running = true; last = performance.now(); lastSec = null; raf = requestAnimationFrame(tick); paint();
+    }
     function hold(){ running = false; cancelAnimationFrame(raf); paint(); }
-    function reset(){ hold(); left = total; if (bar) { bar.el.remove(); bar = null; } paint(); }
+    function reset(){ hold(); total = 0; left = 0; if (bar) { bar.el.remove(); bar = null; } paint(); }
+    // typed time: 4 = 4 min, 3:30 = 3 min 30 s, 2.5 / 2,5 = 2 min 30 s, 90s = 90 s
+    function parse(v){
+      v = String(v).trim().replace(",", ".").toLowerCase();
+      var m = v.match(/^([0-9]{1,2}) *: *([0-9]{1,2})$/);
+      if (m) return +m[1] * 60 + +m[2];
+      m = v.match(/^([0-9]{1,4}) *(s|soniya|sek|초)$/);
+      if (m) return +m[1];
+      if (/^[0-9]{1,2}([.][0-9]+)? *(m|min|daq|daqiqa|분)?$/.test(v)) return Math.round(parseFloat(v) * 60);
+      return null;
+    }
+    function ask(){
+      if (!bar) makeBar();
+      if (bar.typing) { bar.box.focus(); return; }
+      bar.typing = true;
+      var box = bar.box = document.createElement("input");
+      box.type = "text"; box.inputMode = "decimal"; box.placeholder = "daq";
+      box.value = total > 0 ? fmt(left) : ""; box.setAttribute("aria-label", "Vaqt (daqiqa yoki daqiqa:soniya)");
+      bar.tm.textContent = ""; bar.tm.appendChild(box);
+      setTimeout(function(){ box.focus(); box.select(); }, 0);
+      var done = false;
+      function finish(apply){
+        if (done) return; done = true;
+        var sec = apply ? parse(box.value) : null;
+        bar.typing = false; bar.box = null;
+        if (sec && sec >= 5 && sec <= 3600) {
+          total = sec; left = sec; lastSec = null; bar.el.classList.remove("end");
+          if (running) last = performance.now(); else { paint(); go(); return; }   // Enter starts the countdown
+        }
+        if (total <= 0 && !apply) { reset(); return; }
+        paint();
+      }
+      box.addEventListener("keydown", function(ev){
+        ev.stopPropagation();
+        if (ev.key === "Enter") finish(true);
+        if (ev.key === "Escape") finish(false);
+      });
+      box.addEventListener("blur", function(){ finish(true); });
+      box.addEventListener("click", function(ev){ ev.stopPropagation(); });
+      box.addEventListener("pointerdown", function(ev){ ev.stopPropagation(); });
+    }
     function makeBar(){
       var page = badge.parentNode, el = document.createElement("div");
       el.className = "rt-bar"; el.title = "Ushlab boshqa joyga surish mumkin";
@@ -615,23 +659,26 @@ const rtJs = `
       bar = { el: el, pp: el.querySelector(".pp"), fl: el.querySelector(".fl"), kn: el.querySelector(".kn"), tm: el.querySelector(".tm"),
               ln: el.querySelector(".ln"), shown: null };
       bar.pp.addEventListener("click", function(e){ e.stopPropagation(); if (running) hold(); else go(); });
-      // − / +: the teacher decides how long this class gets; the new length is kept for next time
+      // − / +: 30 seconds less or more, while counting too
       function adjust(d){
+        if (total <= 0 && d < 0) return;
         var was = left;
         total = Math.max(30, total + d);
         left = d > 0 ? Math.min(total, left + d) : Math.max(Math.min(total, 1), Math.min(total, left + d));
         if (was <= 0 && left > 0) { lastSec = null; bar.el.classList.remove("end"); }
-        try { localStorage.setItem(store, total); } catch (e) {}
-        tip = tip.replace(/: [^—]*—/, ": " + minutes(total) + " —");
         paint();
       }
       el.querySelector(".mn").addEventListener("click", function(e){ e.stopPropagation(); adjust(-30); });
       el.querySelector(".pl").addEventListener("click", function(e){ e.stopPropagation(); adjust(30); });
+      bar.tm.title = "Bosing va vaqtni yozing: 4 · 3:30 · 2.5";
+      bar.tm.addEventListener("pointerdown", function(e){ e.stopPropagation(); });
+      bar.tm.addEventListener("click", function(e){ e.stopPropagation(); ask(); });
       el.querySelector(".cl").addEventListener("click", function(e){ e.stopPropagation(); reset(); });
       el.addEventListener("click", function(e){ e.stopPropagation(); });
       // the line: drag or click to set how much of the time has gone
       var seeking = false;
       function seek(e){
+        if (total <= 0) return;
         var r = bar.ln.querySelector(".tr").getBoundingClientRect();
         left = total * (1 - Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)));
         lastSec = null; paint();
@@ -640,12 +687,12 @@ const rtJs = `
         try { bar.ln.setPointerCapture(e.pointerId); } catch (err) {} seek(e); });
       bar.ln.addEventListener("pointermove", function(e){ if (seeking) seek(e); });
       bar.ln.addEventListener("pointerup", function(e){ if (seeking) { seek(e); seeking = false; last = performance.now();
-        if (left <= 0) { running = false; beep(true); unlock(); paint(); } } });
+        if (total > 0 && left <= 0) { running = false; beep(true); unlock(); paint(); } } });
       bar.ln.addEventListener("pointercancel", function(){ seeking = false; });
       // move the whole bar
       var mv = null;
       el.addEventListener("pointerdown", function(e){
-        if (e.target.closest(".pp") || e.target.closest(".cl") || e.target.closest(".ln") || e.target.closest(".adj")) return;
+        if (e.target.closest(".pp") || e.target.closest(".cl") || e.target.closest(".ln") || e.target.closest(".adj") || e.target.closest(".tm")) return;
         e.preventDefault(); e.stopPropagation();
         var k = page.getBoundingClientRect().width / page.offsetWidth || 1;
         mv = { x: e.clientX, y: e.clientY, l: el.offsetLeft, t: el.offsetTop, k: k };
@@ -659,10 +706,11 @@ const rtJs = `
       });
       function drop(){ mv = null; el.classList.remove("moving"); }
       el.addEventListener("pointerup", drop); el.addEventListener("pointercancel", drop);
+      paint();
     }
     badge.addEventListener("click", function(e){
       e.preventDefault(); e.stopPropagation();
-      if (!bar) makeBar();
+      if (total <= 0) { ask(); return; }                    // first click: the teacher types the time
       if (running) hold(); else go();
     });
     paint();
