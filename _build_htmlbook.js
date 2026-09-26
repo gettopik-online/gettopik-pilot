@@ -154,7 +154,7 @@ const css = `
   @keyframes rtAn{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}
   @media (prefers-reduced-motion:reduce){.page.hpage .rt-an{animation:none}}
   /* its bar: a compact pill that can be moved anywhere on the page */
-  .page.hpage .rt-bar{position:absolute;z-index:5;display:flex;align-items:center;gap:5px;width:212px;height:28px;padding:0 3px;
+  .page.hpage .rt-bar{position:absolute;z-index:5;display:flex;align-items:center;gap:5px;width:182px;height:28px;padding:0 3px;
     border-radius:14px;background:#fff;border:1px solid #F3CDB6;box-shadow:0 2px 10px rgba(30,20,10,.14);cursor:grab;touch-action:none;
     font:700 12px/1 "Malgun Gothic",sans-serif;color:#3A2A20;user-select:none}
   .page.hpage .rt-bar.moving{cursor:grabbing;box-shadow:0 6px 18px rgba(30,20,10,.24)}
@@ -165,7 +165,9 @@ const css = `
   .page.hpage .rt-bar .tm{flex:none;min-width:34px;font-variant-numeric:tabular-nums}
   .page.hpage .rt-bar .tm{cursor:text;border-radius:5px;padding:2px 2px}
   .page.hpage .rt-bar .tm:hover{background:#FFF1E8}
-  .page.hpage .rt-bar .tm input{width:44px;height:20px;padding:0 3px;border:1.5px solid #F26B2A;border-radius:5px;outline:none;
+  .page.hpage .rt-bar .tm{min-width:40px;text-align:center;color:#3A2A20}
+  .page.hpage .rt-bar .tm input::placeholder{color:#C9A48E;letter-spacing:.5px}
+  .page.hpage .rt-bar .tm input{width:46px;height:20px;padding:0 3px;border:1.5px solid #F26B2A;border-radius:5px;outline:none;
     font:700 12px/1 "Malgun Gothic",sans-serif;color:#3A2A20;text-align:center;background:#fff}
   .page.hpage .rt-bar .adj{flex:none;display:flex;gap:2px}
   .page.hpage .rt-bar .adj button{width:19px;height:19px;padding:0;border:1px solid #F3CDB6;border-radius:50%;background:#FFFBF7;color:#C8561E;
@@ -539,14 +541,14 @@ const qaJs = `
 // 읽기 timers (see .rt / .rt-bar above). Clicking the badge starts; clicking it or ⏸ pauses and resumes; the line
 // can be dragged to give more or less time; × resets. The last ten seconds tick, the end rings.
 const rtJs = `
-<script id="rt-v6">
+<script id="rt-v7">
 (function(){
   var PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12.5-7.5z"/></svg>',
       PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="5.5" y="4.5" width="4.5" height="15" rx="1"/><rect x="14" y="4.5" width="4.5" height="15" rx="1"/></svg>',
       GRIP = '<svg class="grip" viewBox="0 0 12 18" fill="currentColor"><circle cx="3" cy="3" r="1.6"/><circle cx="9" cy="3" r="1.6"/>' +
         '<circle cx="3" cy="9" r="1.6"/><circle cx="9" cy="9" r="1.6"/><circle cx="3" cy="15" r="1.6"/><circle cx="9" cy="15" r="1.6"/></svg>',
       X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
-  var W = 212, ac = null, BOOK = location.pathname.split("/").pop().replace(/\.html$/, ""),
+  var W = 182, ac = null, BOOK = location.pathname.split("/").pop().replace(/\.html$/, ""),
       RING = '<svg class="ring" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" pathLength="100" stroke="transparent"/></svg>';
   function beep(hi){
     try {
@@ -576,7 +578,7 @@ const rtJs = `
       if (!bar) return;
       var f = set ? 1 - left / total : 0;
       bar.fl.style.width = (f * 100) + "%"; bar.kn.style.left = (f * 100) + "%";
-      if (!bar.typing) bar.tm.textContent = set ? fmt(left) : "--:--";
+      if (!bar.typing) bar.tm.textContent = set ? fmt(left) : "__:__";
       bar.el.classList.toggle("hold", !running && left > 0);
       bar.el.classList.toggle("last", left > 0 && left <= 10);
       bar.el.classList.toggle("end", set && left <= 0);
@@ -607,8 +609,9 @@ const rtJs = `
     // typed time: 4 = 4 min, 3:30 = 3 min 30 s, 2.5 / 2,5 = 2 min 30 s, 90s = 90 s
     function parse(v){
       v = String(v).trim().replace(",", ".").toLowerCase();
-      var m = v.match(/^([0-9]{1,2}) *: *([0-9]{1,2})$/);
-      if (m) return +m[1] * 60 + +m[2];
+      var m = v.match(/^([0-9]{0,2}) *: *([0-9]{1,2})$/);
+      if (m) return (+m[1] || 0) * 60 + +m[2];
+      if (/^[0-9]{3,4}$/.test(v)) return +v.slice(0, -2) * 60 + +v.slice(-2);
       m = v.match(/^([0-9]{1,4}) *(s|soniya|sek|초)$/);
       if (m) return +m[1];
       if (/^[0-9]{1,2}([.][0-9]+)? *(m|min|daq|daqiqa|분)?$/.test(v)) return Math.round(parseFloat(v) * 60);
@@ -619,7 +622,7 @@ const rtJs = `
       if (bar.typing) { bar.box.focus(); return; }
       bar.typing = true;
       var box = bar.box = document.createElement("input");
-      box.type = "text"; box.inputMode = "decimal"; box.placeholder = "daq";
+      box.type = "text"; box.inputMode = "numeric"; box.placeholder = "__:__"; box.maxLength = 5;
       box.value = total > 0 ? fmt(left) : ""; box.setAttribute("aria-label", "Vaqt (daqiqa yoki daqiqa:soniya)");
       bar.tm.textContent = ""; bar.tm.appendChild(box);
       setTimeout(function(){ box.focus(); box.select(); }, 0);
@@ -635,6 +638,10 @@ const rtJs = `
         if (total <= 0 && !apply) { reset(); return; }
         paint();
       }
+      box.addEventListener("input", function(){
+        var d = box.value.replace(/[^0-9]/g, "").slice(0, 4);
+        box.value = d.length > 2 ? d.slice(0, -2) + ":" + d.slice(-2) : d;
+      });
       box.addEventListener("keydown", function(ev){
         ev.stopPropagation();
         if (ev.key === "Enter") finish(true);
@@ -648,8 +655,6 @@ const rtJs = `
       var page = badge.parentNode, el = document.createElement("div");
       el.className = "rt-bar"; el.title = "Ushlab boshqa joyga surish mumkin";
       el.innerHTML = '<button type="button" class="pp"></button><span class="tm"></span>' +
-        '<span class="adj"><button type="button" class="mn" title="30 soniya kamaytirish" aria-label="30 soniya kamaytirish">−</button>' +
-        '<button type="button" class="pl" title="30 soniya qo‘shish" aria-label="30 soniya qo‘shish">+</button></span>' +
         '<span class="ln"><span class="tr"><span class="fl"></span>' +
         '<span class="kn"></span></span></span><button type="button" class="cl" title="Yopish" aria-label="Yopish">' + X + '</button>';
       var cx = badge.offsetLeft + (badge.classList.contains("c") ? 0 : badge.offsetWidth / 2);
@@ -659,18 +664,7 @@ const rtJs = `
       bar = { el: el, pp: el.querySelector(".pp"), fl: el.querySelector(".fl"), kn: el.querySelector(".kn"), tm: el.querySelector(".tm"),
               ln: el.querySelector(".ln"), shown: null };
       bar.pp.addEventListener("click", function(e){ e.stopPropagation(); if (running) hold(); else go(); });
-      // − / +: 30 seconds less or more, while counting too
-      function adjust(d){
-        if (total <= 0 && d < 0) return;
-        var was = left;
-        total = Math.max(30, total + d);
-        left = d > 0 ? Math.min(total, left + d) : Math.max(Math.min(total, 1), Math.min(total, left + d));
-        if (was <= 0 && left > 0) { lastSec = null; bar.el.classList.remove("end"); }
-        paint();
-      }
-      el.querySelector(".mn").addEventListener("click", function(e){ e.stopPropagation(); adjust(-30); });
-      el.querySelector(".pl").addEventListener("click", function(e){ e.stopPropagation(); adjust(30); });
-      bar.tm.title = "Bosing va vaqtni yozing: 4 · 3:30 · 2.5";
+      bar.tm.title = "Bosing va vaqtni yozing: 3 · 230 · 2:30";
       bar.tm.addEventListener("pointerdown", function(e){ e.stopPropagation(); });
       bar.tm.addEventListener("click", function(e){ e.stopPropagation(); ask(); });
       el.querySelector(".cl").addEventListener("click", function(e){ e.stopPropagation(); reset(); });
@@ -692,7 +686,7 @@ const rtJs = `
       // move the whole bar
       var mv = null;
       el.addEventListener("pointerdown", function(e){
-        if (e.target.closest(".pp") || e.target.closest(".cl") || e.target.closest(".ln") || e.target.closest(".adj") || e.target.closest(".tm")) return;
+        if (e.target.closest(".pp") || e.target.closest(".cl") || e.target.closest(".ln") || e.target.closest(".tm")) return;
         e.preventDefault(); e.stopPropagation();
         var k = page.getBoundingClientRect().width / page.offsetWidth || 1;
         mv = { x: e.clientX, y: e.clientY, l: el.offsetLeft, t: el.offsetTop, k: k };
