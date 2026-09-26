@@ -253,6 +253,20 @@ body { font-family:"Noto Sans KR","Malgun Gothic",sans-serif; color:#1a1a1a; fon
 .time-overlay.tick { animation:timeOverlayTick .15s ease; }
 @keyframes timeOverlayTick { 0% { transform:scale(1); } 50% { transform:scale(1.08); } 100% { transform:scale(1); } }
 </style>
+<style id="perf-v1">
+/* off-screen pages are skipped entirely until they come near the viewport */
+#stage-inner > .page { content-visibility:auto; contain-intrinsic-size:auto 794px auto 1123px; }
+/* a large blurred shadow on every page and a blurred bar over moving content are costly to repaint */
+#stage-inner > .page { box-shadow:0 0 0 1px #E3E5E9, 0 2px 10px rgba(0,0,0,.10) !important; }
+#nav-bar { backdrop-filter:none !important; -webkit-backdrop-filter:none !important; background:rgba(20,22,28,.95) !important; }
+.page.hpage > img.pbg { position:absolute; left:0; top:0; width:100%; height:100%; display:block; pointer-events:none; user-select:none; }
+#backBtn { display:inline-flex; align-items:center; gap:6px; height:30px; padding:0 12px 0 9px; border-radius:8px;
+  background:rgba(255,255,255,.12); color:#fff; font-size:13px; font-weight:700; text-decoration:none; margin-right:6px; }
+#backBtn:hover { background:rgba(255,255,255,.22); }
+#backBtn:focus-visible { outline:2px solid #8DB8FF; outline-offset:2px; }
+#backBtn svg { width:16px; height:16px; }
+@media (max-width:560px) { #backBtn .txt { display:none; } #backBtn { padding:0 9px; } #nav-bar .lbl { min-width:0 !important; } }
+</style>
 </head>
 <body>
 <div id="stage-outer"><div id="stage-inner">
@@ -844,6 +858,7 @@ body { font-family:"Noto Sans KR","Malgun Gothic",sans-serif; color:#1a1a1a; fon
 </div>
 
 <div id="nav-bar">
+  <a id="backBtn" href="menu.html" title="Menyuga qaytish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg><span class="txt">Orqaga</span></a>
   <button id="zoomOutBtn" title="Kichraytirish">−</button>
   <span class="zoom-lbl" id="zoomLbl">100%</span>
   <button id="zoomInBtn" title="Kattalashtirish">+</button>
@@ -943,13 +958,15 @@ body { font-family:"Noto Sans KR","Malgun Gothic",sans-serif; color:#1a1a1a; fon
   }
   function updateCurrentFromScroll(){
     var midY = stageOuter.getBoundingClientRect().top + stageOuter.clientHeight/2;
-    var newCur = 0;
-    for (var i = 0; i < ORDER.length; i++) {
-      if (pagesEls[ORDER[i]].getBoundingClientRect().top <= midY) newCur = i; else break;
+    var lo = 0, hi = ORDER.length - 1, newCur = 0;   // pages are stacked in order: binary search
+    while (lo <= hi) {
+      var mid = (lo + hi) >> 1;
+      if (pagesEls[ORDER[mid]].getBoundingClientRect().top <= midY) { newCur = mid; lo = mid + 1; } else hi = mid - 1;
     }
     if (newCur !== cur) { cur = newCur; updatePageChrome(); }
   }
-  stageOuter.addEventListener("scroll", function(){ requestAnimationFrame(updateCurrentFromScroll); }, { passive: true });
+  var scrollTick = false;
+  stageOuter.addEventListener("scroll", function(){ if (scrollTick) return; scrollTick = true; requestAnimationFrame(function(){ scrollTick = false; updateCurrentFromScroll(); }); }, { passive: true });
   document.getElementById("prevBtn").onclick = function(){ if (cur>0) scrollToPage(ORDER[cur-1]); };
   document.getElementById("nextBtn").onclick = function(){ if (cur<ORDER.length-1) scrollToPage(ORDER[cur+1]); };
   document.addEventListener("keydown", function(e){
@@ -1370,6 +1387,18 @@ body { font-family:"Noto Sans KR","Malgun Gothic",sans-serif; color:#1a1a1a; fon
   }
   document.querySelectorAll(".time").forEach(makeTimeInteractive);
 
+})();
+</script>
+<script id="back-v1">
+(function(){
+  var b = document.getElementById("backBtn");
+  if (!b) return;
+  b.addEventListener("click", function(e){
+    // came from the programme menu: step back so the teacher lands on the same book page
+    if (document.referrer && /\/menu\.html/.test(document.referrer) && history.length > 1) {
+      e.preventDefault(); history.back();
+    }
+  });
 })();
 </script>
 </body>

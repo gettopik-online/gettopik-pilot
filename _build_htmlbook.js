@@ -21,7 +21,7 @@ const pageHtml = pages.map((p, i) => {
     ].filter(Boolean).join(";");
     return `<span class="t" style="${st}" data-w="${(r.w * PT).toFixed(2)}">${esc(r.t)}</span>`;
   }).join("");
-  return `<div class="page hpage" data-key="p${i + 1}" style="height:${px(p.h)};background-image:url(${dir}/${p.bg})">${runs}</div>`;
+  return `<div class="page hpage" data-key="p${i + 1}" style="height:${px(p.h)}"><img class="pbg" src="${dir}/${p.bg}" loading="lazy" decoding="async" alt="">${runs}</div>`;
 });
 
 const css = `
@@ -33,20 +33,28 @@ const css = `
 
 // fit every run to the width it has in the book, so lines end exactly where they did in print
 const fitJs = `
-<script>
+<script id="fit-v2">
 (function(){
-  function fit(){
-    document.querySelectorAll(".page.hpage .t").forEach(function(el){
-      el.style.transform = "";
-      var target = +el.dataset.w, natural = el.offsetWidth;
+  function fitPage(pg){
+    var els = pg.querySelectorAll(".t"), w = [], i;
+    for (i = 0; i < els.length; i++) w.push(els[i].offsetWidth);   // offsetWidth ignores transforms
+    for (i = 0; i < els.length; i++) {
+      var el = els[i], target = +el.dataset.w, natural = w[i];
       var rot = el.style.getPropertyValue("--rot");
       var sx = (natural > 0 && target > 0) ? target / natural : 1;
       if (Math.abs(sx - 1) < 0.01) sx = 1;
       el.style.transform = (rot ? "rotate(" + rot + ") " : "") + (sx !== 1 ? "scaleX(" + sx.toFixed(4) + ")" : "");
-    });
+    }
   }
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit); else window.addEventListener("load", fit);
-  window.addEventListener("load", fit);
+  function start(){
+    var pages = document.querySelectorAll(".page.hpage");
+    if (!("IntersectionObserver" in window)) { pages.forEach(fitPage); return; }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if (e.isIntersecting) { io.unobserve(e.target); fitPage(e.target); } });
+    }, { root: document.getElementById("stage-outer"), rootMargin: "1500px 0px" });
+    pages.forEach(function(p){ io.observe(p); });
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(start); else window.addEventListener("load", start);
 })();
 </script>
 `;
