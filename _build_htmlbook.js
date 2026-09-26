@@ -169,9 +169,11 @@ const css = `
   .page.hpage .qa-marks.ink path{stroke:#2C6FB7}
   .page.hpage .wx-set[hidden]{display:none}
   .page.hpage .wx-set{--s:1}
-  .page.hpage .wx{position:absolute;z-index:4;font-family:"Gaegu","Malgun Gothic",sans-serif;font-weight:700;color:#2C6FB7;
+  .page.hpage .wx{position:absolute;z-index:4;font-family:"Malgun Gothic","맑은 고딕","Noto Sans KR","Apple SD Gothic Neo",sans-serif;
+    font-weight:400;color:#2C6FB7;-webkit-font-smoothing:antialiased;
     font-size:calc(var(--fs) * var(--s));line-height:1.05;white-space:nowrap;padding:0 2px;border-radius:4px;outline:none;cursor:text;
-    animation:qaWrite .35s ease-out both}
+    animation:wxIn .35s ease-out both}
+  @keyframes wxIn{from{opacity:0}to{opacity:1}}
   .page.hpage .wx.mid{transform:translateX(-50%)}
   .page.hpage .wx:hover{background:rgba(44,111,183,.08)}
   .page.hpage .wx:focus{background:rgba(44,111,183,.10);box-shadow:0 0 0 1px rgba(44,111,183,.45)}
