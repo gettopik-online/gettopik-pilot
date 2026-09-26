@@ -192,6 +192,24 @@ NAV_CSS = """<style id="nav-v1">
 </style>
 """
 
+ZOOM_ANCHOR = "  scaleStage();\n  updatePageChrome();\n\n  // ---------- nav-v1"
+ZOOM_JS = """  // ---------- zoom-v2: the zoom the teacher chose comes back after a reload ----------
+  (function(){
+    var KEY = "gt-zoom:" + location.pathname.split("/").pop(), z = null;
+    try { z = parseFloat(localStorage.getItem(KEY)); } catch (e) {}
+    if (z >= 0.5 && z <= 2.5) {
+      zoomFactor = z;
+      var l = document.getElementById("zoomLbl");
+      if (l) l.textContent = Math.round(z * 100) + "%";
+    }
+    var plain = scaleStage;
+    scaleStage = function(){                       // every zoom change goes through here, so remember it
+      plain();
+      try { localStorage.setItem(KEY, String(zoomFactor)); } catch (e) {}
+    };
+  })();
+""" + ZOOM_ANCHOR
+
 BG = re.compile(r'(<div class="page hpage" data-key="[^"]+" style="height:[^;"]+);background-image:url\(([^)]+)\)">')
 
 def patch(name):
@@ -219,6 +237,8 @@ def patch(name):
     if "nav-v1" not in s and NAV_ANCHOR in s:
         s = s.replace(NAV_ANCHOR, NAV_JS, 1)
         s = s.replace("</head>", NAV_CSS + "</head>", 1)
+    if "zoom-v2" not in s and ZOOM_ANCHOR in s:
+        s = s.replace(ZOOM_ANCHOR, ZOOM_JS, 1)
     if OLD_FIT in s:
         s = s.replace(OLD_FIT, NEW_FIT, 1)
     # page backgrounds become lazy, asynchronously decoded images
@@ -228,7 +248,8 @@ def patch(name):
         open(p, "w", encoding="utf-8").write(s)
     print(f"{name}: {'patched' if s != before else 'already done'}, lazy backgrounds {n}, "
           f"scroll {'ok' if NEW_SCROLL in s else 'MISSING'}, search {'ok' if NEW_FIND in s else 'MISSING'}, "
-          f"zoom {'ok' if 'anchor = null' in s else 'MISSING'}, nav {'ok' if 'nav-v1' in s else 'MISSING'}")
+          f"zoom {'ok' if 'anchor = null' in s else 'MISSING'}, nav {'ok' if 'nav-v1' in s else 'MISSING'}, "
+          f"zoom-keep {'ok' if 'zoom-v2' in s else 'MISSING'}")
 
 for b in (sys.argv[1:] or BOOKS):
     patch(b)

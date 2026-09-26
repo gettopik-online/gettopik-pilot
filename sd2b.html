@@ -1598,6 +1598,21 @@ tspan.gg { text-decoration-color:#0E9F6E; }
     });
   });
 
+  // ---------- zoom-v2: the zoom the teacher chose comes back after a reload ----------
+  (function(){
+    var KEY = "gt-zoom:" + location.pathname.split("/").pop(), z = null;
+    try { z = parseFloat(localStorage.getItem(KEY)); } catch (e) {}
+    if (z >= 0.5 && z <= 2.5) {
+      zoomFactor = z;
+      var l = document.getElementById("zoomLbl");
+      if (l) l.textContent = Math.round(z * 100) + "%";
+    }
+    var plain = scaleStage;
+    scaleStage = function(){                       // every zoom change goes through here, so remember it
+      plain();
+      try { localStorage.setItem(KEY, String(zoomFactor)); } catch (e) {}
+    };
+  })();
   scaleStage();
   updatePageChrome();
 
