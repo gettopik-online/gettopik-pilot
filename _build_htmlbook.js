@@ -343,7 +343,7 @@ const qaJs = `
     L.lines.forEach(function(l, k){
       if (!(l.n in sides)) sides[l.n] = order++ % 2 ? "r" : "";
       html += '<div class="ln ' + sides[l.n] + '" data-k="' + k + '" title="Bosing: shu gapni tinglash · yana bosing: to‘xtatish / davom ettirish"><span class="av ' + (l.g || "") + '">' +
-        esc(l.n.charAt(0)) + '</span><span class="col"><span class="nm">' + esc(l.n) + '</span><span class="bb">' + l.x.split(/\s+/).map(function(w, j, all){ return '<span class="wd">' + esc(w) + (j < all.length - 1 ? " " : "") + "</span>"; }).join("") + '</span></span></div>';
+        esc(l.n.charAt(0)) + '</span><span class="col"><span class="nm">' + esc(l.n) + '</span><span class="bb">' + l.x.split(" ").map(function(w, j, all){ return '<span class="wd">' + esc(w) + (j < all.length - 1 ? " " : "") + "</span>"; }).join("") + '</span></span></div>';
     });
     var box = document.createElement("div");
     box.className = "qa-sc"; box.innerHTML = html;
