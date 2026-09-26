@@ -1,0 +1,29 @@
+{
+  "_": "대본 and 정답 for listening codes, keyed by YouTube id. Script from the Student's Book appendix (듣기 지문, p.156), answers from 모범 답안 (p.158); t = second the line starts in the recording. Marks are in PDF points on the teacher-book page: circle = [cx, cy, rx, ry], line = [x1, y1, x2, y2].",
+  "0bL8A1_A5_k": {
+    "title": "듣기 1",
+    "lines": [
+      { "n": "나나", "g": "f", "t": 11.0, "x": "안녕하세요? 저는 나나예요." },
+      { "n": "테오", "g": "m", "t": 15.5, "x": "안녕하세요? 저는 테오예요. 나나 씨는 어느 나라 사람이에요?" },
+      { "n": "나나", "g": "f", "t": 23.0, "x": "저는 중국 사람이에요." },
+      { "n": "테오", "g": "m", "t": 26.0, "x": "아, 네. 저는 브라질 사람이에요. 만나서 반가워요." }
+    ],
+    "marks": [
+      { "line": [119.5, 347.0, 129.8, 352.0] },
+      { "circle": [159.5, 352.2, 35.5, 9.8] },
+      { "line": [119.5, 405.0, 129.8, 389.9] },
+      { "circle": [164.0, 389.9, 40.5, 9.8] }
+    ]
+  },
+  "PerMcAhTWdY": {
+    "title": "듣기 2",
+    "lines": [
+      { "n": "에릭", "g": "m", "t": 10.5, "x": "만나서 반가워요. 저는 에릭이에요. 프랑스 사람이에요." },
+      { "n": "마리", "g": "f", "t": 17.5, "x": "여러분 안녕하세요? 저는 마리예요. 일본 사람이에요." },
+      { "n": "닛쿤", "g": "m", "t": 23.9, "x": "반가워요. 저는 닛쿤이에요. 태국에서 왔어요." }
+    ],
+    "marks": [
+      { "circle": [375.3, 417.2, 63.0, 10.2] }
+    ]
+  }
+}
