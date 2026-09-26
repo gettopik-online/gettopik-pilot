@@ -860,9 +860,14 @@ tspan.gg { text-decoration-color:#0E9F6E; }
   #gp .x{width:32px;font-size:18px}
   #gp .pg{padding:0 12px}
   #gp .x:hover,#gp .pg:hover{background:#EAE3DC}
-  #gp .stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:24px;overflow:hidden}
-  #gp .stage.tall{align-items:flex-start;overflow-y:auto}
-  #gp .cut{position:relative;overflow:hidden;transform-origin:0 0;animation:gpIn .35s ease-out}
+  #gp .stage{flex:1;min-height:0;overflow-y:auto;padding:28px 30px 40px;background:#EFEBE7}
+  #gp .sheet{margin:0 auto;background:#fff;box-sizing:border-box;padding:44px 44px 60px;box-shadow:0 2px 14px rgba(60,40,20,.12);
+    display:flex;flex-direction:column;align-items:center;gap:18px}
+  #gp .part{position:relative;flex:none}
+  #gp .part.fresh{animation:gpDrop .45s cubic-bezier(.2,.8,.3,1)}
+  @keyframes gpDrop{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){#gp .part.fresh{animation:none}}
+  #gp .cut{position:absolute;left:0;top:0;overflow:hidden;transform-origin:0 0}
   #gp .cut .pbg{position:absolute;max-width:none}
   #gp .cut .t{position:absolute;white-space:pre;transform-origin:0 0;font-family:"Malgun Gothic","맑은 고딕","Noto Sans KR","Apple SD Gothic Neo",sans-serif;
     color:#231F20;-webkit-font-smoothing:antialiased}
@@ -2454,7 +2459,7 @@ tspan.gg { text-decoration-color:#0E9F6E; }
   <div class="stage"></div>
   <div class="nav"><button type="button" class="prev">◀ Oldingi</button><button type="button" class="next">Keyingi ▶</button></div>
 </div>
-<script id="gp-v1">
+<script id="gp-v2">
 (function(){
   var GRAM = window.GRAM || {}, PT = 96 / 72;
   var gp = document.getElementById("gp"), stage = gp.querySelector(".stage"), steps = gp.querySelector(".steps"),
@@ -2482,17 +2487,46 @@ tspan.gg { text-decoration-color:#0E9F6E; }
       els[i].style.transform = (rot ? "rotate(" + rot + ") " : "") + (Math.abs(sx - 1) > 0.01 ? "scaleX(" + sx.toFixed(4) + ")" : "");
     }
   }
-  function show(){
-    var part = cur.g.part[k], box = cut(cur.page, part[1]);
-    stage.innerHTML = ""; stage.appendChild(box); fitText(box);
-    var w = parseFloat(box.style.width), h = parseFloat(box.style.height);
-    var s = Math.min((stage.clientWidth - 48) / w, (stage.clientHeight - 48) / h, k === 0 ? 3.4 : 2.6), tall = s < 1.6;
-    if (tall) s = Math.min((stage.clientWidth - 48) / w, 2.2);                      // tall part: fill the width, scroll down
-    stage.classList.toggle("tall", tall); stage.scrollTop = 0;
-    box.style.transform = "scale(" + s + ")"; box.style.marginRight = (w * s - w) + "px"; box.style.marginBottom = (h * s - h) + "px";
+  // one clean A4 sheet; parts 0..k stand on it one under another, the newest slides in at the bottom
+  var sheet = null;
+  function sheetWidth(){ return Math.min(stage.clientWidth - 60, 860); }
+  function addPart(i, animate){
+    var part = cur.g.part[i], box = cut(cur.page, part[1]), wrap = document.createElement("div");
+    wrap.className = "part" + (animate ? " fresh" : "");
+    wrap.appendChild(box); sheet.appendChild(wrap); fitText(box);
+    var w = parseFloat(box.style.width), h = parseFloat(box.style.height), inner = sheetWidth() - 2 * 44;
+    var sc = Math.min(inner / w, i === 0 ? 2.6 : 2.4);
+    box.style.transform = "scale(" + sc + ")";
+    wrap.style.width = (w * sc) + "px"; wrap.style.height = (h * sc) + "px";
+    return wrap;
+  }
+  function build(){                                    // (re)draw the sheet with parts 0..k
+    stage.innerHTML = "";
+    sheet = document.createElement("div"); sheet.className = "sheet";
+    var sw = sheetWidth(); sheet.style.width = sw + "px"; sheet.style.minHeight = (sw * 1.414) + "px";
+    stage.appendChild(sheet);
+    for (var i = 0; i <= k; i++) addPart(i, false);
+    marks();
+  }
+  function marks(){
     Array.prototype.forEach.call(steps.children, function(b, i){ b.className = i === k ? "now" : i < k ? "done" : ""; });
     prevB.disabled = k === 0; nextB.disabled = k === cur.g.part.length - 1;
     nextB.textContent = k < cur.g.part.length - 1 ? cur.g.part[k + 1][0] + " ▶" : "Tugadi";
+  }
+  function next(){
+    if (!cur || k >= cur.g.part.length - 1) return;
+    k++;
+    var el = addPart(k, true);
+    marks();
+    var top = el.getBoundingClientRect().top - stage.getBoundingClientRect().top + stage.scrollTop;
+    var bottom = top + el.offsetHeight;
+    if (bottom > stage.scrollTop + stage.clientHeight - 20) stage.scrollTo({ top: Math.max(0, bottom - stage.clientHeight + 40), behavior: "smooth" });
+  }
+  function prev(){
+    if (!cur || k === 0) return;
+    k--;
+    var last = sheet.lastElementChild; if (last) last.remove();
+    marks();
   }
   function open(pageKey, col, from){
     var g = GRAM[pageKey] && GRAM[pageKey][col], page = document.querySelector('.page[data-key="' + pageKey + '"]');
@@ -2502,14 +2536,14 @@ tspan.gg { text-decoration-color:#0E9F6E; }
     var sm = document.createElement("small"); sm.textContent = "grammatika"; lbl.appendChild(sm);
     steps.innerHTML = "";
     g.part.forEach(function(p, i){ var b = document.createElement("button"); b.type = "button"; b.textContent = p[0];
-      b.addEventListener("click", function(){ k = i; show(); }); steps.appendChild(b); });
+      b.addEventListener("click", function(){ k = i; build(); }); steps.appendChild(b); });
     pgB.textContent = "📖 " + pageKey.slice(1) + "-bet";
-    gp.classList.add("on"); show(); nextB.focus();
+    gp.classList.add("on"); build(); stage.scrollTop = 0; nextB.focus();
     return true;
   }
-  function close(){ gp.classList.remove("on"); stage.innerHTML = ""; cur = null; }
-  nextB.addEventListener("click", function(){ if (cur && k < cur.g.part.length - 1) { k++; show(); } });
-  prevB.addEventListener("click", function(){ if (cur && k > 0) { k--; show(); } });
+  function close(){ gp.classList.remove("on"); stage.innerHTML = ""; cur = null; sheet = null; }
+  nextB.addEventListener("click", next);
+  prevB.addEventListener("click", prev);
   gp.querySelector(".x").addEventListener("click", close);
   pgB.addEventListener("click", function(){ var key = cur.key; close(); if (window.gpJump) window.gpJump(key); });
   document.addEventListener("keydown", function(e){
@@ -2519,7 +2553,7 @@ tspan.gg { text-decoration-color:#0E9F6E; }
     if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); prevB.click(); }
     if (e.key === "Escape") close();
   }, true);
-  addEventListener("resize", function(){ if (cur) show(); });
+  addEventListener("resize", function(){ if (cur) build(); });
   window.gpOpen = open;
 })();
 </script>
